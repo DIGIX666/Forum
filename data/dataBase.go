@@ -12,6 +12,7 @@ func DataBase(email string, password string) {
 	db, err := sql.Open("sqlite3", "./users.db")
 	if err != nil {
 		log.Fatal(err)
+
 	}
 
 	_, err = db.Exec("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT, password TEXT)")

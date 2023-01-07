@@ -1,13 +1,31 @@
 package main
 
 import (
+	data "Forum/data"
 	"fmt"
-	"html/template"
 	"log"
 	"net/http"
+	"text/template"
 )
 
 func erreur(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/" && r.URL.Path != "/register" && r.URL.Path != "/home" && r.URL.Path != "/error" {
+		http.Error(w, "404 not found", http.StatusNotFound)
+		return
+	}
+
+	_, err := template.ParseFiles("./assets/error.html")
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("500: Internal Server Error"))
+		log.Println((http.StatusInternalServerError))
+		return
+	}
+
+	if r.Method != "POST" {
+		http.Error(w, "Method is not supported", http.StatusNotFound)
+		return
+	}
 
 }
 
@@ -30,6 +48,12 @@ func main() {
 }
 
 func login(w http.ResponseWriter, r *http.Request) {
+	t := template.New("login")
+	t = template.Must(t.ParseFiles("./assets/login.html"))
+	err := t.ExecuteTemplate(w, "login", nil)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 }
 
@@ -37,10 +61,24 @@ func register(w http.ResponseWriter, r *http.Request) {
 
 	t := template.New("register")
 	t = template.Must(t.ParseFiles("./assets/register.html"))
-	t.ExecuteTemplate(w, "register", nil)
+	err := t.ExecuteTemplate(w, "register", nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	email := r.FormValue("email_confirm")
+	password := r.FormValue("password_confirm")
+	fmt.Printf("email: %v\n", email)
+	fmt.Printf("password: %v\n", password)
+
+	data.DataBase(email, password)
 
 }
 
 func home(w http.ResponseWriter, r *http.Request) {
+	//fonction a compléter
+}
 
+func DisplayBadMatching(w http.ResponseWriter, r *http.Request) {
+	//fonction à compléter
 }

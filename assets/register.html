@@ -39,7 +39,7 @@
 
 
 
-			if (emailInput.value == email_confirmInput.value && emailInput.value != "" && email_confirmInput.value != "" && passwordInput.value == password_confirmInput.value && passwordInput.value != "" && password_confirmInput.value != "") {
+			if (emailInput.value == email_confirmInput.value && emailInput.value != "" && email_confirmInput.value != "" && passwordInput.value == password_confirmInput.value && passwordInput.value != "" && password_confirmInput.value != "" && password_confirmInput.value.length>6) {
 				btn.disabled = false
 				btn.style.backgroundColor = "#3498db"
 				

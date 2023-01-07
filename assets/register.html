@@ -1,13 +1,16 @@
+{{define "register"}}
 <!DOCTYPE html>
 <html>
+
 <head>
 	<title>ZeHives</title>
-	<link rel="stylesheet" type="text/css" href="/register.css">
+	<link rel="stylesheet" type="text/css" href="/assets/register.css">
 </head>
+
 <body>
 	<div class="container">
 		<h1>Forum</h1>
-		<form action="POST">
+		<form id="form" method="POST">
 			<label for="email">Adresse e-mail :</label><br>
 			<input type="text" id="email" name="email"><br>
 			<label for="email_confirm">Confirmation adresse e-mail :</label><br>
@@ -17,7 +20,41 @@
 			<label for="password_confirm">Confirmation du mot de passe :</label><br>
 			<input type="password" id="password_confirm" name="password_confirm"><br><br>
 			<input type="submit" id="submit" value="S'inscrire">
-		</form> 
+			<label for="login">You have an account ? <a href="/">login</a></label>
+		</form>
 	</div>
+	<script type="text/javascript">
+		function displayBadMatching() {
+			const emailInput = document.getElementById("email")
+			const email_confirmInput = document.getElementById("email_confirm")
+			const passwordInput = document.getElementById("password")
+			const password_confirmInput = document.getElementById("password_confirm")
+			let btn = document.getElementById("submit")
+
+			emailInput.addEventListener("input", displayBadMatching)
+			email_confirmInput.addEventListener("input", displayBadMatching)
+			passwordInput.addEventListener("input", displayBadMatching)
+			password_confirmInput.addEventListener("input", displayBadMatching)
+
+
+
+
+			if (emailInput.value == email_confirmInput.value && emailInput.value != "" && email_confirmInput.value != "" && passwordInput.value == password_confirmInput.value && passwordInput.value != "" && password_confirmInput.value != "") {
+				btn.disabled = false
+				btn.style.backgroundColor = "#3498db"
+				
+			} else {
+				btn.disabled = true
+				btn.style.backgroundColor = "grey"
+				
+
+			}
+		}
+
+		displayBadMatching()
+
+	</script>
 </body>
+
 </html>
+{{end}}

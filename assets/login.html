@@ -13,16 +13,49 @@
 				<!-- Emplacement de la photo de l'utilisateur -->
 				<img src="/assets/images/beehive-37436.svg" alt="Photo de l'utilisateur">
 			</div>
-			<form>
-				<label for="username">Nom d'utilisateur :</label><br>
-				<input type="text" id="username" name="username"><br>
+			<form id="form" action="/" method="post">
+				<label for="email">email :</label><br>
+				<input type="text" id="email" name="email"><br>
 				<label for="password">Mot de passe :</label><br>
 				<input type="password" id="password" name="password"><br><br>
 				<input type="submit" value="Se connecter">
-                <label for="register">You don't have an account ? <a href="/register">register</a></label>
+               
 			</form> 
+            <label for="register">You don't have an account ? <a href="/register">register</a></label>
 		</div>
 	</div>
+    <script type="text/javascript">
+		function displayBadMatching() {
+			const emailInput = document.getElementById("email")
+		
+			const passwordInput = document.getElementById("password")
+			
+			let btn = document.getElementById("submit")
+
+			emailInput.addEventListener("input", displayBadMatching)
+			
+			passwordInput.addEventListener("input", displayBadMatching)
+		
+
+			const passwordBytes = new TextEncoder().encode(password);
+
+
+			if ( emailInput.value != "" &&  passwordInput.value != ""  && passwordBytes.length<72 ) {
+
+				btn.disabled = false
+				btn.style.backgroundColor = "#3498db"
+				
+			} else {
+				btn.disabled = true
+				btn.style.backgroundColor = "grey"
+				
+
+			}
+		}
+
+		displayBadMatching()
+
+	</script>
 </body>
 </html>
 {{end}}

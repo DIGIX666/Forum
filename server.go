@@ -1,6 +1,7 @@
 package main
 
 import (
+	data "Forum/data"
 	script "Forum/scripts"
 	"fmt"
 	"log"
@@ -22,7 +23,7 @@ func erreur(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if r.Method != "POST" {
+	if r.Method != "GET" {
 		http.Error(w, "Method is not supported", http.StatusNotFound)
 		return
 	}
@@ -48,6 +49,10 @@ func main() {
 }
 
 func login(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		fmt.Fprintf(w, "ParseForm() err: %v", err)
+		return
+	}
 	t := template.New("login")
 	t = template.Must(t.ParseFiles("./assets/login.html"))
 	err := t.ExecuteTemplate(w, "login", nil)
@@ -55,9 +60,21 @@ func login(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
+	email := r.FormValue("email")
+	password := r.FormValue("password")
+	uuidUser := script.GenerateRandomString()
+	if email != "" && password != "" {
+		data.DataBaseLogin(email, password, uuidUser)
+	}
+
 }
 
 func register(w http.ResponseWriter, r *http.Request) {
+
+	if err := r.ParseForm(); err != nil {
+		fmt.Fprintf(w, "ParseForm() err: %v", err)
+		return
+	}
 
 	t := template.New("register")
 	t = template.Must(t.ParseFiles("./assets/register.html"))
@@ -65,23 +82,26 @@ func register(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	email := r.FormValue("email_confirm")
-	password := r.FormValue("password_confirm")
-	fmt.Printf("email: %v\n", email)
+	var email string
+	var password string
+	email = r.FormValue("email_confirm")
+	password = r.FormValue("password_confirm")
+	/*fmt.Printf("email: %v\n", email)
 	fmt.Printf("password: %v\n", password)
-
-	//mixedPassword := password + script.GenerateRandomString()
+	fmt.Printf("length email: %v\n", len(email))
+	fmt.Printf("length password: %v\n", len(password))*/
 
 	hashPassword := script.GenerateHash(password)
 
-	fmt.Printf("email: %v\n", email)
-	fmt.Printf("hashPassword: %v\n", hashPassword)
+	//fmt.Printf("email: %v\n", email)
+	//fmt.Printf("hashPassword: %v\n", hashPassword)
 
 	compare := script.ComparePassword(hashPassword, password)
 	fmt.Printf("compare: %v\n", compare)
 
-	//data.DataBase(email, password)
+	if email != "" && password != "" {
+		data.DataBaseRegister(email, hashPassword)
+	}
 
 }
 

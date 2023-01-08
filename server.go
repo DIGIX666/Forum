@@ -1,7 +1,7 @@
 package main
 
 import (
-	data "Forum/data"
+	script "Forum/scripts"
 	"fmt"
 	"log"
 	"net/http"
@@ -71,14 +71,20 @@ func register(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("email: %v\n", email)
 	fmt.Printf("password: %v\n", password)
 
-	data.DataBase(email, password)
+	//mixedPassword := password + script.GenerateRandomString()
+
+	hashPassword := script.GenerateHash(password)
+
+	fmt.Printf("email: %v\n", email)
+	fmt.Printf("hashPassword: %v\n", hashPassword)
+
+	compare := script.ComparePassword(hashPassword, password)
+	fmt.Printf("compare: %v\n", compare)
+
+	//data.DataBase(email, password)
 
 }
 
 func home(w http.ResponseWriter, r *http.Request) {
 	//fonction a compléter
-}
-
-func DisplayBadMatching(w http.ResponseWriter, r *http.Request) {
-	//fonction à compléter
 }

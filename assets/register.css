@@ -1,7 +1,7 @@
 body {
 	font-family: Arial, sans-serif;
 	background-color: #333; /* Couleur de fond sombre */
-	background-image: url('./images/beehive-37436.svg'); /* Illustration de fond */
+	/*background-image: url('./images/beehive-37436.svg'); /* Illustration de fond */
 	background-size: cover; /* Redimensionnement de l'illustration pour qu'elle remplisse toute la page */
 	color: #fff; /* Couleur des textes en blanc */
 }
@@ -38,8 +38,7 @@ label {
 	margin-bottom: 10px;
 }
 
-input[type="text"],
-input[type="password"] {
+input[type="text"]{
 	width: 48%;
 	height: 45px;
 	padding: 0 20px;
@@ -47,7 +46,7 @@ input[type="password"] {
 	border: 1px solid #ddd;
 	border-radius: 10px;
 	outline: none;
-	color: #333; /*Couleurdutextedeschampsdesaisieennoir*/
+	color: white; /*Couleurdutextedeschampsdesaisieennoir*/
 	background-color: rgba(255, 255, 255, 0.1); /*Couleurdefondtransparenteavecunelégèreteinteblanche*/
 	transition: all 0.3s;
 	-webkit-border-radius: 10px;
@@ -56,11 +55,21 @@ input[type="password"] {
 	-o-border-radius: 10px;
 }
 
-input[type="text"]:focus,
-input[type="password"]:focus {
-	border-color: #3498db;
-	background-color: #fff; /* Couleur de fond blanche lorsque le champ est sélectionné */
-	color: #333; /* Couleur du texte en noir lorsque le champ est sélectionné */
+input[type="password"] {
+	width: 48%;
+	height: 45px;
+	padding: 0 20px;
+	font-size: 16px;
+	border: 1px solid #ddd;
+	border-radius: 10px;
+	outline: none;
+	color: white; /*Couleurdutextedeschampsdesaisieennoir*/
+	background-color: rgba(255, 255, 255, 0.1); /*Couleurdefondtransparenteavecunelégèreteinteblanche*/
+	transition: all 0.3s;
+	-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
+	-ms-border-radius: 10px;
+	-o-border-radius: 10px;
 }
 
 input[type="submit"] {

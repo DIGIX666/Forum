@@ -1,15 +1,17 @@
+{{define "login"}}
 <!DOCTYPE html>
 <html>
 <head>
 	<title>Connexion au forum</title>
-	<link rel="stylesheet" type="text/css" href="/login.css">
+	<link rel="stylesheet" type="text/css" href="/assets/login.css">
 </head>
 <body>
 	<div class="container">
 		<div class="user-card">
+            <h2>LOGIN</h2>
 			<div class="user-photo">
 				<!-- Emplacement de la photo de l'utilisateur -->
-				<img src="./images/beehive-37436.svg" alt="Photo de l'utilisateur">
+				<img src="/assets/images/beehive-37436.svg" alt="Photo de l'utilisateur">
 			</div>
 			<form>
 				<label for="username">Nom d'utilisateur :</label><br>
@@ -17,8 +19,10 @@
 				<label for="password">Mot de passe :</label><br>
 				<input type="password" id="password" name="password"><br><br>
 				<input type="submit" value="Se connecter">
+                <label for="register">You don't have an account ? <a href="/register">register</a></label>
 			</form> 
 		</div>
 	</div>
 </body>
 </html>
+{{end}}

@@ -8,8 +8,9 @@
 </head>
 
 <body>
+	<title>Register</title>
 	<div class="container">
-		<h1>Forum</h1>
+		<h1>FORUM</h1>
 		<form id="form" method="POST">
 			<label for="email">Adresse e-mail :</label><br>
 			<input type="text" id="email" name="email"><br>
@@ -36,10 +37,11 @@
 			passwordInput.addEventListener("input", displayBadMatching)
 			password_confirmInput.addEventListener("input", displayBadMatching)
 
+			const passwordBytes = new TextEncoder().encode(password_confirmInput);
 
 
+			if (emailInput.value == email_confirmInput.value && emailInput.value != "" && email_confirmInput.value != "" && passwordInput.value == password_confirmInput.value && passwordInput.value != "" && password_confirmInput.value != "" && password_confirmInput.value.length>6 && passwordBytes.length<72 ) {
 
-			if (emailInput.value == email_confirmInput.value && emailInput.value != "" && email_confirmInput.value != "" && passwordInput.value == password_confirmInput.value && passwordInput.value != "" && password_confirmInput.value != "" && password_confirmInput.value.length>6) {
 				btn.disabled = false
 				btn.style.backgroundColor = "#3498db"
 				

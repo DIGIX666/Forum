@@ -23,20 +23,19 @@ func erreur(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if r.Method != "GET" {
+	if r.Method != "POST" {
 		http.Error(w, "Method is not supported", http.StatusNotFound)
 		return
 	}
-
 }
 
 func main() {
 	fileServer := http.FileServer(http.Dir("./assets"))
 	http.Handle("/assets/", http.StripPrefix("/assets/", fileServer))
 
-	http.HandleFunc("/", login)
-	http.HandleFunc("/register", register)
-	http.HandleFunc("/home", home)
+	http.HandleFunc("/", register)
+	http.HandleFunc("/login", login)
+	//http.HandleFunc("/home", home)
 
 	http.HandleFunc("/error", erreur)
 
@@ -65,12 +64,11 @@ func login(w http.ResponseWriter, r *http.Request) {
 	uuidUser := script.GenerateRandomString()
 	if email != "" && password != "" {
 		if data.DataBaseLogin(email, password, uuidUser) {
-			home(w, r)
+			http.HandleFunc("/home", home)
 		} else {
-
+			fmt.Println("mot de passe pas bon !!")
 		}
 	}
-
 }
 
 func register(w http.ResponseWriter, r *http.Request) {
@@ -106,13 +104,16 @@ func register(w http.ResponseWriter, r *http.Request) {
 	if email != "" && password != "" {
 		data.DataBaseRegister(email, hashPassword)
 	}
-
 }
 
 func home(w http.ResponseWriter, r *http.Request) {
-	t := template.New("home")
-	t = template.Must(t.ParseFiles("./assets/home.html"))
-	err := t.ExecuteTemplate(w, "home", nil)
+	if err := r.ParseForm(); err != nil {
+		fmt.Fprintf(w, "ParseForm() err: %v", err)
+		return
+	}
+	temp := template.New("home")
+	temp = template.Must(temp.ParseFiles("./assets/home.html"))
+	err := temp.ExecuteTemplate(w, "home", nil)
 	if err != nil {
 		log.Fatal(err)
 	}

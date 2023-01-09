@@ -64,7 +64,11 @@ func login(w http.ResponseWriter, r *http.Request) {
 	password := r.FormValue("password")
 	uuidUser := script.GenerateRandomString()
 	if email != "" && password != "" {
-		data.DataBaseLogin(email, password, uuidUser)
+		if data.DataBaseLogin(email, password, uuidUser) {
+			home(w, r)
+		} else {
+
+		}
 	}
 
 }
@@ -106,5 +110,10 @@ func register(w http.ResponseWriter, r *http.Request) {
 }
 
 func home(w http.ResponseWriter, r *http.Request) {
-	//fonction a compléter
+	t := template.New("home")
+	t = template.Must(t.ParseFiles("./assets/home.html"))
+	err := t.ExecuteTemplate(w, "home", nil)
+	if err != nil {
+		log.Fatal(err)
+	}
 }

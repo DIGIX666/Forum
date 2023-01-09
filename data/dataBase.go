@@ -91,6 +91,11 @@ func DataBaseLogin(email string, password string, uuid string) bool {
 	fmt.Printf("uuid: %v\n", uuid)
 
 	if compare {
+		_, err = db.Exec("UPDATE users SET UUID = ? WHERE email = ?", uuid, email)
+		if err != nil {
+			fmt.Println(err)
+
+		}
 		return true
 	} else {
 		return false

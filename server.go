@@ -34,9 +34,9 @@ func main() {
 	fileServer := http.FileServer(http.Dir("./assets"))
 	http.Handle("/assets/", http.StripPrefix("/assets/", fileServer))
 
-	http.HandleFunc("/", register)
+	http.HandleFunc("/", home)
 	http.HandleFunc("/login", login)
-	//http.HandleFunc("/home", home)
+	http.HandleFunc("/register", register)
 
 	http.HandleFunc("/error", erreur)
 

@@ -30,8 +30,7 @@ func DataBaseRegister(email string, password string) {
 	}
 	if count > 0 {
 
-		/*log.Fatal("email adress already exist !")
-		return*/
+		fmt.Println("email adress already exist !")
 
 	} else {
 		_, err = db.Exec("INSERT INTO users (email, password, UUID) VALUES (?, ?, ?)", email, password, uuid)

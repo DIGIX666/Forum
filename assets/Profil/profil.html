@@ -1,0 +1,241 @@
+{{define "profil"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/assets/Profil/profil.css">
+    <title>PROFIL</title>
+</head>
+
+
+<body>
+    <div class="container" x-data="{ rightSide: false, leftSide: false }">
+        <div class="left-side" :class="{'active' : leftSide}">
+          <div class="left-side-button" @click="leftSide = !leftSide">
+            <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+            <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+        <path d="M19 12H5M12 19l-7-7 7-7"/>
+      </svg>
+          </div>
+          <div class="logo">MDO</div>
+          <div class="side-wrapper">
+            <div class="side-title">MENU</div>
+            <div class="side-menu">
+              <a href="/assets/Home/home.html">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+                  <path d="M9 22V12h6v10" />
+                </svg>
+                Home
+              </a>
+              <a href="#">
+                <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                  <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                  <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                </svg>
+                Me
+              </a>
+            </div>
+          </div>
+
+          <div class="side-wrapper">
+            <div class="side-title">SUBJECTS</div>
+            <div class="side-menu">
+              <a href="#">#  Cat 1 </a>
+              <a href="#">#  Cat 2 </a>
+              <a href="#">#  Cat 3 </a>
+              <a href="#">#  Cat 4 </a>
+              <a href="#">#  Cat 5 </a>
+              <a href="#">#  Cat 6 </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="main">
+          <div class="search-bar"></div>
+          <div class="main-container">
+            <div class="profile">
+              <div class="profile-avatar">
+                <img src="https://media.istockphoto.com/id/1223671392/fr/vectoriel/photo-de-profil-par-d%C3%A9faut-avatar-photo-placeholder-illustration-de-vecteur.jpg?s=170667a&w=0&k=20&c=EqD6q8IUqwN_bgGec0UBhh3tk2Zuur5lezDDlQsGdPY=" alt="" class="profile-img">
+                <div class="profile-name">Profil</div>
+              </div>
+              <img src="https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/cebd17f1-b283-45e5-8600-6ec3edc558fd/dee2aqv-222532a7-8676-4788-b8e3-08d4f5be55e2.png/v1/fill/w_1280,h_640,q_80,strp/profile_banner_by_darkfigure4_dee2aqv-fullview.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9NjQwIiwicGF0aCI6IlwvZlwvY2ViZDE3ZjEtYjI4My00NWU1LTg2MDAtNmVjM2VkYzU1OGZkXC9kZWUyYXF2LTIyMjUzMmE3LTg2NzYtNDc4OC1iOGUzLTA4ZDRmNWJlNTVlMi5wbmciLCJ3aWR0aCI6Ijw9MTI4MCJ9XV0sImF1ZCI6WyJ1cm46c2VydmljZTppbWFnZS5vcGVyYXRpb25zIl19.sdy7FtZ92V4tHXX-hTf0PupZmkD7CQoG-BkmOY0_mQg" alt="" class="profile-cover">
+              <div class="profile-menu">
+                <a class="profile-menu-link active">Timeline</a>
+              </div>
+            </div>
+
+
+            <div class="timeline">
+              <div class="timeline-right">
+                <div class="status box">
+                  <div class="status-menu"></div>
+                  <div class="status-main">
+                    <img src="https://media.istockphoto.com/id/1223671392/fr/vectoriel/photo-de-profil-par-d%C3%A9faut-avatar-photo-placeholder-illustration-de-vecteur.jpg?s=170667a&w=0&k=20&c=EqD6q8IUqwN_bgGec0UBhh3tk2Zuur5lezDDlQsGdPY=" class="status-img">
+                    <textarea class="status-textarea" placeholder="Write something ..."></textarea>
+                  </div>
+                  <div class="status-actions">
+                    <a href="#" class="status-action">
+                      <svg viewBox="-42 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M427.2 424c0 26.7-8.5 48.3-25.3 64.3-16.5 15.7-38.4 23.7-65 23.7H90.2c-26.6 0-48.5-8-65-23.7C8.5 472.3 0 450.7 0 423.9c0-10.2.3-20.4 1-30.2a302.7 302.7 0 0112.1-64.9c3.3-10.3 7.8-20.5 13.4-30.3 5.8-10.2 12.5-19 20.1-26.3a89 89 0 0129-18.2c11.2-4.4 23.7-6.7 37-6.7 5.2 0 10.3 2.2 20 8.5l21 13.5c6.6 4.3 15.7 8.3 27 11.9a107.7 107.7 0 0033 5.3c11 0 22-1.8 33-5.3 11.2-3.6 20.3-7.6 27-12l21-13.4c9.7-6.3 14.7-8.5 20-8.5 13.3 0 25.7 2.3 37 6.7a89 89 0 0128.9 18.2c7.6 7.3 14.4 16.1 20.2 26.3 5.5 9.8 10 20 13.3 30.3a305.5 305.5 0 0112.1 64.9c.7 9.8 1 20 1 30.2zm0 0" fill="#6aa9ff" />
+                        <path d="M427.2 424c0 26.7-8.5 48.3-25.3 64.3-16.5 15.7-38.4 23.7-65 23.7H210.2V286.5h3.3c11 0 22-1.8 33-5.3 11.2-3.6 20.3-7.6 27-12l21-13.4c9.7-6.3 14.7-8.5 20-8.5 13.3 0 25.7 2.3 37 6.7a89 89 0 0128.9 18.2c7.6 7.3 14.4 16.1 20.2 26.3 5.5 9.8 10 20 13.3 30.3a305.5 305.5 0 0112.1 64.9c.7 9.8 1 20 1 30.2zm0 0" fill="#2682ff" />
+                      </svg>
+                      Upload Picture
+                    </a>
+                    <button class="status-share">Send</button>
+                  </div>
+                </div>
+                <hr>
+                <div class="album box">
+                  <div class="status-main">
+                    <img src="https://media.istockphoto.com/id/1223671392/fr/vectoriel/photo-de-profil-par-d%C3%A9faut-avatar-photo-placeholder-illustration-de-vecteur.jpg?s=170667a&w=0&k=20&c=EqD6q8IUqwN_bgGec0UBhh3tk2Zuur5lezDDlQsGdPY=" class="status-img" />
+                    <div class="album-detail">
+                      <div class="album-title"><strong>Profil</strong> create new <span>post</span></div>
+                      <div class="album-date">6 hours ago</div>
+                    </div>
+                  </div>
+                  <div class="album-content">When the bass drops, so do my problems.
+                    <div class="album-photos">
+                      <img src="https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__480.jpg" alt="" class="album-photo" />
+                      <div class="album-right">
+                        <img src="https://www.referenseo.com/wp-content/uploads/2019/03/image-attractive-960x540.jpg" alt="" class="album-photo" />
+                        <img src="https://cdn.futura-sciences.com/sources/images/dossier/773/01-intro-773.jpg" alt="" class="album-photo"/>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="album-actions">
+                    <a href="#" class="album-action">
+                      <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                        <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
+                      </svg>
+                      9
+                    </a>
+                    <a href="#" class="album-action">
+                      <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="css-i6dzq1" viewBox="0 0 24 24">
+                        <path d="M18 6L6 18M6 6l12 12"/>
+                      </svg>
+                      10
+                    </a>
+                    <a href="#" class="album-action">
+                      <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="css-i6dzq1" viewBox="0 0 24 24">
+                        <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
+                      </svg>
+                      1
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="right-side" :class="{ 'active': rightSide }">
+          <div class="account">
+            <button class="account-button">
+              <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="css-i6dzq1" viewBox="0 0 24 24">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                <path d="M22 6l-10 7L2 6" />
+              </svg>
+            </button>
+            <span class="account-user">Profil
+              <img src="https://media.istockphoto.com/id/1223671392/fr/vectoriel/photo-de-profil-par-d%C3%A9faut-avatar-photo-placeholder-illustration-de-vecteur.jpg?s=170667a&w=0&k=20&c=EqD6q8IUqwN_bgGec0UBhh3tk2Zuur5lezDDlQsGdPY=" class="account-profile">
+              <span>▼</span>
+            </span>
+          </div>
+          <div class="side-wrapper stories">
+            <div class="side-title">NOTIFICATIONS</div>
+            <div class="user">
+              <img src="https://pbs.twimg.com/profile_images/1102351320567164931/ZCkJgJIH.png" alt="" class="user-img">
+              <div class="username">Lisandro Matos
+                <div class="album-date">12 hours ago</div>
+              </div>
+            </div>
+            <div class="user">
+              <img src="https://pbs.twimg.com/profile_images/1153966095444992000/1lpIyHaQ.jpg" alt="" class="user-img">
+              <div class="username">Gvozden Boskovsky
+                <div class="album-date">29 minutes ago</div>
+              </div>
+            </div>
+            <div class="user">
+              <img src="https://images.unsplash.com/photo-1565464027194-7957a2295fb7?ixlib=rb-1.2.1&auto=format&fit=crop&w=3500&q=80" alt="" class="user-img">
+              <div class="username">Hnek Fortuin
+                <div class="album-date">3 hours ago</div>
+              </div>
+            </div>
+            <div class="user">
+              <img src="https://images.unsplash.com/photo-1527980965255-d3b416303d12?ixlib=rb-1.2.1&auto=format&fit=crop&w=1400&q=80" alt="" class="user-img">
+              <div class="username">Lubomir Dvorak
+                <div class="album-date">18 hours ago</div>
+              </div>
+            </div>
+          </div>
+          <div class="side-wrapper contacts">
+            <div class="side-title">ACIVITÉS</div>
+            <div class="user">
+              <img src="https://randomuser.me/api/portraits/men/1.jpg" class="user-img">
+              <div class="username">Andrei Mashrin
+                <div class="user-status"></div>
+              </div>
+            </div>
+            <div class="user">
+              <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=200&fit=max&s=046c29138c1335ef8edee7daf521ba50" class="user-img">
+              <div class="username">Aryn Jacobssen
+                <div class="user-status offline"></div>
+              </div>
+            </div>
+            <div class="user">
+              <img src="https://images.unsplash.com/photo-1575084713138-342cae5f8d00?ixlib=rb-1.2.1&auto=format&fit=crop&w=958&q=80" class="user-img">
+              <div class="username">Carole Landu
+                <div class="user-status offline"></div>
+              </div>
+            </div>
+            <div class="user">
+              <img src="https://images.pexels.com/photos/598745/pexels-photo-598745.jpeg?h=350&auto=compress&cs=tinysrgb" class="user-img">
+              <div class="username">Chineze Afa
+                <div class="user-status"></div>
+              </div>
+            </div>
+            <div class="user">
+              <img src="https://pbs.twimg.com/profile_images/2452384114/noplz47r59v1uxvyg8ku.png" class="user-img">
+              <div class="username">Mok Kwang
+                <div class="user-status"></div>
+              </div>
+            </div>
+            <div class="user">
+              <img src="https://randomuser.me/api/portraits/women/63.jpg" class="user-img">
+              <div class="username">Naomi Yepes
+                <div class="user-status"></div>
+              </div>
+            </div>
+            <div class="user">
+              <img src="https://images.unsplash.com/photo-1476493279419-b785d41e38d8?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=200&fit=max&s=61eaea85f1aa3d065400179c78163f15" class="user-img">
+              <div class="username">Shaamikh Ale
+                <div class="user-status"></div>
+              </div>
+            </div>
+            <div class="user">
+              <img src="https://m.media-amazon.com/images/M/MV5BMjI4NDcyNjQxNl5BMl5BanBnXkFtZTgwMzI4OTM3NjM@._V1_UY256_CR13,0,172,256_AL_.jpg" class="user-img">
+              <div class="username">Sofia Alcocer
+                <div class="user-status idle"></div>
+              </div>
+            </div>
+            <div class="user">
+              <img src="https://images.unsplash.com/photo-1509380836717-c4320ccf1a6f?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=200&fit=max&s=e01c8c45a063daaf6d6e571a32bd6c90" class="user-img">
+              <div class="username">Wen Yahui
+                <div class="user-status"></div>
+              </div>
+            </div>
+            <div class="user">
+              <img src="https://pbs.twimg.com/profile_images/737221709267374081/sdwta9Oh.jpg" alt="" class="user-img">
+              <div class="username">Leslee Moss
+                <div class="user-status idle"></div>
+              </div>
+            </div>
+          </div>
+      </div>
+</body>
+
+
+</html>
+{{end}}

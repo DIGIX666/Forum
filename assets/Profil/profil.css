@@ -601,7 +601,7 @@ body {
 
 .album {
   padding-top: 20px;
-  margin-top: 20px;
+  margin-top: 50px;
 }
 .album .status-main {
   border: none;
@@ -937,4 +937,4 @@ body {
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.1);
-}/*# sourceMappingURL=home.css.map */
+}/*# sourceMappingURL=profil.css.map */

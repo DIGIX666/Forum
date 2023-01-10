@@ -39,10 +39,11 @@ func main() {
 	http.Handle("/assets/", http.StripPrefix("/assets/", fileServer))
 
 	// Create a limiter with the maximum rate of 5 requests per minute.
-	lmt := tollbooth.NewLimiter(5, &limiter.ExpirableOptions{DefaultExpirationTTL: time.Minute})
+	lmt := tollbooth.NewLimiter(10, &limiter.ExpirableOptions{DefaultExpirationTTL: time.Minute})
 
 	// Use the limiter as middleware for the "/" handler
 	http.Handle("/", tollbooth.LimitFuncHandler(lmt, home))
+	http.Handle("/profil", tollbooth.LimitFuncHandler(lmt, profil))
 	http.Handle("/login", tollbooth.LimitFuncHandler(lmt, login))
 	http.Handle("/register", tollbooth.LimitFuncHandler(lmt, register))
 
@@ -142,8 +143,21 @@ func home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	temp := template.New("home")
-	temp = template.Must(temp.ParseFiles("./assets/home.html"))
+	temp = template.Must(temp.ParseFiles("./assets/Home/home.html"))
 	err := temp.ExecuteTemplate(w, "home", nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func profil(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		fmt.Fprintf(w, "ParseForm() err: %v", err)
+		return
+	}
+	temp := template.New("profil")
+	temp = template.Must(temp.ParseFiles("./assets/Profil/profil.html"))
+	err := temp.ExecuteTemplate(w, "profil", nil)
 	if err != nil {
 		log.Fatal(err)
 	}

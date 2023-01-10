@@ -35,10 +35,11 @@ label {
 	width: 48%;
 	font-size: 18px;
 	color: #fff; /* Couleur des labels en blanc */
+	
 	margin-bottom: 10px;
 }
 
-input[type="text"]{
+input[type="email"]{
 	width: 48%;
 	height: 45px;
 	padding: 0 20px;

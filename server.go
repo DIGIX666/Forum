@@ -8,6 +8,10 @@ import (
 	"log"
 	"net/http"
 	"text/template"
+	"time"
+
+	"github.com/didip/tollbooth"
+	"github.com/didip/tollbooth/limiter"
 )
 
 func erreur(w http.ResponseWriter, r *http.Request) {
@@ -34,9 +38,13 @@ func main() {
 	fileServer := http.FileServer(http.Dir("./assets"))
 	http.Handle("/assets/", http.StripPrefix("/assets/", fileServer))
 
-	http.HandleFunc("/", home)
-	http.HandleFunc("/login", login)
-	http.HandleFunc("/register", register)
+	// Create a limiter with the maximum rate of 5 requests per minute.
+	lmt := tollbooth.NewLimiter(5, &limiter.ExpirableOptions{DefaultExpirationTTL: time.Minute})
+
+	// Use the limiter as middleware for the "/" handler
+	http.Handle("/", tollbooth.LimitFuncHandler(lmt, home))
+	http.Handle("/login", tollbooth.LimitFuncHandler(lmt, login))
+	http.Handle("/register", tollbooth.LimitFuncHandler(lmt, register))
 
 	http.HandleFunc("/error", erreur)
 
@@ -86,7 +94,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 	uuidUser := script.GenerateRandomString()
 	if email != "" && password != "" {
 		if data.DataBaseLogin(email, password, uuidUser) {
-			http.HandleFunc("/home", home)
+			http.HandleFunc("/"+uuidUser, userAccount)
 		} else {
 			fmt.Println("mot de passe pas bon !!")
 		}
@@ -136,6 +144,22 @@ func home(w http.ResponseWriter, r *http.Request) {
 	temp := template.New("home")
 	temp = template.Must(temp.ParseFiles("./assets/home.html"))
 	err := temp.ExecuteTemplate(w, "home", nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+//
+
+func userAccount(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		fmt.Fprintf(w, "ParseForm() err: %v", err)
+		return
+	}
+
+	t := template.New("userAccount")
+	t = template.Must(t.ParseFiles("./assets/userAccount.html"))
+	err := t.ExecuteTemplate(w, "userAccount", nil)
 	if err != nil {
 		log.Fatal(err)
 	}

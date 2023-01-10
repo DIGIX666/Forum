@@ -8,6 +8,10 @@ import (
 	"log"
 	"net/http"
 	"text/template"
+	"time"
+
+	"github.com/didip/tollbooth"
+	"github.com/didip/tollbooth/limiter"
 )
 
 func erreur(w http.ResponseWriter, r *http.Request) {
@@ -34,9 +38,13 @@ func main() {
 	fileServer := http.FileServer(http.Dir("./assets"))
 	http.Handle("/assets/", http.StripPrefix("/assets/", fileServer))
 
-	http.HandleFunc("/", home)
-	http.HandleFunc("/login", login)
-	http.HandleFunc("/register", register)
+	// Create a limiter with the maximum rate of 5 requests per minute.
+	lmt := tollbooth.NewLimiter(5, &limiter.ExpirableOptions{DefaultExpirationTTL: time.Minute})
+
+	// Use the limiter as middleware for the "/" handler
+	http.Handle("/", tollbooth.LimitFuncHandler(lmt, home))
+	http.Handle("/login", tollbooth.LimitFuncHandler(lmt, login))
+	http.Handle("/register", tollbooth.LimitFuncHandler(lmt, register))
 
 	http.HandleFunc("/error", erreur)
 

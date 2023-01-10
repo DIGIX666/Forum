@@ -12,16 +12,16 @@
 	<div class="container">
 		<h1>FORUM</h1>
 		<form id="form" method="POST">
-			<label for="email">Adresse e-mail :</label><br>
-			<input type="text" id="email" name="email"><br>
-			<label for="email_confirm">Confirmation adresse e-mail :</label><br>
-			<input type="text" id="email_confirm" name="email_confirm"><br>
-			<label for="password">Mot de passe :</label><br>
+			<label for="email" id="label_email">Adresse e-mail :</label><br>
+			<input type="email" id="email" name="email"><br>
+			<label for="email_confirm" id="label_email_confirm">Confirmation adresse e-mail :</label><br>
+			<input type="email" id="email_confirm" name="email_confirm"><br>
+			<label for="password" id="password">Mot de passe :</label><br>
 			<input type="password" id="password" name="password"><br>
-			<label for="password_confirm">Confirmation du mot de passe :</label><br>
+			<label for="password_confirm" id="label_password_confirm">Confirmation du mot de passe :</label><br>
 			<input type="password" id="password_confirm" name="password_confirm"><br><br>
 			<input type="submit" id="submit" value="S'inscrire">
-			
+
 		</form>
 		<label for="login">You have an account ? <a href="/login">login</a></label>
 	</div>
@@ -31,6 +31,11 @@
 			const email_confirmInput = document.getElementById("email_confirm")
 			const passwordInput = document.getElementById("password")
 			const password_confirmInput = document.getElementById("password_confirm")
+			const labelEmail = document.getElementById("email")
+			const labelEmailConfirm = document.getElementById("email_confirm")
+			const labelPassword = document.getElementById("password")
+			const labelPasswordConfirm = document.getElementById("password_confirm")
+
 			let btn = document.getElementById("submit")
 
 			emailInput.addEventListener("input", displayBadMatching)
@@ -40,18 +45,70 @@
 
 			const passwordBytes = new TextEncoder().encode(password_confirmInput);
 
+			let regexEmail = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
 
-			if (emailInput.value == email_confirmInput.value && emailInput.value != "" && email_confirmInput.value != "" && passwordInput.value == password_confirmInput.value && passwordInput.value != "" && password_confirmInput.value != "" && password_confirmInput.value.length>6 && passwordBytes.length<72 ) {
+			emailInput.style.backgroundColor = "white";
+			emailInput.style.color = "black";
 
-				btn.disabled = false
-				btn.style.backgroundColor = "#3498db"
-				
-			} else {
-				btn.disabled = true
-				btn.style.backgroundColor = "grey"
-				
+			email_confirmInput.disabled = true;
+			
 
+
+			passwordInput.disabled = true;
+			password_confirmInput.disabled = true;
+			btn.disabled = true;
+			btn.style.backgroundColor = "grey";
+
+			if (emailInput.value.match(regexEmail)) {
+				email_confirmInput.disabled = false
+				email_confirmInput.style.backgroundColor = "white"
+				email_confirmInput.style.color = "black"
+
+				if(email_confirmInput.value==emailInput.value && emailInput.value !="" && email_confirmInput.value != ""){
+					passwordInput.disabled = false
+					passwordInput.style.backgroundColor = "white"
+					passwordInput.style.color="black"
+				}else{
+					labelEmailConfirm.innerHTML += "email doesn't match"
+					passwordInput.disabled = true
+					passwordInput.style.backgroundColor = "grey"
+				}
+
+				if(passwordInput.value.length>6 && passwordInput.value != ""){
+					password_confirmInput.disabled = false
+					password_confirmInput.style.backgroundColor = "white"
+					password_confirmInput.style.color = "black"
+
+					if(passwordBytes>=72){
+						labelPassword.innerHTML = "password too long"
+					}else{
+						if(passwordInput.value == password_confirmInput.value){
+							btn.disabled = false
+							btn.style.backgroundColor = "#3498db"
+
+
+						}else{
+							labelPasswordConfirm.innerHTML += "password doesn't match"
+							btn.disabled = true
+							btn.style.backgroundColor = "grey"
+						}
+					}
+
+				}else{
+					labelPassword.innerHTML += "password too short"
+					password_confirmInput.disabled = true
+					password_confirmInput.style.backgroundColor = "grey"
+					
+				}
+
+
+			}else{
+				labelEmail.innerText += "not a correct email adress"
+				email_confirmInput.disabled = true
+				email_confirmInput.style.backgroundColor = "grey"
 			}
+
+
 		}
 
 		displayBadMatching()

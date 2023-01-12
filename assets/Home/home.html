@@ -11,6 +11,8 @@
 
 
 <body>
+<!-----------------------------.BLOCK DE GAUCHE.------------------------>
+
     <div class="container" x-data="{ rightSide: false, leftSide: false }">
         <div class="left-side" :class="{'active' : leftSide}">
           <div class="left-side-button" @click="leftSide = !leftSide">
@@ -52,31 +54,48 @@
             </div>
           </div>
         </div>
+<!------------------------------------------------------------------------>
 
+
+<!-----------------------------.BLOCK CENTRAL.---------------------------->
         <div class="main">
           <div class="search-bar"></div>
           <div class="main-container">
-
-
             <div class="timeline">
               <div class="timeline-right">
+                <!--------------.Écriture Post.----------->
+                <div class="status box">
+                  <div class="status-menu"></div>
+                  <div class="status-main">
+                    <img src="https://media.istockphoto.com/id/1223671392/fr/vectoriel/photo-de-profil-par-d%C3%A9faut-avatar-photo-placeholder-illustration-de-vecteur.jpg?s=170667a&w=0&k=20&c=EqD6q8IUqwN_bgGec0UBhh3tk2Zuur5lezDDlQsGdPY=" class="status-img">
+                    <textarea class="status-textarea" placeholder="Write something ..."></textarea>
+                  </div>
+                  <div class="status-actions">
+                    <a href="#" class="status-action">
+                      <svg viewBox="-42 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M427.2 424c0 26.7-8.5 48.3-25.3 64.3-16.5 15.7-38.4 23.7-65 23.7H90.2c-26.6 0-48.5-8-65-23.7C8.5 472.3 0 450.7 0 423.9c0-10.2.3-20.4 1-30.2a302.7 302.7 0 0112.1-64.9c3.3-10.3 7.8-20.5 13.4-30.3 5.8-10.2 12.5-19 20.1-26.3a89 89 0 0129-18.2c11.2-4.4 23.7-6.7 37-6.7 5.2 0 10.3 2.2 20 8.5l21 13.5c6.6 4.3 15.7 8.3 27 11.9a107.7 107.7 0 0033 5.3c11 0 22-1.8 33-5.3 11.2-3.6 20.3-7.6 27-12l21-13.4c9.7-6.3 14.7-8.5 20-8.5 13.3 0 25.7 2.3 37 6.7a89 89 0 0128.9 18.2c7.6 7.3 14.4 16.1 20.2 26.3 5.5 9.8 10 20 13.3 30.3a305.5 305.5 0 0112.1 64.9c.7 9.8 1 20 1 30.2zm0 0" fill="#6aa9ff" />
+                        <path d="M427.2 424c0 26.7-8.5 48.3-25.3 64.3-16.5 15.7-38.4 23.7-65 23.7H210.2V286.5h3.3c11 0 22-1.8 33-5.3 11.2-3.6 20.3-7.6 27-12l21-13.4c9.7-6.3 14.7-8.5 20-8.5 13.3 0 25.7 2.3 37 6.7a89 89 0 0128.9 18.2c7.6 7.3 14.4 16.1 20.2 26.3 5.5 9.8 10 20 13.3 30.3a305.5 305.5 0 0112.1 64.9c.7 9.8 1 20 1 30.2zm0 0" fill="#2682ff" />
+                      </svg>
+                      Upload Picture
+                    </a>
+                    <button class="status-share">Send</button>
+                    <input type="submit" value="Envoyer">
+                  </div>
+                </div>
+                <!--------------.FIN Écriture Post.----------->
+
+                <hr>
+
+                <!--------------.Armature Post.-----------> 
                 <div class="album box">
                   <div class="status-main">
                     <img src="https://media.istockphoto.com/id/1223671392/fr/vectoriel/photo-de-profil-par-d%C3%A9faut-avatar-photo-placeholder-illustration-de-vecteur.jpg?s=170667a&w=0&k=20&c=EqD6q8IUqwN_bgGec0UBhh3tk2Zuur5lezDDlQsGdPY=" class="status-img" />
                     <div class="album-detail">
                       <div class="album-title"><strong>Profil</strong> create new <span>post</span></div>
-                      <div class="album-date">6 hours ago</div>
+                      <div class="album-date">{{.DateTime}}</div>
                     </div>
                   </div>
-                  <div class="album-content">When the bass drops, so do my problems.
-                    <div class="album-photos">
-                      <img src="https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__480.jpg" alt="" class="album-photo" />
-                      <div class="album-right">
-                        <img src="https://www.referenseo.com/wp-content/uploads/2019/03/image-attractive-960x540.jpg" alt="" class="album-photo" />
-                        <img src="https://cdn.futura-sciences.com/sources/images/dossier/773/01-intro-773.jpg" alt="" class="album-photo"/>
-                      </div>
-                    </div>
-                  </div>
+                  <div class="album-content">{{ .Message }}</div>
                   <div class="album-actions">
                     <a href="#" class="album-action">
                       <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
@@ -99,9 +118,16 @@
                   </div>
                 </div>
               </div>
+
+              <!-----------------.FIN Armature Post.------------>
+
             </div>
           </div>
         </div>
+<!-------------------------------------------------------------------------->
+
+
+<!-----------------------------.BLOCK DE DROITE.---------------------------->
         <div class="right-side" :class="{ 'active': rightSide }">
           <div class="account">
             <button class="account-button">
@@ -110,10 +136,11 @@
                 <path d="M22 6l-10 7L2 6" />
               </svg>
             </button>
-            <span class="account-user">Profil
-              <img src="https://media.istockphoto.com/id/1223671392/fr/vectoriel/photo-de-profil-par-d%C3%A9faut-avatar-photo-placeholder-illustration-de-vecteur.jpg?s=170667a&w=0&k=20&c=EqD6q8IUqwN_bgGec0UBhh3tk2Zuur5lezDDlQsGdPY=" class="account-profile">
-              <span>▼</span>
-            </span>
+            <a href="/login">
+              <span class="account-user">Profil
+                <img src="https://media.istockphoto.com/id/1223671392/fr/vectoriel/photo-de-profil-par-d%C3%A9faut-avatar-photo-placeholder-illustration-de-vecteur.jpg?s=170667a&w=0&k=20&c=EqD6q8IUqwN_bgGec0UBhh3tk2Zuur5lezDDlQsGdPY=" class="account-profile">
+              </span>
+            </a>
           </div>
           <div class="side-wrapper stories">
             <div class="side-title">NOTIFICATIONS</div>
@@ -205,9 +232,14 @@
               </div>
             </div>
           </div>
-      </div>
+        </div>
 </body>
+<!-----------------------------------.FIN BODY.--------------------------------->
 
+
+<!-----------------------------------.SCRIPT.----------------------------------->
+  
+<!------------------------------------------------------------------------------>
 
 </html>
 {{end}}

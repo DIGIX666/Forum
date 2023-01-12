@@ -11,6 +11,9 @@
 
 
 <body>
+
+  <!-----------------------------.BLOCK DE GAUCHE.------------------------>
+
     <div class="container" x-data="{ rightSide: false, leftSide: false }">
         <div class="left-side" :class="{'active' : leftSide}">
           <div class="left-side-button" @click="leftSide = !leftSide">
@@ -52,7 +55,10 @@
             </div>
           </div>
         </div>
+<!------------------------------------------------------------------------>
 
+
+<!-----------------------------.BLOCK CENTRAL.---------------------------->
         <div class="main">
           <div class="search-bar"></div>
           <div class="main-container">
@@ -70,6 +76,7 @@
 
             <div class="timeline">
               <div class="timeline-right">
+                <!--------------.Écriture Post.----------->
                 <div class="status box">
                   <div class="status-menu"></div>
                   <div class="status-main">
@@ -87,7 +94,11 @@
                     <button class="status-share">Send</button>
                   </div>
                 </div>
+                <!--------------.FIN Écriture Post.----------->
+                
                 <hr>
+
+                <!--------------.Armature Post.----------->
                 <div class="album box">
                   <div class="status-main">
                     <img src="https://media.istockphoto.com/id/1223671392/fr/vectoriel/photo-de-profil-par-d%C3%A9faut-avatar-photo-placeholder-illustration-de-vecteur.jpg?s=170667a&w=0&k=20&c=EqD6q8IUqwN_bgGec0UBhh3tk2Zuur5lezDDlQsGdPY=" class="status-img" />
@@ -127,9 +138,15 @@
                   </div>
                 </div>
               </div>
+              <!-----------------.FIN Armature Post.------------>
+
             </div>
           </div>
         </div>
+<!-------------------------------------------------------------------------->
+
+
+<!-----------------------------.BLOCK DE DROITE.---------------------------->
         <div class="right-side" :class="{ 'active': rightSide }">
           <div class="account">
             <button class="account-button">
@@ -140,7 +157,6 @@
             </button>
             <span class="account-user">Profil
               <img src="https://media.istockphoto.com/id/1223671392/fr/vectoriel/photo-de-profil-par-d%C3%A9faut-avatar-photo-placeholder-illustration-de-vecteur.jpg?s=170667a&w=0&k=20&c=EqD6q8IUqwN_bgGec0UBhh3tk2Zuur5lezDDlQsGdPY=" class="account-profile">
-              <span>▼</span>
             </span>
           </div>
           <div class="side-wrapper stories">
@@ -235,7 +251,11 @@
           </div>
       </div>
 </body>
+<!-----------------------------------.FIN BODY.--------------------------------->
 
+<!-----------------------------------.SCRIPT.----------------------------------->
+
+<!------------------------------------------------------------------------------>
 
 </html>
 {{end}}

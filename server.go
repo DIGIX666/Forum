@@ -1,6 +1,7 @@
 package main
 
 import (
+	structure "Forum/Struct"
 	data "Forum/data"
 	script "Forum/scripts"
 	"crypto/tls"
@@ -13,6 +14,8 @@ import (
 	"github.com/didip/tollbooth"
 	"github.com/didip/tollbooth/limiter"
 )
+
+/****************************** FUNCTION ERREUR *******************************/
 
 func erreur(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" && r.URL.Path != "/register" && r.URL.Path != "/home" && r.URL.Path != "/error" {
@@ -33,6 +36,8 @@ func erreur(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+/****************************** FUNCTION MAIN ********************************/
 
 func main() {
 	fileServer := http.FileServer(http.Dir("./assets"))
@@ -78,6 +83,8 @@ func main() {
 	}
 }
 
+/***************************** FUNCTION LOGIN *****************************/
+
 func login(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
 		fmt.Fprintf(w, "ParseForm() err: %v", err)
@@ -101,6 +108,8 @@ func login(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 }
+
+/*************************** FUNCTION REGISTER **********************************/
 
 func register(w http.ResponseWriter, r *http.Request) {
 
@@ -137,6 +146,8 @@ func register(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+/*************************** FUNCTION HOME **********************************/
+
 func home(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
 		fmt.Fprintf(w, "ParseForm() err: %v", err)
@@ -148,6 +159,16 @@ func home(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Fatal(err)
 	}
+	var comments []structure.Comment
+	name := r.FormValue("name")
+	message := r.FormValue("message")
+	if name != "" && message != "" {
+		currentTime := time.Now().Format("15:04  11.janv.2006")
+		comments = append(comments, structure.Comment{Name: name, Message: message, DateTime: currentTime})
+	}
+
+	t, _ := template.ParseGlob("./templates/*")
+	t.Execute(w, comments)
 }
 
 func profil(w http.ResponseWriter, r *http.Request) {
@@ -163,7 +184,7 @@ func profil(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-//
+/*************************** FUNCTION USER ACCOUNT **********************************/
 
 func userAccount(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {

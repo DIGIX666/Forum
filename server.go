@@ -5,6 +5,7 @@ import (
 	data "Forum/data"
 	script "Forum/scripts"
 	"crypto/tls"
+	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
@@ -13,6 +14,7 @@ import (
 
 	"github.com/didip/tollbooth"
 	"github.com/didip/tollbooth/limiter"
+	"github.com/gofrs/uuid"
 )
 
 /****************************** FUNCTION ERREUR *******************************/
@@ -86,6 +88,7 @@ func main() {
 /***************************** FUNCTION LOGIN *****************************/
 
 func login(w http.ResponseWriter, r *http.Request) {
+	lmt := tollbooth.NewLimiter(10, &limiter.ExpirableOptions{DefaultExpirationTTL: time.Minute})
 	if err := r.ParseForm(); err != nil {
 		fmt.Fprintf(w, "ParseForm() err: %v", err)
 		return
@@ -99,14 +102,46 @@ func login(w http.ResponseWriter, r *http.Request) {
 
 	email := r.FormValue("email")
 	password := r.FormValue("password")
-	uuidUser := script.GenerateRandomString()
+	uuidGenerated, _ := uuid.NewV4()
+	uuidUser := uuidGenerated.String()
+	fmt.Printf("uuidUser: %v\n", uuidUser)
+
 	if email != "" && password != "" {
-		if data.DataBaseLogin(email, password, uuidUser) {
-			http.HandleFunc("/"+uuidUser, userAccount)
-		} else {
-			fmt.Println("mot de passe pas bon !!")
+		checkLogin := data.CheckUserLogin(email, password, uuidUser)
+		if checkLogin {
+
+			var uAccount []structure.UserAccount
+			uAccount = append(uAccount, structure.UserAccount{
+				UUID: uuidUser,
+			})
+			for _, v := range uAccount {
+				db, err := sql.Open("sqlite3", "./usersForum.db")
+				if err != nil {
+					log.Fatal(err)
+				}
+				var userSession string
+				err = db.QueryRow("SELECT uuid FROM users WHERE email = ?", email).Scan(&userSession)
+				if err != nil {
+					log.Println("Erreur dans la QueryRow dans la fonction login pour userSession")
+					log.Fatal(err)
+				}
+				fmt.Println("l'UUID: " + v.UUID)
+				http.Handle("/userAccount", tollbooth.LimitFuncHandler(lmt, userAccount))
+
+			}
+
+			cookie := http.Cookie{
+				Expires: time.Now().Add(time.Hour),
+				Value:   uuidUser,
+				Name:    "session",
+			}
+			http.SetCookie(w, &cookie)
+
 		}
+	} else {
+		fmt.Println("email empty && password empty!")
 	}
+
 }
 
 /*************************** FUNCTION REGISTER **********************************/
@@ -148,29 +183,43 @@ func register(w http.ResponseWriter, r *http.Request) {
 
 /*************************** FUNCTION HOME **********************************/
 
+var comments []structure.Comment
+
+func preappendComment(c structure.Comment) {
+	comments = append(comments, structure.Comment{})
+	copy(comments[1:], comments)
+	comments[0] = c
+}
+
 func home(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
 		fmt.Fprintf(w, "ParseForm() err: %v", err)
 		return
 	}
-	temp := template.New("home")
-	temp = template.Must(temp.ParseFiles("./assets/Home/home.html"))
-	err := temp.ExecuteTemplate(w, "home", nil)
+	temp, err := template.ParseFiles("./assets/Home/home.html")
 	if err != nil {
-		log.Fatal(err)
+		log.Println("Error parsing template:", err)
+		return
 	}
-	var comments []structure.Comment
+
 	name := r.FormValue("name")
 	message := r.FormValue("message")
-	if name != "" && message != "" {
+	if message != "" {
 		currentTime := time.Now().Format("15:04  11.janv.2006")
-		comments = append(comments, structure.Comment{Name: name, Message: message, DateTime: currentTime})
+		preappendComment(structure.Comment{Name: name, Message: message, DateTime: currentTime})
 	}
 
-	t, _ := template.ParseGlob("./templates/*")
-	t.Execute(w, comments)
+	for _, v := range comments {
+		fmt.Printf("v.DateTime: %v\n", v.DateTime)
+		fmt.Printf("v.Message: %v\n", v.Message)
+	}
+	if err := temp.ExecuteTemplate(w, "home", comments); err != nil {
+		log.Println("Error executing template:", err)
+		return
+	}
 }
 
+/*************************** FUNCTION PROFIL **********************************/
 func profil(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
 		fmt.Fprintf(w, "ParseForm() err: %v", err)

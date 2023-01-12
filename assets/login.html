@@ -17,7 +17,7 @@
 				<label for="email">email :</label><br>
 				<input type="text" id="email" name="email"><br>
 				<label for="password">Mot de passe :</label><br>
-				<input type="password" id="password" name="password"><br><br>
+				<input type="password" id="password" name="password"><button type="button" onclick="revealPassword()" ></button><br><br>
 				<input type="submit" value="Se connecter">
                
 			</form> 
@@ -25,6 +25,18 @@
 		</div>
 	</div>
     <script type="text/javascript">
+		  function revealPassword() {
+            let passwordInput = document.getElementById("password");
+            
+            if (passwordInput.type === "password") {
+              passwordInput.type = "text";
+              
+            } else {
+              passwordInput.type = "password";
+              
+            }
+
+          }
 		function displayBadMatching() {
 			const emailInput = document.getElementById("email")
 		

@@ -340,14 +340,14 @@ func profil(w http.ResponseWriter, r *http.Request) {
 	message := r.FormValue("message")
 	if message != "" {
 		currentTime := time.Now().Format("15:04  11.janv.2006")
-		preappendComment(structure.Comment{Name: name, Message: message, DateTime: currentTime})
+		preappendPost(structure.Post{Name: name, Message: message, DateTime: currentTime})
 	}
 
-	for _, v := range comments {
+	for _, v := range posts {
 		fmt.Printf("v.DateTime: %v\n", v.DateTime)
 		fmt.Printf("v.Message: %v\n", v.Message)
 	}
-	if err := temp.ExecuteTemplate(w, "profil", comments); err != nil {
+	if err := temp.ExecuteTemplate(w, "profil", posts); err != nil {
 		log.Println("Error executing template:", err)
 		return
 	}

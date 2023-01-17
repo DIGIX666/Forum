@@ -103,10 +103,9 @@ body {
   transition: 0.5s;
   margin-top: 40px;
   letter-spacing: 4px;
-<<<<<<< HEAD
+
 }
 
-<<<<<<< HEAD
 .caixa__login a:hover {
   background: #8b80f9;
   color: #fff;
@@ -204,7 +203,6 @@ body {
 }
 
 
-=======
 input[type="text"] {
 	width: 48%;
 	height: 45px;
@@ -222,9 +220,6 @@ input[type="text"] {
 	-o-border-radius: 10px;
 }
 
->>>>>>> backend
-=======
-}
 
 .caixa__login a:hover {
   background: #8b80f9;
@@ -323,7 +318,7 @@ input[type="text"] {
 }
 
 
->>>>>>> 0949d5a8f9cb9069bf5985e92dd8f5252173d9b8
+
 input[type="submit"] {
 	height: 30px;
 	background-color: transparent;

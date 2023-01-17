@@ -208,7 +208,7 @@ input[type="submit"] {
 }
 
 .register {
-	margin-top: 40px;
+	margin-top: -5px;
 	color: #fff;
 	font-size: 12px;
 	margin-left: 40px;
@@ -225,3 +225,25 @@ input[type="submit"] {
 	height: 30px;
 	width: 7px;
 }
+
+
+.logo_google,
+.logo_github {
+  cursor: pointer;
+  background: white;
+  border-radius: 10px;
+}
+
+.logo_google {
+  width: 10%;
+}
+
+.logo_github {
+  width: 10%;
+}
+
+.authentifaction {
+  display: flex;
+  height: 100px;
+}
+

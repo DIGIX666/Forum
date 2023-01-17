@@ -3,38 +3,92 @@
 <html>
 
 <head>
-	<title>ZeHives</title>
+	<title>MDO</title>
 	<link rel="stylesheet" type="text/css" href="/assets/register.css">
+	<link rel="website icon" type="png" href="/assets/icon.png">
 </head>
 
 <body>
-	<title>Register</title>
-	<div class="container">
-		<h1>FORUM</h1>
+	<div class="caixa__login">
+		<h1>MDO</h1>
 		<form id="form" method="POST">
-			<label for="email" id="label_email">Adresse e-mail :</label><br>
-			<input type="email" id="email" name="email"><br>
-			<label for="email_confirm" id="label_email_confirm">Confirmation adresse e-mail :</label><br>
-			<input type="email" id="email_confirm" name="email_confirm"><br>
-			<label for="password" id="password">Mot de passe :</label><br>
-			<input type="password" id="password" name="password"><br>
-			<label for="password_confirm" id="label_password_confirm">Confirmation du mot de passe :</label><br>
-			<input type="password" id="password_confirm" name="password_confirm"><br><br>
-			<input type="submit" id="submit" value="S'inscrire">
+			<div class="caixa__login-input">
+				<label for="email" id="label_email">email :</label><br>
+				<input type="email" id="email" name="email"><br>
+			</div>
 
+			<div class="caixa__login-input">
+				<label for="email_confirm" id="label_email_confirm">email confirmation :</label><br>
+				<input type="email" id="email_confirm" name="email_confirm"><br>
+			</div>
+
+			<div class="caixa__login-input">
+				<label for="password" id="label_label_password">Password :</label><br>
+				<input type="password" id="password" name="password"> <button class="button-password" type="button"
+					onclick="revealPassword()"></button><br><button type="button" onclick="revealPassword()" ></button><br>
+			</div>
+
+			<div class="caixa__login-input">
+				<label for="password_confirm" id="label_password_confirm">Password confirmation :</label><br>
+				<input type="password" id="password_confirm" name="password_confirm"> <button class="button-password2" type="button"
+				onclick="revealPasswoutton type="button" onclick="rd2()"></buttonevealPassword()" ></button><br><br>
+			</div>
+
+			<a class="anime__button">
+				<span></span>
+				<span></span>
+				<span></span>
+				<span></span>
+				<input type="submit" id="submit" value="Register">
+
+		</form>
+		<form method="POST">
+			<input type="button" value="Sign in with Google" onclick="location.href='https://accounts.google.com/o/oauth2/v2/auth?scope=https://www.googleapis.com/auth/userinfo.profile+https://www.googleapis.com/auth/userinfo.email&access_type=offline&include_granted_scopes=false&response_type=code&state=state_parameter_passthrough_value&redirect_uri=https%3A//localhost:8080/register&client_id=760601264616-u9vo4s8hdistvmn6ia2goko3m6qhmff8.apps.googleusercontent.com'" />
+			</a>
+		  </form>
+		  
+		  
+		<form action="POST">
+			<input type="submit" value="GitHub">
 		</form>
 		<label for="login">You have an account ? <a href="/login">login</a></label>
 	</div>
 	<script type="text/javascript">
+
+		function revealPassword() {
+			let passwordInput = document.getElementById("password");
+
+			if (passwordInput.type === "password") {
+				passwordInput.type = "text";
+
+			} else {
+				passwordInput.type = "password";
+
+			}
+
+		}
+		function revealPassword2() {
+			let password_confirmInput = document.getElementById("password_confirm");
+
+			if (password_confirmInput.type === "password_confirm") {
+				password_confirmInput.type = "text";
+
+			} else {
+				password_confirmInput.type = "password_confirm";
+
+			}
+		}
 		function displayBadMatching() {
 			const emailInput = document.getElementById("email")
 			const email_confirmInput = document.getElementById("email_confirm")
 			const passwordInput = document.getElementById("password")
 			const password_confirmInput = document.getElementById("password_confirm")
-			const labelEmail = document.getElementById("email")
-			const labelEmailConfirm = document.getElementById("email_confirm")
-			const labelPassword = document.getElementById("password")
-			const labelPasswordConfirm = document.getElementById("password_confirm")
+			const labelEmail = document.getElementById("label_email")
+			const labelEmailConfirm = document.getElementById("label_email_confirm")
+			const labelPassword = document.getElementById("label_password")
+			const labelPasswordConfirm = document.getElementById("label_password_confirm")
+
+		
 
 			let btn = document.getElementById("submit")
 
@@ -45,10 +99,17 @@
 
 			const passwordBytes = new TextEncoder().encode(password_confirmInput);
 
-			let regexEmail = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
+			const regexEmail = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9]+\.[a-zA-Z]{2,}$/g
+			const regexNumber = /[0-9]/g
+			const regexSpecial = /[!@#\$%\^\&*\)\(+=._-]/g
+			const regexUpperCase = /[A-Z]/g
+			const regexLowerCase = /[a-z]/g
 
-			emailInput.style.backgroundColor = "white";
-			emailInput.style.color = "black";
+
+			emailInput.style.backgroundColor = "#211f33";
+			emailInput.style.color = "white";
+			emailInput.style.borderRadius = "10px"
+			emailInput.style.marginTop = "10px"
 
 			email_confirmInput.disabled = true;
 			
@@ -57,9 +118,8 @@
 			passwordInput.disabled = true;
 			password_confirmInput.disabled = true;
 			btn.disabled = true;
-			btn.style.backgroundColor = "grey";
 
-			if (emailInput.value.match(regexEmail)) {
+			if (regexEmail.test(emailInput.value)) {
 				email_confirmInput.disabled = false
 				email_confirmInput.style.backgroundColor = "white"
 				email_confirmInput.style.color = "black"
@@ -71,7 +131,6 @@
 				}else{
 					labelEmailConfirm.innerHTML += "email doesn't match"
 					passwordInput.disabled = true
-					passwordInput.style.backgroundColor = "grey"
 				}
 
 				if(passwordInput.value.length>6 && passwordInput.value != ""){
@@ -90,7 +149,6 @@
 						}else{
 							labelPasswordConfirm.innerHTML += "password doesn't match"
 							btn.disabled = true
-							btn.style.backgroundColor = "grey"
 						}
 					}
 
@@ -98,7 +156,7 @@
 					labelPassword.innerHTML += "password too short"
 					password_confirmInput.disabled = true
 					password_confirmInput.style.backgroundColor = "grey"
-					
+
 				}
 
 
@@ -107,11 +165,10 @@
 				email_confirmInput.disabled = true
 				email_confirmInput.style.backgroundColor = "grey"
 			}
-
-
 		}
 
 		displayBadMatching()
+		revealPassword()
 
 	</script>
 </body>

@@ -46,6 +46,16 @@ func GenerateRandomString() string {
 
 }
 
+func GeneratePostID() string {
+
+	lengthString := 5
+	rand.Seed(time.Now().UnixNano())
+	randomString := RandStringBytes(lengthString)
+
+	return randomString
+
+}
+
 func RandStringBytes(n int) string {
 	b := make([]byte, n)
 	for i := range b {

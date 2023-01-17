@@ -1,123 +1,227 @@
-body {
-	font-family: Arial, sans-serif;
-	background-color: #333; /* Couleur de fond sombre */
-	/*background-image: url('./images/beehive-37436.svg'); /* Illustration de fond */
-	background-size: cover; /* Redimensionnement de l'illustration pour qu'elle remplisse toute la page */
-	color: #fff; /* Couleur des textes en blanc */
+@import url("https://fonts.googleapis.com/css?family=Poppins:200,300,400,500,600,700,800,900&display=swap");
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
 }
 
-.container {
+html {
+  height: 100%;
+}
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Verdana;
+  background: linear-gradient(#8b80f9, #212123);
+}
+
+/* .container {
 	max-width: 600px;
 	margin: 0 auto;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	height: 100%;
+	height: 100%; */
 	/*Pourquelecontaineroccupetoutelahauteurdelapage*/
-    background-color: rgba(255, 255, 255, 0.1);
+    /* background-color: rgba(255, 255, 255, 0.1); */
 	/*Couleurdefondtransparenteavecunelégèreteinteblanche*/
-    padding: 20px;
+  /* padding: 20px;
 	border-radius: 20px;
 	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 	-webkit-border-radius: 20px;
 	-moz-border-radius: 20px;
 	-ms-border-radius: 20px;
 	-o-border-radius: 20px;
+} */
+
+
+.caixa__login {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 400px;
+  height: 715px;
+  padding: 40px;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.5);
+  box-sizing: border-box;
+  box-shadow: 0 15px 25px rgba(139, 128, 249, 0.6);
+  border-radius: 10px;
 }
 
-.user-card {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	width: 300px;
-	height: 400px;
-	background-color: #333;
-	border-radius: 20px;
-	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-	padding: 20px;
-	-webkit-border-radius: 20px;
-	-moz-border-radius: 20px;
-	-ms-border-radius: 20px;
-	-o-border-radius: 20px;
+.caixa__login h2 {
+  margin: 0 0 30px;
+  padding: 0;
+  color: #fff;
+  text-align: center;
 }
 
-
-h1 {
-	text-align: center;
-	margin-bottom: 20px;
-	color: #fff; /* Couleur du titre en blanc */
+.caixa__login .caixa__login-input {
+  position: relative;
 }
 
-form {
-	display: flex;
-	flex-wrap: wrap;
-	justify-content: space-between;
+.caixa__login .caixa__login-input input {
+  width: 90%;
+  padding: 10px 0;
+  font-size: 12px;
+  color: #fff;
+  margin-bottom: 30px;
+  border: none;
+  border-bottom: 1px solid #fff;
+  outline: none;
+  background: transparent;
+}
+.caixa__login .caixa__login-input label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 10px 0;
+  font-size: 12px;
+  color: #8b80f9;
+  pointer-events: none;
+  transition: 0.5s;
 }
 
-label {
-	width: 48%;
-	font-size: 18px;
-	color: #fff; /* Couleur des labels en blanc */
-	margin-bottom: 10px;
+.caixa__login .caixa__login-input input:focus ~ label,
+.caixa__login .caixa__login-input input:valid ~ label {
+  top: -20px;
+  left: 0;
+  color: #8b80f9;
+  font-size: 12px;
 }
 
-input[type="text"],
-input[type="password"] {
-	width: 48%;
-	height: 45px;
-	padding: 0 20px;
-	font-size: 16px;
-	border: 1px solid #ddd;
-	border-radius: 10px;
-	outline: none;
-	color: whitesmoke; /*Couleurdutextedeschampsdesaisieennoir*/
-	background-color: rgba(255, 255, 255, 0.1); /*Couleurdefondtransparenteavecunelégèreteinteblanche*/
-	transition: all 0.3s;
-	-webkit-border-radius: 10px;
-	-moz-border-radius: 10px;
-	-ms-border-radius: 10px;
-	-o-border-radius: 10px;
+.caixa__login form a {
+  position: relative;
+  display: inline-block;
+  padding: 10px 20px;
+  color: #8b80f9;
+  font-size: 16px;
+  text-decoration: none;
+  text-transform: uppercase;
+  overflow: hidden;
+  transition: 0.5s;
+  margin-top: 40px;
+  letter-spacing: 4px;
 }
 
-/*input[type="text"]:focus,
-input[type="password"]:focus {
-	border-color: #3498db;
-	background-color: #fff;
-	color: #333; 
-}*/
+.caixa__login a:hover {
+  background: #8b80f9;
+  color: #fff;
+  border-radius: 5px;
+  box-shadow: 0 0 5px #8b80f9, 0 0 25px #8b80f9, 0 0 50px #8b80f9,
+    0 0 100px #8b80f9;
+}
+
+.caixa__login a span {
+  position: absolute;
+  display: block;
+}
+
+.caixa__login a span:nth-child(1) {
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #8b80f9);
+  animation: animacaoBotao1 1s linear infinite;
+}
+
+@keyframes animacaoBotao1 {
+  0% {
+    left: -100%;
+  }
+  50%,
+  100% {
+    left: 100%;
+  }
+}
+
+.caixa__login a span:nth-child(2) {
+  top: -100%;
+  right: 0;
+  width: 2px;
+  height: 100%;
+  background: linear-gradient(180deg, transparent, #8b80f9);
+  animation: animacaoBotao2 1s linear infinite;
+  animation-delay: 0.25s;
+}
+
+@keyframes animacaoBotao2 {
+  0% {
+    top: -100%;
+  }
+  50%,
+  100% {
+    top: 100%;
+  }
+}
+
+.caixa__login a span:nth-child(3) {
+  bottom: 0;
+  right: -100%;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(270deg, transparent, #8b80f9);
+  animation: animacaoBotao3 1s linear infinite;
+  animation-delay: 0.5s;
+}
+
+@keyframes animacaoBotao3 {
+  0% {
+    right: -100%;
+  }
+  50%,
+  100% {
+    right: 100%;
+  }
+}
+
+.caixa__login a span:nth-child(4) {
+  bottom: -100%;
+  left: 0;
+  width: 2px;
+  height: 100%;
+  background: linear-gradient(360deg, transparent, #8b80f9);
+  animation: animacaoBotao4 1s linear infinite;
+  animation-delay: 0.75s;
+}
+
+@keyframes animacaoBotao4 {
+  0% {
+    bottom: -100%;
+  }
+  50%,
+  100% {
+    bottom: 100%;
+  }
+}
+
 
 input[type="submit"] {
-	width: 100%;
-	height: 45px;
-	margin-top: 10px;
-	background-color: #3498db;
+	height: 30px;
+	background-color: transparent;
 	color: #fff;
 	border: none;
-	border-radius: 5px;
-	font-size: 18px;
+	font-size: 16px;
 	cursor: pointer;
-	transition: all 0.3s;
-	-webkit-border-radius: 5px;
-	-moz-border-radius: 5px;
-	-ms-border-radius: 5px;
-	-o-border-radius: 5px;
 }
 
-
-.user-photo {
-	width: 150px;
-	height: 150px;
-	border-radius: 15%;
-	overflow: hidden;
-	margin-bottom: 20px;
-	-webkit-border-radius: 15%;
-	-moz-border-radius: 15%;
-	-ms-border-radius: 15%;
-	-o-border-radius: 15%;
+.register {
+	margin-top: 40px;
+	color: #fff;
+	font-size: 12px;
+	margin-left: 40px;
 }
 
-.user-photo img {
-	width: 100%;
-	height: auto;
+.register a {
+	color: #fff;
+	text-decoration: none;
+	font-size: 14px;
+}
+
+.button-password {
+	margin-left: 20px;
+	height: 30px;
+	width: 7px;
 }

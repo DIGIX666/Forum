@@ -4,24 +4,60 @@
 <head>
 	<title>Connexion au forum</title>
 	<link rel="stylesheet" type="text/css" href="/assets/login.css">
+	<link rel="website icon" type="png" href="/assets/icon.png">
 </head>
 <body>
-	<div class="container">
-		<div class="user-card">
+	<div>
+		<div class="caixa__login">
             <h2>LOGIN</h2>
 			<div class="user-photo">
 				<!-- Emplacement de la photo de l'utilisateur -->
 				<img src="/assets/images/beehive-37436.svg" alt="Photo de l'utilisateur">
 			</div>
-			<form id="form" action="/" method="post">
+<<<<<<< HEAD
+			<div>
+				<form id="form" action="/" method="post">
+					<div class="caixa__login-input">
+						<label for="email">Email</label><br>
+						<input type="text" id="email" name="email"><br>
+					</div>
+					<div class="caixa__login-input">
+						<label for="password">Mot de passe</label><br>
+						<input type="password" id="password" name="password">
+						<button class="button-password" type="button" onclick="revealPassword()"></button><br><br>
+					</div>
+					<a>
+						<span></span>
+                		<span></span>
+               			<span></span>
+                		<span></span>
+						<input type="submit" value="Se connecter">
+					</a>
+				</form> 
+			</div>
+            <div class="register">
+				<label for="register">You don't have an account ? <a href="/register">Register</a></label>
+			</div>
+=======
+			<form id="form" method="POST">
 				<label for="email">email :</label><br>
 				<input type="text" id="email" name="email"><br>
 				<label for="password">Mot de passe :</label><br>
 				<input type="password" id="password" name="password"><button type="button" onclick="revealPassword()" ></button><br><br>
 				<input type="submit" value="Se connecter">
+				
                
 			</form> 
+			<form method="POST">
+				<input type="button" value="Authenticate with Google" onclick="location.href='https://accounts.google.com/o/oauth2/v2/auth?scope=https://www.googleapis.com/auth/userinfo.profile+https://www.googleapis.com/auth/userinfo.email&access_type=offline&include_granted_scopes=false&response_type=code&state=state_parameter_passthrough_value&redirect_uri=https%3A//localhost:8080/login&client_id=760601264616-u9vo4s8hdistvmn6ia2goko3m6qhmff8.apps.googleusercontent.com'" />
+			  </form>
+			  
+			  
+			<form action="POST">
+				<input type="submit" value="GitHub">
+			</form>
             <label for="register">You don't have an account ? <a href="/register">register</a></label>
+>>>>>>> backend
 		</div>
 	</div>
     <script type="text/javascript">
@@ -47,6 +83,7 @@
 			emailInput.addEventListener("input", displayBadMatching)
 			
 			passwordInput.addEventListener("input", displayBadMatching)
+			
 		
 
 			const passwordBytes = new TextEncoder().encode(password);

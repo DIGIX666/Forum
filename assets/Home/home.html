@@ -8,6 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="/assets/Home/home.css">
   <title>HOME</title>
+  <link rel="website icon" type="png" href="/assets/icon.png">
 </head>
 
 
@@ -40,7 +41,9 @@
             </svg>
             Home
           </a>
-          <a href="/profil">
+        
+        <a href="/profil">
+        
             <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
               viewBox="0 0 24 24">
               <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
@@ -73,12 +76,14 @@
         <div class="timeline">
           <div class="timeline-right">
             <!--------------.Écriture Post.----------->
-            <form method="post">
+            <form method="POST">
               <div class="status box">
                 <div class="status-menu"></div>
                 <div class="status-main">
-                  <img
-                    src="https://media.istockphoto.com/id/1223671392/fr/vectoriel/photo-de-profil-par-d%C3%A9faut-avatar-photo-placeholder-illustration-de-vecteur.jpg?s=170667a&w=0&k=20&c=EqD6q8IUqwN_bgGec0UBhh3tk2Zuur5lezDDlQsGdPY="
+                 <img
+              
+                    src="../images/beehive-37436.svg"
+                 
                     class="status-img">
                   <textarea class="status-textarea" name="message" placeholder="Write something ..."></textarea>
                 </div>
@@ -100,39 +105,46 @@
             </form>
             <!--------------.FIN Écriture Post.----------->
 
-            <hr>
+            <hr class="hr">
 
-            
+
             <!--------------.Armature Post.----------->
             {{ range .}}
             <div class="album box">
               <div class="status-main">
                 <img
-                  src="https://media.istockphoto.com/id/1223671392/fr/vectoriel/photo-de-profil-par-d%C3%A9faut-avatar-photo-placeholder-illustration-de-vecteur.jpg?s=170667a&w=0&k=20&c=EqD6q8IUqwN_bgGec0UBhh3tk2Zuur5lezDDlQsGdPY="
+                  src="{{.Picture}}"
                   class="status-img" />
                 <div class="album-detail">
-                  <div class="album-title"><strong>Profil</strong> create new <span>post</span></div>
+                  <div class="album-title"><strong>{{.Name}}</strong> create new <span>post</span></div>
 
                   <div class="album-date">{{.DateTime}}</div>
+                
                 </div>
               </div>
+              
               <div class="album-content">{{.Message}}</div>
+            
 
               <div class="album-actions">
                 <a href="#" class="album-action">
-                  <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
-                    viewBox="0 0 24 24">
-                    <path
-                      d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
-                  </svg>
-                  9
+                  <button class="like">
+                    <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"
+                      stroke-linejoin="round" viewBox="0 0 24 24">
+                      <path
+                        d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
+                    </svg>
+                  </button>
+                  <span class="like-count"></span>
                 </a>
                 <a href="#" class="album-action">
-                  <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
-                    class="css-i6dzq1" viewBox="0 0 24 24">
-                    <path d="M18 6L6 18M6 6l12 12" />
-                  </svg>
-                  10
+                  <button class="dislike">
+                    <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"
+                      stroke-linejoin="round" class="css-i6dzq1" viewBox="0 0 24 24">
+                      <path d="M18 6L6 18M6 6l12 12" />
+                    </svg>
+                  </button>
+                  <span class="dislike-count"></span>
                 </a>
                 <a href="#" class="album-action">
                   <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
@@ -147,10 +159,11 @@
             <!--------------. FIN Armature Post.----------->
 
             <!--------------. Armature Post1 Précréer.----------->
+           
             <div class="album box">
               <div class="status-main">
                 <img
-                  src="https://media.istockphoto.com/id/1223671392/fr/vectoriel/photo-de-profil-par-d%C3%A9faut-avatar-photo-placeholder-illustration-de-vecteur.jpg?s=170667a&w=0&k=20&c=EqD6q8IUqwN_bgGec0UBhh3tk2Zuur5lezDDlQsGdPY="
+                  src="../images/beehive-37436.svg"
                   class="status-img" />
                 <div class="album-detail">
                   <div class="album-title"><strong>Profil</strong> create new <span>post</span></div>
@@ -176,19 +189,23 @@
 
               <div class="album-actions">
                 <a href="#" class="album-action">
-                  <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
-                    viewBox="0 0 24 24">
-                    <path
-                      d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
-                  </svg>
-                  9
+                  <button class="like">
+                    <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"
+                      stroke-linejoin="round" viewBox="0 0 24 24">
+                      <path
+                        d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
+                    </svg>
+                  </button>
+                  <span class="like-count"></span>
                 </a>
                 <a href="#" class="album-action">
-                  <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
-                    class="css-i6dzq1" viewBox="0 0 24 24">
-                    <path d="M18 6L6 18M6 6l12 12" />
-                  </svg>
-                  10
+                  <button class="dislike">
+                    <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"
+                      stroke-linejoin="round" class="css-i6dzq1" viewBox="0 0 24 24">
+                      <path d="M18 6L6 18M6 6l12 12" />
+                    </svg>
+                  </button>
+                  <span class="dislike-count"></span>
                 </a>
                 <a href="#" class="album-action">
                   <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
@@ -201,14 +218,16 @@
             </div>
           </div>
           <!-----------------.FIN Armature Post1 Précréer.------------>
-          
+
         </div>
       </div>
     </div>
+ 
     <!-----------------------------.FIN BLOCK CENTRAL.---------------------------->
 
 
     <!-----------------------------.BLOCK DE DROITE.---------------------------->
+  
     <div class="right-side" :class="{ 'active': rightSide }">
       <div class="account">
         <button class="account-button">
@@ -221,40 +240,17 @@
         <a href="/login">
           <span class="account-user">Profil
             <img
-              src="https://media.istockphoto.com/id/1223671392/fr/vectoriel/photo-de-profil-par-d%C3%A9faut-avatar-photo-placeholder-illustration-de-vecteur.jpg?s=170667a&w=0&k=20&c=EqD6q8IUqwN_bgGec0UBhh3tk2Zuur5lezDDlQsGdPY="
+              src=""
               class="account-profile">
           </span>
         </a>
       </div>
       <div class="side-wrapper stories">
         <div class="side-title">NOTIFICATIONS</div>
-        <div class="user">
-          <img src="https://pbs.twimg.com/profile_images/1102351320567164931/ZCkJgJIH.png" alt="" class="user-img">
-          <div class="username">Lisandro Matos
-            <div class="album-date">12 hours ago</div>
-          </div>
-        </div>
-        <div class="user">
-          <img src="https://pbs.twimg.com/profile_images/1153966095444992000/1lpIyHaQ.jpg" alt="" class="user-img">
-          <div class="username">Gvozden Boskovsky
-            <div class="album-date">29 minutes ago</div>
-          </div>
-        </div>
-        <div class="user">
-          <img
-            src="https://images.unsplash.com/photo-1565464027194-7957a2295fb7?ixlib=rb-1.2.1&auto=format&fit=crop&w=3500&q=80"
-            alt="" class="user-img">
-          <div class="username">Hnek Fortuin
-            <div class="album-date">3 hours ago</div>
-          </div>
-        </div>
-        <div class="user">
-          <img
-            src="https://images.unsplash.com/photo-1527980965255-d3b416303d12?ixlib=rb-1.2.1&auto=format&fit=crop&w=1400&q=80"
-            alt="" class="user-img">
-          <div class="username">Lubomir Dvorak
-            <div class="album-date">18 hours ago</div>
-          </div>
+        <a href="/login"><button type="submit" class="status-share">Login in</button></a>
+        <div class="side-wrapper contacts">
+          <div class="side-title">ACIVITÉS</div>
+          <a href="/login"><button type="submit" class="status-share">Login in</button></a>
         </div>
       </div>
       <div class="side-wrapper contacts">
@@ -332,14 +328,61 @@
         </div>
       </div>
     </div>
+    
 <!-----------------------------.FIN BLOCK DE DROITE.---------------------------->
 </body>
 <!-----------------------------------.FIN BODY.--------------------------------->
 
+      <!-----------------------------------.SCRIPT.----------------------------------->
+      <script>
+        function likes() {
+          let buttonLike = document.querySelector(".like")
+          let spanLike = document.querySelector(".like-count")
 
-<!-----------------------------------.SCRIPT.----------------------------------->
+          buttonLike.addEventListener("button", () => {
+            likes
+          })
+          spanLike.addEventListener("span", () => {
+            likes
+          })
+          let likeButton = document.querySelector('.like');
+          let likeCount = document.querySelector('.like-count');
+          let like = 0;
+          likeButton.addEventListener("click", () => {
+            like++;
+            likeCount.innerHTML = like;
+            console.log(like)
+          });
+        }
+        likes()
 
-<!------------------------------------------------------------------------------>
+
+
+        function dislike() {
+          let buttonLike = document.querySelector(".dislike")
+          let spanLike = document.querySelector(".dislike-count")
+
+          buttonLike.addEventListener("button", () => {
+            likes
+          })
+          spanLike.addEventListener("span", () => {
+            likes
+          })
+          let likeButton = document.querySelector('.dislike');
+          let likeCount = document.querySelector('.dislike-count');
+          let like = 0;
+          likeButton.addEventListener("click", () => {
+            like++;
+            likeCount.innerHTML = like;
+            console.log(like)
+          });
+        }
+        dislike()
+      </script>
+      <!------------------------------------------------------------------------------>
+
+</body>
+<!-----------------------------------.FIN BODY.--------------------------------->
 
 </html>
 {{end}}

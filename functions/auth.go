@@ -172,3 +172,7 @@ func GoogleAuthRegister(code string, hashPassword string) (bool, string) {
 
 	return googleUserLogged, uuidGoogleUser
 }
+
+func GitHubRegister() {
+
+}

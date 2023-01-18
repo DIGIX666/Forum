@@ -3,6 +3,7 @@ package function
 import (
 	structure "Forum/Struct"
 	dataBase "Forum/data"
+	script "Forum/scripts"
 	"database/sql"
 	"encoding/json"
 	"fmt"
@@ -66,11 +67,11 @@ func GoogleAuthLog(code string) (bool, string) {
 		log.Fatal(err)
 	}
 
-	fmt.Printf("googleUser.Name: %v\n", googleUser.Name)
+	/*fmt.Printf("googleUser.Name: %v\n", googleUser.Name)
 	fmt.Printf("googleUser.Picture: %v\n", googleUser.Picture)
 
 	fmt.Printf("googleUserEmail.Email: %v\n", googleUser.Email)
-	fmt.Printf("googleUserEmail.Email_Verified: %v\n", googleUser.Email_Verified)
+	fmt.Printf("googleUserEmail.Email_Verified: %v\n", googleUser.Email_Verified)*/
 
 	db, err := sql.Open("sqlite3", "./usersForum.db")
 	if err != nil {
@@ -95,7 +96,7 @@ func GoogleAuthLog(code string) (bool, string) {
 
 }
 
-func GoogleAuthRegister(code string, hashPassword string) (bool, string) {
+func GoogleAuthRegister(code string, hashPassword string) (bool, string, string) {
 
 	fmt.Printf("code: %v\n", code)
 
@@ -119,8 +120,8 @@ func GoogleAuthRegister(code string, hashPassword string) (bool, string) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	a, _ := ioutil.ReadAll(responseGoogle.Body)
-	fmt.Printf("ResponseGoogle: %v\n", string(a))
+	//a, _ := ioutil.ReadAll(responseGoogle.Body)
+	/*fmt.Printf("ResponseGoogle: %v\n", string(a))
 
 	fmt.Printf("googleTokenJSON: %v\n", googleTokenJSON)
 
@@ -132,7 +133,7 @@ func GoogleAuthRegister(code string, hashPassword string) (bool, string) {
 	//Rfresh_Token := googleTokenJSON.Refresh_Token
 	//refresh_token := "1//03141UoOFJOiJCgYIARAAGAMSNwF-L9Irjnoum5-ga4HAMEgCNKgxA4GUcxt90qDVCa23nw0ZLZfHUDB7FJ7_JV08LIUCQSBc4r4"
 	//fmt.Printf("refresh Token: %v", Rfresh_Token)
-	//fmt.Printf("googleTokenJSON.Token_Type: %v\n", googleTokenJSON.Token_Type)
+	//fmt.Printf("googleTokenJSON.Token_Type: %v\n", googleTokenJSON.Token_Type)*/
 
 	googleAuthResponse, err := http.Get("https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=" + googleTokenJSON.Id_Token)
 	if err != nil {
@@ -146,22 +147,16 @@ func GoogleAuthRegister(code string, hashPassword string) (bool, string) {
 		log.Fatal(err)
 	}
 
-	fmt.Printf("googleUser.Name: %v\n", googleUser.Name)
-	fmt.Printf("googleUser.Picture: %v\n", googleUser.Picture)
+	/*	fmt.Printf("googleUser.Name: %v\n", googleUser.Name)
+		fmt.Printf("googleUser.Picture: %v\n", googleUser.Picture)
 
-	fmt.Printf("googleUserEmail.Email: %v\n", googleUser.Email)
-	fmt.Printf("googleUserEmail.Email_Verified: %v\n", googleUser.Email_Verified)
-
-	db, err := sql.Open("sqlite3", "./usersForum.db")
-	if err != nil {
-		fmt.Println("Erreur à l'ouverture de la base de donnée dans GoogleAuthRegister:")
-		log.Fatal(err)
-	}
+		fmt.Printf("googleUserEmail.Email: %v\n", googleUser.Email)
+		fmt.Printf("googleUserEmail.Email_Verified: %v\n", googleUser.Email_Verified)*/
 
 	uuidGenerated, _ := uuid.NewV4()
 	uuidGoogleUser := uuidGenerated.String()
 
-	_, err = db.Exec("INSERT INTO users (name, image, email, uuid, password, admin) VALUES (?, ?, ?,?,?,?)", googleUser.Name, googleUser.Picture, googleUser.Email, uuidGoogleUser, hashPassword, false)
+	_, err = dataBase.Db.Exec("INSERT INTO users (name, image, email, uuid, password, admin) VALUES (?, ?, ?,?,?,?)", googleUser.Name, googleUser.Picture, googleUser.Email, uuidGoogleUser, hashPassword, false)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -170,9 +165,92 @@ func GoogleAuthRegister(code string, hashPassword string) (bool, string) {
 
 	fmt.Printf("googleUserLogged: %v\n", googleUserLogged)
 
-	return googleUserLogged, uuidGoogleUser
+	return googleUserLogged, uuidGoogleUser, googleUser.Name
 }
 
-func GitHubRegister() {
+func GitHubRegister(code string) (bool, string, string) {
+
+	fmt.Printf("code: %v\n", code)
+
+	data := url.Values{}
+	data.Set("client_id", "44fd70920b2db737a3ba")
+	data.Set("client_secret", "d01537f316e411dbc710369e9f907f5b8a71cc9d")
+	data.Set("code", code)
+	data.Set("redirect_uri", "https://localhost:8080/register")
+
+	responseGitHub, err := http.PostForm("https://github.com/login/oauth/access_token", data)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if responseGitHub.StatusCode != http.StatusOK {
+		log.Fatalf("Error: %v", responseGitHub.Status)
+	}
+
+	// read the response
+	body, err := ioutil.ReadAll(responseGitHub.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// close the response
+	responseGitHub.Body.Close()
+
+	// parse the response
+	values, err := url.ParseQuery(string(body))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Printf("string(body): %v\n", string(body))
+
+	// get the token
+	token := values.Get("access_token")
+	fmt.Println("Token:", token)
+
+	client := &http.Client{}
+
+	reqGitHubUser, err := http.NewRequest("GET", "https://api.github.com/user", nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	reqGitHubUser.Header.Set("Authorization", "Bearer "+token)
+	reqGitHubUser.Header.Set("Accept", "application/vnd.github+json")
+	reqGitHubUser.Header.Set("X-GitHub-Api-Version", "2022-11-28")
+
+	fmt.Println(reqGitHubUser.Header)
+
+	responseGitHubUser, err := client.Do(reqGitHubUser)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println(responseGitHubUser.Status)
+
+	var githubUserJSONToken structure.GithubUser
+
+	json.NewDecoder(responseGitHubUser.Body).Decode(&githubUserJSONToken)
+
+	defer responseGitHubUser.Body.Close()
+
+	fmt.Println(githubUserJSONToken)
+
+	uuidGenerated, _ := uuid.NewV4()
+	uuidGoogleUser := uuidGenerated.String()
+
+	hashPassword := script.GenerateHash(script.GenerateRandomString())
+
+	_, err = dataBase.Db.Exec("INSERT INTO users (name, image, email, uuid, password, admin) VALUES (?, ?, ?,?,?,?)", githubUserJSONToken.Name, githubUserJSONToken.Avatar_Url, githubUserJSONToken.Email, uuidGoogleUser, hashPassword, false)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	githubUserLogged := dataBase.CheckGoogleUserLogin(githubUserJSONToken.Email, "true", uuidGoogleUser)
+
+	fmt.Printf("githubUserLogged: %v\n", githubUserLogged)
+
+	return githubUserLogged, uuidGoogleUser, githubUserJSONToken.Name
 
 }

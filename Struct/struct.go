@@ -45,3 +45,15 @@ type GoogleUser struct {
 	Email          string `json:"email"`
 	Email_Verified string `json:"email_verified"`
 }
+
+type AuthGitHub struct {
+	Access_Token string `json:"access_token"`
+	Scope        string `json:"scope"`
+	Token_Type   string `json:"token_type"`
+}
+
+type GithubUser struct {
+	Avatar_Url string `json:"avatar_url"`
+	Name       string `json:"name"`
+	Email      string `json:"email"`
+}

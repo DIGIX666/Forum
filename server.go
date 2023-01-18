@@ -2,11 +2,11 @@ package main
 
 import (
 	structure "Forum/Struct"
+	"Forum/data"
 	dataBase "Forum/data"
 	function "Forum/functions"
 	script "Forum/scripts"
 	"crypto/tls"
-	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
@@ -45,6 +45,8 @@ func erreur(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	dataBase.CreateDataBase()
+	defer data.Db.Close()
+
 	fileServer := http.FileServer(http.Dir("./assets"))
 	http.Handle("/assets/", http.StripPrefix("/assets/", fileServer))
 
@@ -123,19 +125,13 @@ func login(w http.ResponseWriter, r *http.Request) {
 		if email != "" && password != "" {
 			checkLogin := dataBase.CheckUserLogin(email, password, uuidUser)
 			if checkLogin {
-				db, err := sql.Open("sqlite3", "./usersForum.db")
-				if err != nil {
-					fmt.Println("Erreur Ouverture de la base de donnée dans la function login")
-					log.Fatal(err)
-				}
-
 				uAccount = append(uAccount, structure.UserAccount{
 					UUID: uuidUser,
 				})
+				var userSession string
 				for range uAccount {
 
-					var userSession string
-					err = db.QueryRow("SELECT uuid FROM users WHERE email = ?", email).Scan(&userSession)
+					err := data.Db.QueryRow("SELECT uuid FROM users WHERE email = ?", email).Scan(&userSession)
 					if err != nil {
 						log.Println("Erreur dans la QueryRow dans la fonction login pour userSession")
 						log.Fatal(err)
@@ -150,10 +146,11 @@ func login(w http.ResponseWriter, r *http.Request) {
 					Name:    "session",
 				}
 				http.SetCookie(w, &cookie)
+
 				var uName, uEmail, uPassword string
 				var uAdmin bool
 				var uImage string
-				err = db.QueryRow("SELECT name, image, email, password, admin FROM users WHERE email = ?", email).Scan(&uName, &uImage, &uEmail, &uPassword, &uAdmin)
+				err := data.Db.QueryRow("SELECT name, image, email, password, admin FROM users WHERE email = ?", email).Scan(&uName, &uImage, &uEmail, &uPassword, &uAdmin)
 				if err != nil {
 					log.Println(" Erreur dans la selection des parametres utilisateur dans la fonction login: ")
 					log.Fatal(err)
@@ -166,7 +163,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 					Password: uPassword,
 					Admin:    uAdmin,
 				})
-
+				data.AddSession(uName, userSession, cookie.Value)
 				for _, v := range uAccount {
 					t := template.New("userAccount")
 					t = template.Must(t.ParseFiles("./assets/userAccount.html"))
@@ -197,18 +194,55 @@ func login(w http.ResponseWriter, r *http.Request) {
 
 func register(w http.ResponseWriter, r *http.Request) {
 
+	//gitHub client Secret: d01537f316e411dbc710369e9f907f5b8a71cc9d
+
 	if err := r.ParseForm(); err != nil {
 		fmt.Fprintf(w, "ParseForm() err: %v", err)
 		return
 	}
 
 	if r.FormValue("code") != "" {
+		checkUserRegistered, uuidUser, userName := function.GitHubRegister(r.FormValue("code"))
+
+		if checkUserRegistered {
+			cookie := http.Cookie{
+				Expires: time.Now().Add(time.Hour),
+				Value:   uuidUser,
+				Name:    "session",
+			}
+			http.SetCookie(w, &cookie)
+			//fmt.Printf("uuidUser: %v\n", uuidUser)
+			//fmt.Printf("userName: %s\n", userName)
+			//fmt.Printf("cookie.Value: %v\n", cookie.Value)
+
+			data.AddSession(userName, uuidUser, cookie.Value)
+			http.Redirect(w, r, "/profil/"+uuidUser, http.StatusFound)
+
+		} else {
+			fmt.Println("Error to register the GitHub user !")
+			return
+		}
+		return
+	} else {
+		fmt.Println("Receive nothing from github")
+	}
+
+	if r.FormValue("code") != "" {
 		code := r.FormValue("code")
 		hashPassword := script.GenerateHash(script.GenerateRandomString())
 
-		checkUserRegistered, uuidUser := function.GoogleAuthRegister(code, hashPassword)
+		checkUserRegistered, uuidUser, userName := function.GoogleAuthRegister(code, hashPassword)
 
 		if checkUserRegistered {
+
+			cookie := http.Cookie{
+				Expires: time.Now().Add(time.Hour),
+				Value:   uuidUser,
+				Name:    "session",
+			}
+			http.SetCookie(w, &cookie)
+			data.AddSession(userName, uuidUser, cookie.Value)
+
 			http.Redirect(w, r, "/profil/"+uuidUser, http.StatusFound)
 		} else {
 			fmt.Println("Error to Register the Google User !")
@@ -274,7 +308,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "ParseForm() err: %v", err)
 		return
 	}
-	temp, err := template.ParseFiles("./assets/Home/home.html")
+	/*temp, err := template.ParseFiles("./assets/Home/home.html")
 	if err != nil {
 		log.Println("Error parsing template:", err)
 		return
@@ -282,19 +316,13 @@ func home(w http.ResponseWriter, r *http.Request) {
 
 	//var user structure.UserAccount
 
-	//name := r.FormValue("name")
-	name := "Mirio Togata"
+	/*name := r.FormValue("name")
+	//name := "Mirio Togata"
 	var userIdDB int
 
 	var profil structure.UserAccount
 
-	db, err := sql.Open("sqlite3", "./usersForum.db")
-	if err != nil {
-		fmt.Println("Error opening DataBase in GetUserProfil Function")
-		log.Fatal(err)
-	}
-
-	err = db.QueryRow("SELECT id,image, email, UUID, admin, password FROM users WHERE name = ?", name).Scan(&userIdDB, &profil.Image, &profil.Email, &profil.UUID, &profil.Admin, &profil.Password)
+	err = data.Db.QueryRow("SELECT id,image, email, UUID, admin, password FROM users WHERE name = ?", name).Scan(&userIdDB, &profil.Image, &profil.Email, &profil.UUID, &profil.Admin, &profil.Password)
 	if err != nil {
 		fmt.Println("Error when Selecting user profil from userForum.db")
 		log.Fatal(err)
@@ -319,7 +347,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 	if err := temp.ExecuteTemplate(w, "home", posts); err != nil {
 		log.Println("Error executing template:", err)
 		return
-	}
+	}*/
 
 }
 

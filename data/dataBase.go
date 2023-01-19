@@ -1,8 +1,8 @@
 package data
 
 import (
+	structure "Forum/Struct"
 	script "Forum/scripts"
-	"Forum/structure"
 	"database/sql"
 	"fmt"
 	"log"
@@ -120,7 +120,7 @@ func AddSession(name string, uuid string, cookie string) {
 	fmt.Printf("cookie.Value: %v\n", cookie)
 
 	if name != "" || uuid != "" || cookie != "" {
-		fmt.Println("insert")
+
 		_, err := Db.Exec("INSERT INTO session (name, uuid, cookie) VALUES (?, ?, ?)", name, uuid, cookie)
 		if err != nil {
 			fmt.Println("Erreur à l'insertion de donnée dans session, func AddSession:")
@@ -233,7 +233,9 @@ func CheckUserLogin(email string, password string, uuid string) bool {
 	var hashpassword string
 	err := Db.QueryRow("SELECT password FROM users WHERE email = ?", email).Scan(&hashpassword)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println("Erreur SELECT fonction checkUserLogin: ")
+		fmt.Println(err)
+		return false
 	}
 
 	fmt.Printf("email: %v\n", email)
@@ -264,6 +266,10 @@ func UserPost(userName string, message string, postID string, dateTime string) b
 	}
 
 	return false
+
+}
+
+func SetUserUUID() {
 
 }
 

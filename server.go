@@ -2,11 +2,11 @@ package main
 
 import (
 	structure "Forum/Struct"
+	"Forum/data"
 	dataBase "Forum/data"
 	function "Forum/functions"
 	script "Forum/scripts"
 	"crypto/tls"
-	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
@@ -45,6 +45,8 @@ func erreur(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	dataBase.CreateDataBase()
+	defer data.Db.Close()
+
 	fileServer := http.FileServer(http.Dir("./assets"))
 	http.Handle("/assets/", http.StripPrefix("/assets/", fileServer))
 
@@ -56,7 +58,7 @@ func main() {
 	http.Handle("/profil", tollbooth.LimitFuncHandler(lmt, profil))
 	http.Handle("/login", tollbooth.LimitFuncHandler(lmt, login))
 	http.Handle("/register", tollbooth.LimitFuncHandler(lmt, register))
-	http.Handle("/userAccount", tollbooth.LimitFuncHandler(lmt, userAccount))
+	//http.Handle("/userAccount", tollbooth.LimitFuncHandler(lmt, userAccount))
 
 	http.Handle("/error", tollbooth.LimitFuncHandler(lmt, erreur))
 
@@ -98,13 +100,43 @@ func login(w http.ResponseWriter, r *http.Request) {
 	if r.FormValue("code") != "" {
 
 		code := r.FormValue("code")
-		checkUserLogged, uuidUser := function.GoogleAuthLog(code)
-		if checkUserLogged {
-			http.Redirect(w, r, "/profil/"+uuidUser, http.StatusFound)
-		} else {
-			fmt.Println("Error to logIn the Google User")
+
+		checkGoogleUserLogged, uName, uEmail, _ := function.GoogleAuthLog(code)
+		fmt.Printf("checkGoogleUserLogged: %v\n", checkGoogleUserLogged)
+		checkGitHubUserLoogged, GitHub_UserName, _, _ := function.GitHubLog(code)
+		fmt.Printf("checkGitHubUserLoogged: %v\n", checkGitHubUserLoogged)
+
+		if checkGoogleUserLogged {
+			uuidGenerated, _ := uuid.NewV4()
+			uuidUser := uuidGenerated.String()
+			cookie := http.Cookie{
+				Expires: time.Now().Add(time.Minute),
+				Value:   uuidUser,
+				Name:    "session",
+			}
+			http.SetCookie(w, &cookie)
+			data.SetGoogleUserUUID(uEmail)
+			dataBase.AddSession(uName, uuidUser, cookie.Value)
+			http.Redirect(w, r, "/profil", http.StatusFound)
 			return
 		}
+		if checkGitHubUserLoogged {
+			fmt.Println("STEP 1")
+			uuidGenerated, _ := uuid.NewV4()
+			uuidGithubUser := uuidGenerated.String()
+			cookie := http.Cookie{
+				Expires: time.Now().Add(time.Minute),
+				Value:   uuidGithubUser,
+				Name:    "session",
+			}
+			http.SetCookie(w, &cookie)
+			dataBase.AddSession(GitHub_UserName, uuidGithubUser, cookie.Value)
+			fmt.Println("STEP 3")
+			http.Redirect(w, r, "/profil", http.StatusFound)
+			return
+		}
+		http.Redirect(w, r, "/register", http.StatusFound)
+		return
 
 	}
 
@@ -118,44 +150,37 @@ func login(w http.ResponseWriter, r *http.Request) {
 		password := r.FormValue("password")
 		uuidGenerated, _ := uuid.NewV4()
 		uuidUser := uuidGenerated.String()
-		fmt.Printf("uuidUser: %v\n", uuidUser)
 
 		if email != "" && password != "" {
 			checkLogin := dataBase.CheckUserLogin(email, password, uuidUser)
 			if checkLogin {
-				db, err := sql.Open("sqlite3", "./usersForum.db")
-				if err != nil {
-					fmt.Println("Erreur Ouverture de la base de donnée dans la function login")
-					log.Fatal(err)
-				}
-
 				uAccount = append(uAccount, structure.UserAccount{
 					UUID: uuidUser,
 				})
+				var userSession string
 				for range uAccount {
 
-					var userSession string
-					err = db.QueryRow("SELECT uuid FROM users WHERE email = ?", email).Scan(&userSession)
+					err := data.Db.QueryRow("SELECT uuid FROM users WHERE email = ?", email).Scan(&userSession)
 					if err != nil {
 						log.Println("Erreur dans la QueryRow dans la fonction login pour userSession")
 						log.Fatal(err)
 					}
-					//fmt.Println("l'UUID: " + v.UUID)
 
 				}
 
 				cookie := http.Cookie{
-					Expires: time.Now().Add(time.Hour),
+					Expires: time.Now().Add(time.Minute),
 					Value:   uuidUser,
 					Name:    "session",
 				}
 				http.SetCookie(w, &cookie)
+
 				var uName, uEmail, uPassword string
 				var uAdmin bool
 				var uImage string
-				err = db.QueryRow("SELECT name, image, email, password, admin FROM users WHERE email = ?", email).Scan(&uName, &uImage, &uEmail, &uPassword, &uAdmin)
+				err := data.Db.QueryRow("SELECT name, image, email, password, admin FROM users WHERE email = ?", email).Scan(&uName, &uImage, &uEmail, &uPassword, &uAdmin)
 				if err != nil {
-					log.Println(" Erreur dans la selection des parametres utilisateur dans la fonction login: ")
+					log.Println("Erreur dans la selection des parametres utilisateur dans la fonction login: ")
 					log.Fatal(err)
 				}
 
@@ -166,20 +191,25 @@ func login(w http.ResponseWriter, r *http.Request) {
 					Password: uPassword,
 					Admin:    uAdmin,
 				})
+				data.AddSession(uName, userSession, cookie.Value)
 
-				for _, v := range uAccount {
-					t := template.New("userAccount")
-					t = template.Must(t.ParseFiles("./assets/userAccount.html"))
-					err = t.ExecuteTemplate(w, "userAccount", v)
-					if err != nil {
-						log.Fatal(err)
-					}
+				t := template.New("profil")
+				t = template.Must(t.ParseFiles("./assets/Profil/profil.html"))
+				err = t.ExecuteTemplate(w, "profil", nil)
+				if err != nil {
+					log.Fatal(err)
 				}
 
+				return
+
+			} else {
+				http.Redirect(w, r, "/register", http.StatusFound)
+				return
 			}
 
 		} else {
 			fmt.Println("email empty && password empty!")
+			return
 		}
 	} else if r.Method == "GET" {
 		t := template.New("login")
@@ -188,6 +218,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			log.Fatal(err)
 		}
+		return
 
 	}
 
@@ -197,31 +228,69 @@ func login(w http.ResponseWriter, r *http.Request) {
 
 func register(w http.ResponseWriter, r *http.Request) {
 
+	//gitHub client Secret: d01537f316e411dbc710369e9f907f5b8a71cc9d
+
 	if err := r.ParseForm(); err != nil {
 		fmt.Fprintf(w, "ParseForm() err: %v", err)
 		return
 	}
 
 	if r.FormValue("code") != "" {
-		code := r.FormValue("code")
+		fmt.Printf("Code receive: %v\n", r.FormValue("code"))
+		checkGitHub_User_Registered, _, userGitHubName := function.GitHubRegister(r.FormValue("code"))
 		hashPassword := script.GenerateHash(script.GenerateRandomString())
 
-		checkUserRegistered, uuidUser := function.GoogleAuthRegister(code, hashPassword)
+		checkGoogleUserRegistered, googleUserEmail, userGoogleName := function.GoogleAuthRegister(r.FormValue("code"), hashPassword)
+		fmt.Printf("checkGoogleUserRegistered: %v\n", checkGoogleUserRegistered)
 
-		if checkUserRegistered {
-			http.Redirect(w, r, "/profil/"+uuidUser, http.StatusFound)
-		} else {
-			fmt.Println("Error to Register the Google User !")
+		if checkGitHub_User_Registered || userGitHubName != "" {
+
+			uuidGitHubUser := data.SetGitHubUUID(userGitHubName)
+			cookie := http.Cookie{
+				Expires: time.Now().Add(time.Second),
+				Value:   uuidGitHubUser,
+				Name:    "session",
+			}
+
+			http.SetCookie(w, &cookie)
+
+			data.AddSession(userGitHubName, uuidGitHubUser, cookie.Value)
+			http.Redirect(w, r, "/profil", http.StatusFound)
 			return
+
 		}
 
-	} else {
+		if checkGoogleUserRegistered && googleUserEmail != "" {
+			uuidGoogleUser := data.SetGoogleUserUUID(googleUserEmail)
+			cookie := http.Cookie{
+				Expires: time.Now().Add(time.Second),
+				Value:   uuidGoogleUser,
+				Name:    "session",
+			}
+			http.SetCookie(w, &cookie)
 
-		t := template.New("register")
-		t = template.Must(t.ParseFiles("./assets/register.html"))
-		err := t.ExecuteTemplate(w, "register", nil)
-		if err != nil {
-			log.Fatal(err)
+			data.AddSession(userGoogleName, uuidGoogleUser, cookie.Value)
+
+			http.Redirect(w, r, "/profil", http.StatusFound)
+			return
+		} else if googleUserEmail != "" {
+			http.Redirect(w, r, "/login", http.StatusFound)
+			return
+
+		} else {
+			fmt.Println("Error register Google User !")
+			return
+		}
+	} else {
+		fmt.Println("Receive no code !")
+
+		if r.Method == "GET" {
+			t := template.New("register")
+			t = template.Must(t.ParseFiles("./assets/register.html"))
+			err := t.ExecuteTemplate(w, "register", nil)
+			if err != nil {
+				log.Fatal(err)
+			}
 		}
 
 		var email string
@@ -234,8 +303,7 @@ func register(w http.ResponseWriter, r *http.Request) {
 		//fmt.Printf("email: %v\n", email)
 		//fmt.Printf("hashPassword: %v\n", hashPassword)
 
-		compare := script.ComparePassword(hashPassword, password)
-		fmt.Printf("compare: %v\n", compare)
+		//compare := script.ComparePassword(hashPassword, password)
 
 		if email != "" && password != "" {
 			checkRegister := dataBase.DataBaseRegister(email, hashPassword)
@@ -246,13 +314,32 @@ func register(w http.ResponseWriter, r *http.Request) {
 					Email:    email,
 					Password: password,
 				})
+				if r.Method == "POST" {
+					uuidGenerated, _ := uuid.NewV4()
+					uuidUser := uuidGenerated.String()
+					cookie := http.Cookie{
+						Expires: time.Now().Add(time.Second),
+						Value:   uuidUser,
+						Name:    "session",
+					}
+					http.SetCookie(w, &cookie)
+					data.AddSession("none", uuidUser, cookie.Value)
+					_, err := data.Db.Exec("UPDATE users SET UUID = ? WHERE email = ?", uuidUser, email)
+					if err != nil {
+						fmt.Println("Erreur modifie la valeur de UUID de la fonction register:")
+						log.Fatal(err)
+						return
+					}
+					http.Redirect(w, r, "/profil", http.StatusFound)
+					return
+				}
 
 			} else {
 				fmt.Println("problem to Register ! maybe email already exist !")
+				return
 
 			}
 		}
-
 	}
 
 }
@@ -260,8 +347,6 @@ func register(w http.ResponseWriter, r *http.Request) {
 /*************************** FUNCTION HOME **********************************/
 
 var posts []structure.Post
-
-//var templatePost []structure.Post
 
 func preappendPost(c structure.Post) {
 	posts = append(posts, structure.Post{})
@@ -280,45 +365,32 @@ func home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//var user structure.UserAccount
-
-	//name := r.FormValue("name")
-	name := "Mirio Togata"
-	var userIdDB int
-
-	var profil structure.UserAccount
-
-	db, err := sql.Open("sqlite3", "./usersForum.db")
-	if err != nil {
-		fmt.Println("Error opening DataBase in GetUserProfil Function")
-		log.Fatal(err)
-	}
-
-	err = db.QueryRow("SELECT id,image, email, UUID, admin, password FROM users WHERE name = ?", name).Scan(&userIdDB, &profil.Image, &profil.Email, &profil.UUID, &profil.Admin, &profil.Password)
-	if err != nil {
-		fmt.Println("Error when Selecting user profil from userForum.db")
-		log.Fatal(err)
-	}
-
 	message := r.FormValue("message")
 	if message != "" {
+		lastPost := data.GetLastPost()
 		currentTime := time.Now().Format("15:04  11.janv.2006")
 		preappendPost(structure.Post{
 			PostID:   script.GeneratePostID(),
-			Name:     name,
+			Name:     lastPost["name"],
 			Message:  message,
 			DateTime: currentTime,
+			Picture:  "",
 		})
 
 		//Put the message in the dataBase
-		fmt.Printf("profil.Name: %v", profil.Name)
-		dataBase.UserPost(profil.Name, message, script.GeneratePostID(), currentTime)
+
+		dataBase.UserPost(lastPost["name"], message, script.GeneratePostID(), currentTime, lastPost["pictureURL"])
+
+		err = temp.ExecuteTemplate(w, "home", posts)
+		if err != nil {
+			log.Fatal(err)
+		}
 
 	}
 
-	if err := temp.ExecuteTemplate(w, "home", posts); err != nil {
-		log.Println("Error executing template:", err)
-		return
+	err = temp.ExecuteTemplate(w, "home", nil)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 }
@@ -330,32 +402,49 @@ func profil(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	temp, err := template.ParseFiles("./assets/Profil/profil.html")
-	if err != nil {
-		log.Println("Error parsing template:", err)
-		return
-	}
+	//var profil structure.UserAccount
 
-	name := r.FormValue("name")
+	profil := data.GetUserProfil()
+
 	message := r.FormValue("message")
 	if message != "" {
 		currentTime := time.Now().Format("15:04  11.janv.2006")
-		preappendPost(structure.Post{Name: name, Message: message, DateTime: currentTime})
+		preappendPost(structure.Post{
+			PostID:   script.GeneratePostID(),
+			Name:     profil["name"],
+			Message:  message,
+			DateTime: currentTime,
+		})
+
+		//Put the message in the dataBase
+		fmt.Printf("profil.Name: %v\n", profil["name"])
+		dataBase.UserPost(profil["name"], message, script.GeneratePostID(), currentTime, "")
+
 	}
 
 	for _, v := range posts {
 		fmt.Printf("v.DateTime: %v\n", v.DateTime)
 		fmt.Printf("v.Message: %v\n", v.Message)
 	}
-	if err := temp.ExecuteTemplate(w, "profil", posts); err != nil {
-		log.Println("Error executing template:", err)
-		return
+
+	if r.Method == "GET" {
+		temp, err := template.ParseFiles("./assets/Profil/profil.html")
+		if err != nil {
+			log.Println("Error parsing template:", err)
+			return
+		}
+
+		if err := temp.ExecuteTemplate(w, "profil", posts); err != nil {
+			log.Println("Error executing template:", err)
+			return
+		}
 	}
+
 }
 
 /*************************** FUNCTION USER ACCOUNT **********************************/
 
-func userAccount(w http.ResponseWriter, r *http.Request) {
+/*func userAccount(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
 		fmt.Fprintf(w, "ParseForm() err: %v", err)
 		return
@@ -373,4 +462,4 @@ func userAccount(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-}
+}*/

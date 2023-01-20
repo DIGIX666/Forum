@@ -41,7 +41,7 @@
             </svg>
             Home
           </a>
-          <a href="/profil">
+          
       
           
         
@@ -85,7 +85,7 @@
                 <div class="status-main">
                  <img
               
-                    src="../images/beehive-37436.svg"
+                    src="{{.Image}}"
                  
                     class="status-img">
                   <textarea class="status-textarea" name="message" placeholder="Write something ..."></textarea>
@@ -112,11 +112,10 @@
 
 
             <!--------------.Armature Post.----------->
-            {{ range .}}
+            {{ range .Post }}
             <div class="album box">
               <div class="status-main">
-                <img
-                  src="{{.Picture}}"
+                <img src=""
                   class="status-img" />
                 <div class="album-detail">
                   <div class="album-title"><strong>{{.Name}}</strong> create new <span>post</span></div>
@@ -166,10 +165,10 @@
             <div class="album box">
               <div class="status-main">
                 <img
-                  src="../images/beehive-37436.svg"
+                  src="{{.Image}}"
                   class="status-img" />
                 <div class="album-detail">
-                  <div class="album-title"><strong>Profil</strong> create new <span>post</span></div>
+                  <div class="album-title"><strong>{{.Name}}</strong> create new <span>post</span></div>
 
                   <div class="album-date">11:10 11.janv.2023</div>
                 </div>
@@ -241,9 +240,9 @@
           </svg>
         </button>
         <a href="/login">
-          <span class="account-user">Profil
+          <span class="account-user">{{.Name}}
             <img
-              src=""
+              src="{{.Image}}"
               class="account-profile">
           </span>
         </a>

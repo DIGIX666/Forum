@@ -7,6 +7,9 @@ type UserAccount struct {
 	Email    string
 	UUID     string
 	Password string
+	Post     []Post
+	Comment  []Comment
+	Like     []Like
 	Admin    bool // true: the user is the Admin
 }
 

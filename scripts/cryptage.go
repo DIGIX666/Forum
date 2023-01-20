@@ -48,7 +48,7 @@ func GenerateRandomString() string {
 
 func GeneratePostID() string {
 
-	lengthString := 5
+	lengthString := 7
 	rand.Seed(time.Now().UnixNano())
 	randomString := RandStringBytes(lengthString)
 

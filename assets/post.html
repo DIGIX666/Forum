@@ -1,0 +1,63 @@
+{{define "post"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/assets/Profil/profil.css">
+    <title>PROFIL</title>
+    <link rel="website icon" type="png" href="/assets/icon.png">
+</head>
+
+
+<body>
+    
+
+{{range .}}
+<div class="album box">
+    <div class="status-main">
+      <img
+        src="https://media.istockphoto.com/id/1223671392/fr/vectoriel/photo-de-profil-par-d%C3%A9faut-avatar-photo-placeholder-illustration-de-vecteur.jpg?s=170667a&w=0&k=20&c=EqD6q8IUqwN_bgGec0UBhh3tk2Zuur5lezDDlQsGdPY="
+        class="status-img" />
+      <div class="album-detail">
+      <div class="album-title"><strong>{{.Name}}</strong> create new <span>post</span></div>
+
+        <div class="album-date">{{.DateTime}}</div>
+      </div>
+    </div>
+    <div class="album-content">{{.Message}}</div>
+
+    <div class="album-actions">
+      <a href="#" class="album-action">
+        <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+          viewBox="0 0 24 24">
+          <path
+            d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
+        </svg>
+        9
+      </a>
+      <a href="#" class="album-action">
+        <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+          class="css-i6dzq1" viewBox="0 0 24 24">
+          <path d="M18 6L6 18M6 6l12 12" />
+        </svg>
+        10
+      </a>
+      <a href="#" class="album-action">
+        <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+          class="css-i6dzq1" viewBox="0 0 24 24">
+          <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
+        </svg>
+        1
+      </a>
+    </div>
+  </div>
+  {{end}}
+
+</body>
+
+
+  {{end}}
+
+</html>

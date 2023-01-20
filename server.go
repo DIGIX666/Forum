@@ -348,10 +348,11 @@ func register(w http.ResponseWriter, r *http.Request) {
 
 var posts []structure.Post
 
-func preappendPost(c structure.Post) {
+func preappendPost(c structure.Post) []structure.Post {
 	posts = append(posts, structure.Post{})
 	copy(posts[1:], posts)
 	posts[0] = c
+	return posts
 }
 
 func home(w http.ResponseWriter, r *http.Request) {
@@ -365,32 +366,48 @@ func home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	name := r.FormValue("name")
+	var user structure.UserAccount
+
+	profil := data.GetUserProfil()
+
+	user.Name = profil["name"]
+	user.Email = profil["email"]
+	user.Image = profil["userImage"]
+	user.UUID = profil["uuid"]
+	if profil["admin"] == "true" {
+		user.Admin = true
+
+	} else {
+		user.Admin = false
+	}
+	Feed := data.HomeFeed()
+
 	picture := r.FormValue("picture")
 	message := r.FormValue("message")
 
 	if message != "" {
-		currentTime := time.Now().Format("15:04  2.Janv.2006")
-		preappendPost(structure.Post{
+		currentTime := time.Now().Format("15:04  2-Janv-2006")
+		Feed = preappendPost(structure.Post{
 			PostID:   script.GeneratePostID(),
-			Name:     name,
+			Name:     user.Name,
 			Message:  message,
 			DateTime: currentTime,
-			Picture:  "",
+			Picture:  picture,
 		})
 
 		//Put the message in the dataBase
 
-		dataBase.UserPost(name, message, script.GeneratePostID(), currentTime, picture)
-
-		err = temp.ExecuteTemplate(w, "home", posts)
-		if err != nil {
-			log.Fatal(err)
-		}
+		dataBase.UserPost(user.Name, message, script.GeneratePostID(), currentTime, picture)
 
 	}
 
-	err = temp.ExecuteTemplate(w, "home", nil)
+	Feed = data.HomeFeed()
+
+	user.Post = Feed
+	user.Comment = []structure.Comment{}
+	user.Like = []structure.Like{}
+
+	err = temp.ExecuteTemplate(w, "home", user)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -410,15 +427,26 @@ func profil(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//var profil structure.UserAccount
+	var user structure.UserAccount
 
 	profil := data.GetUserProfil()
+
+	user.Name = profil["name"]
+	user.Email = profil["email"]
+	user.Image = profil["userImage"]
+	user.UUID = profil["uuid"]
+	if profil["admin"] == "true" {
+		user.Admin = true
+
+	} else {
+		user.Admin = false
+	}
 
 	message := r.FormValue("message")
 
 	if message != "" {
 		currentTime := time.Now().Format("15:04  2.Janv.2006")
-		preappendPost(structure.Post{
+		Posts := preappendPost(structure.Post{
 			PostID:   script.GeneratePostID(),
 			Name:     profil["name"],
 			Message:  message,
@@ -426,23 +454,15 @@ func profil(w http.ResponseWriter, r *http.Request) {
 		})
 
 		//Put the message in the dataBase
-		fmt.Printf("profil.Name: %v\n", profil["name"])
 		dataBase.UserPost(profil["name"], message, script.GeneratePostID(), currentTime, "")
 
+		user.Post = Posts
+		user.Comment = []structure.Comment{}
+		user.Like = []structure.Like{}
+
 	}
 
-	for _, v := range posts {
-		fmt.Printf("v.DateTime: %v\n", v.DateTime)
-		fmt.Printf("v.Message: %v\n", v.Message)
-	}
-
-	temp, err = template.ParseFiles("./assets/Profil/profil.html")
-	if err != nil {
-		log.Println("Error parsing template:", err)
-		return
-	}
-
-	if err := temp.ExecuteTemplate(w, "profil", posts); err != nil {
+	if err = temp.ExecuteTemplate(w, "profil", user); err != nil {
 		log.Println("Error executing template:", err)
 		return
 	}

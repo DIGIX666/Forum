@@ -360,3 +360,45 @@ func GetLastPost() map[string]string {
 	return ans
 
 }
+
+var posts []structure.Post
+
+func preappendPost(c structure.Post) []structure.Post {
+	posts = append(posts, structure.Post{})
+	copy(posts[1:], posts)
+	posts[0] = c
+	return posts
+}
+
+func HomeFeed() []structure.Post {
+
+	rows, err := Db.Query("SELECT * FROM posts ORDER BY id")
+	if err != nil {
+		fmt.Println("Error in HomeFeed Function dataBase:")
+		log.Fatal(err)
+	}
+	var Posts []structure.Post
+
+	for rows.Next() {
+		var id int
+		var postID, userName, message, dateTime, picture string
+
+		err = rows.Scan(&id, &postID, &userName, &message, &dateTime, &picture)
+		if err != nil {
+			fmt.Println("Error HomeFeed Function in rows.Scan:")
+			log.Fatal(err)
+		}
+
+		Posts = preappendPost(structure.Post{
+			PostID:   postID,
+			Name:     userName,
+			Message:  message,
+			DateTime: dateTime,
+			Picture:  picture,
+		})
+
+	}
+
+	return Posts
+
+}

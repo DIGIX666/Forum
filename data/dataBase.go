@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/gofrs/uuid"
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -269,7 +270,29 @@ func UserPost(userName string, message string, postID string, dateTime string) b
 
 }
 
-func SetUserUUID() {
+func SetGoogleUserUUID(userEmail string) string {
+
+	uuidGenerated, _ := uuid.NewV4()
+	uuid := uuidGenerated.String()
+
+	_, err := Db.Exec("UPDATE users SET UUID = ? WHERE email = ?", uuid, userEmail)
+	if err != nil {
+		fmt.Println(err)
+	}
+	return uuid
+
+}
+
+func SetGitHubUUID(userName string) string {
+
+	uuidGenerated, _ := uuid.NewV4()
+	uuid := uuidGenerated.String()
+
+	_, err := Db.Exec("UPDATE users SET UUID = ? WHERE name = ?", uuid, userName)
+	if err != nil {
+		fmt.Println(err)
+	}
+	return uuid
 
 }
 

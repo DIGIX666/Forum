@@ -365,13 +365,18 @@ func home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	profil := data.GetUserProfil()
+
+	//name := r.FormValue("name")
 	message := r.FormValue("message")
+	picture := r.FormValue("picture")
+
 	if message != "" {
-		lastPost := data.GetLastPost()
-		currentTime := time.Now().Format("15:04  11.janv.2006")
+		//lastPost := data.GetLastPost()
+		currentTime := time.Now().Format("15:04  11-Janv-2006")
 		preappendPost(structure.Post{
 			PostID:   script.GeneratePostID(),
-			Name:     lastPost["name"],
+			Name:     profil["name"],
 			Message:  message,
 			DateTime: currentTime,
 			Picture:  "",
@@ -379,7 +384,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 
 		//Put the message in the dataBase
 
-		dataBase.UserPost(lastPost["name"], message, script.GeneratePostID(), currentTime, lastPost["pictureURL"])
+		dataBase.UserPost(profil["name"], message, script.GeneratePostID(), currentTime, picture)
 
 		err = temp.ExecuteTemplate(w, "home", posts)
 		if err != nil {
@@ -402,13 +407,19 @@ func profil(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	temp, err := template.ParseFiles("./assets/Profil/profil.html")
+	if err != nil {
+		log.Println("Error parsing template:", err)
+		return
+	}
+
 	//var profil structure.UserAccount
 
 	profil := data.GetUserProfil()
 
 	message := r.FormValue("message")
 	if message != "" {
-		currentTime := time.Now().Format("15:04  11.janv.2006")
+		currentTime := time.Now().Format("15:04  11-Janv-2006")
 		preappendPost(structure.Post{
 			PostID:   script.GeneratePostID(),
 			Name:     profil["name"],
@@ -427,17 +438,9 @@ func profil(w http.ResponseWriter, r *http.Request) {
 		fmt.Printf("v.Message: %v\n", v.Message)
 	}
 
-	if r.Method == "GET" {
-		temp, err := template.ParseFiles("./assets/Profil/profil.html")
-		if err != nil {
-			log.Println("Error parsing template:", err)
-			return
-		}
-
-		if err := temp.ExecuteTemplate(w, "profil", posts); err != nil {
-			log.Println("Error executing template:", err)
-			return
-		}
+	if err := temp.ExecuteTemplate(w, "profil", posts); err != nil {
+		log.Println("Error executing template:", err)
+		return
 	}
 
 }

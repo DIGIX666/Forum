@@ -345,7 +345,7 @@ func GetLastPost() map[string]string {
 	var id int
 	var postID, message, dataTime, name, pictureURL string
 
-	err := Db.QueryRow("SELECT * FROM posts ORDER BY id DESC LIMIT 1").Scan(&id, postID, &name, &message, &dataTime, &pictureURL)
+	err := Db.QueryRow("SELECT * FROM posts ORDER BY id DESC LIMIT 1").Scan(&id, &postID, &name, &message, &dataTime, &pictureURL)
 	if err != nil {
 		fmt.Println("Erreur SELECT fonction GetLastPost dataBase:")
 		log.Fatal(err)

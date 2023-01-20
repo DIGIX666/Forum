@@ -365,18 +365,15 @@ func home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	profil := data.GetUserProfil()
-
-	//name := r.FormValue("name")
-	message := r.FormValue("message")
+	name := r.FormValue("name")
 	picture := r.FormValue("picture")
+	message := r.FormValue("message")
 
 	if message != "" {
-		//lastPost := data.GetLastPost()
-		currentTime := time.Now().Format("15:04  11-Janv-2006")
+		currentTime := time.Now().Format("15:04  2.Janv.2006")
 		preappendPost(structure.Post{
 			PostID:   script.GeneratePostID(),
-			Name:     profil["name"],
+			Name:     name,
 			Message:  message,
 			DateTime: currentTime,
 			Picture:  "",
@@ -384,7 +381,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 
 		//Put the message in the dataBase
 
-		dataBase.UserPost(profil["name"], message, script.GeneratePostID(), currentTime, picture)
+		dataBase.UserPost(name, message, script.GeneratePostID(), currentTime, picture)
 
 		err = temp.ExecuteTemplate(w, "home", posts)
 		if err != nil {
@@ -418,8 +415,9 @@ func profil(w http.ResponseWriter, r *http.Request) {
 	profil := data.GetUserProfil()
 
 	message := r.FormValue("message")
+
 	if message != "" {
-		currentTime := time.Now().Format("15:04  11-Janv-2006")
+		currentTime := time.Now().Format("15:04  2.Janv.2006")
 		preappendPost(structure.Post{
 			PostID:   script.GeneratePostID(),
 			Name:     profil["name"],
@@ -436,6 +434,12 @@ func profil(w http.ResponseWriter, r *http.Request) {
 	for _, v := range posts {
 		fmt.Printf("v.DateTime: %v\n", v.DateTime)
 		fmt.Printf("v.Message: %v\n", v.Message)
+	}
+
+	temp, err = template.ParseFiles("./assets/Profil/profil.html")
+	if err != nil {
+		log.Println("Error parsing template:", err)
+		return
 	}
 
 	if err := temp.ExecuteTemplate(w, "profil", posts); err != nil {

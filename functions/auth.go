@@ -13,6 +13,7 @@ import (
 	"strings"
 )
 
+/* ----------------------------------- GOOGLE AUTH LOG ---------------------------------- */
 func GoogleAuthLog(code string) (bool, string, string, string) {
 
 	fmt.Printf("code: %v\n", code)
@@ -84,6 +85,7 @@ func GoogleAuthLog(code string) (bool, string, string, string) {
 
 }
 
+/* ------------------------------ GOOGLE AUTH REGISTER -------------------------------- */
 func GoogleAuthRegister(code string, hashPassword string) (bool, string, string) {
 
 	fmt.Printf("code: %v\n", code)
@@ -151,6 +153,7 @@ func GoogleAuthRegister(code string, hashPassword string) (bool, string, string)
 
 }
 
+/* ------------------------------ GITHUB AUTH REGISTER -------------------------------- */
 func GitHubRegister(code string) (bool, string, string) {
 
 	data := url.Values{}
@@ -249,6 +252,7 @@ func GitHubRegister(code string) (bool, string, string) {
 
 }
 
+/* ------------------------------ GITHUB AUTH REGISTER -------------------------------- */
 func GitHubLog(code string) (bool, string, string, string) {
 
 	data := url.Values{}

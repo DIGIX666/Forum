@@ -408,6 +408,7 @@ func profil(w http.ResponseWriter, r *http.Request) {
 	profil := data.GetUserProfil()
 
 	message := r.FormValue("message")
+
 	if message != "" {
 		currentTime := time.Now().Format("15:04  2.Janv.2006")
 		preappendPost(structure.Post{

@@ -42,11 +42,6 @@ func GoogleAuthLog(code string) (bool, string, string, string) {
 
 	fmt.Printf("googleTokenJSON: %v\n", googleTokenJSON)
 
-	/*fmt.Printf("googleTokenJSON.Access_Token: %v\n", googleTokenJSON.Access_Token)
-	fmt.Printf("googleTokenJSON.Scope: %v\n", googleTokenJSON.Scope)
-	fmt.Printf("googleTokenJSON.Id_Token: %v\n", googleTokenJSON.Id_Token)
-	fmt.Printf("googleTokenJSON.Expires_In: %v\n", googleTokenJSON.Expires_In)
-	fmt.Printf("googleTokenJSON.Refresh_Token: %v\n", googleTokenJSON.Refresh_Token)*/
 	//Rfresh_Token := googleTokenJSON.Refresh_Token
 	//refresh_token := "1//03141UoOFJOiJCgYIARAAGAMSNwF-L9Irjnoum5-ga4HAMEgCNKgxA4GUcxt90qDVCa23nw0ZLZfHUDB7FJ7_JV08LIUCQSBc4r4"
 	//fmt.Printf("refresh Token: %v", Rfresh_Token)

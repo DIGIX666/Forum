@@ -7,7 +7,7 @@ type UserAccount struct {
 	Email    string
 	UUID     string
 	Password string
-	Admin    bool // true: the user is Admin
+	Admin    bool // true: the user is the Admin
 }
 
 type Comment struct {
@@ -22,7 +22,6 @@ type Post struct {
 	Message  string
 	DateTime string
 	Picture  string
-	UUID     string
 }
 
 type Like struct {

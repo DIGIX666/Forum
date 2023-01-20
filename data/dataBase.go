@@ -39,26 +39,27 @@ func CreateDataBase() {
 		log.Fatal(err)
 	}
 
-	_, err = Db.Exec(`CREATE TABLE IF NOT EXISTS posts (
+	_, err = Db.Exec(`CREATE TABLE IF NOT EXISTS comments (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT,
-        postid TEXT,
+        commentid TEXT,
         content TEXT
     )`)
 	if err != nil {
-		log.Println("erreur creation de table posts")
+		log.Println("erreur creation de table comments")
 		log.Fatal(err)
 	}
 
-	_, err = Db.Exec(`CREATE TABLE IF NOT EXISTS comments (
+	_, err = Db.Exec(`CREATE TABLE IF NOT EXISTS posts (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        commentid TEXT,
+        postid TEXT,
         name TEXT,
         message TEXT,
-        datetime TEXT
+        datetime TEXT,
+		picture TEXT
     )`)
 	if err != nil {
-		log.Println("erreur creation de table comments")
+		log.Println("erreur creation de table posts")
 		log.Fatal(err)
 	}
 
@@ -82,25 +83,6 @@ func CreateDataBase() {
 		log.Println("erreur creation de table likes")
 		log.Fatal(err)
 	}
-
-	/*count := 0
-
-	if count == 0 {
-		_, err = Db.Exec("INSERT INTO users (name, image, email, uuid, password, admin) VALUES (?, ?, ?,?,?,?)", "none", "../assets/images/beehive-37436.svg", "none", "none", "none", false)
-		if err != nil {
-			log.Fatal(err)
-		}
-		count++
-	}
-
-	uAccount = append(uAccount, structure.UserAccount{
-		Name:     "none",
-		Image:    "../assets/images/beehive-37436.svg",
-		Email:    "none",
-		Password: "none",
-		UUID:     "none",
-		Admin:    false,
-	})*/
 
 }
 
@@ -256,17 +238,33 @@ func CheckUserLogin(email string, password string, uuid string) bool {
 
 }
 
-func UserPost(userName string, message string, postID string, dateTime string) bool {
+func UserPost(userName string, message string, postID string, dateTime string, pictureURL string) bool {
 
-	_, err := Db.Exec("INSERT INTO comments (name, message, commentid, datetime) VALUES (?, ?, ?,?)", userName, message, postID, dateTime)
-	if err != nil {
-		fmt.Println("Error Insert user Post to the dataBase:")
-		log.Fatal(err)
+	if pictureURL != "" {
+
+		_, err := Db.Exec("INSERT INTO posts (name, message, postid, datetime,picture) VALUES (?, ?, ?,?,?)", userName, message, postID, dateTime, pictureURL)
+		if err != nil {
+			fmt.Println("Error Insert user Post to the dataBase:")
+			log.Fatal(err)
+		} else {
+			return true
+		}
+
+		return false
+
 	} else {
-		return true
-	}
 
-	return false
+		_, err := Db.Exec("INSERT INTO posts (name, message, postid, datetime,picture) VALUES (?, ?, ?,?,?)", userName, message, postID, dateTime, "")
+		if err != nil {
+			fmt.Println("Error Insert user Post to the dataBase:")
+			log.Fatal(err)
+		} else {
+			return true
+		}
+
+		return false
+
+	}
 
 }
 
@@ -296,18 +294,69 @@ func SetGitHubUUID(userName string) string {
 
 }
 
-func GetUserProfil(uName string) interface{} {
-	var ans interface{}
+/*func GetUserProfil(uName string)  {
+
 	var userIdDB int
 
-	var profil structure.UserAccount
+
 
 	err := Db.QueryRow("SELECT id,image, email, UUID, admin, password FROM users WHERE name = ?", uName).Scan(&userIdDB, &profil.Image, &profil.Email, &profil.UUID, &profil.Admin, &profil.Password)
 	if err != nil {
 		fmt.Println("Error when Selecting user profil from userForum.Db")
 		log.Fatal(err)
 	}
-	ans = profil
+
+	return
+
+}*/
+
+func GetUserProfil() map[string]string {
+
+	ans := make(map[string]string, 5)
+	var id int
+	var name, uuid, cookie string
+
+	err := Db.QueryRow("SELECT * FROM session ORDER BY id DESC LIMIT 1").Scan(&id, &name, &uuid, &cookie)
+	if err != nil {
+		fmt.Println("Erreur SELECT fonction GetUserProfil dataBase:")
+		log.Fatal(err)
+	}
+
+	var userImage, userEmail, admin string
+
+	err = Db.QueryRow("SELECT image,email,admin FROM users WHERE name = ?", name).Scan(&userImage, &userEmail, &admin)
+	if err != nil {
+		fmt.Println("Erreur SELECT 2 fonction GetUserProfil dataBase:")
+		log.Fatal(err)
+	}
+
+	ans["name"] = name
+	ans["email"] = userEmail
+	ans["userImage"] = userImage
+	ans["uuid"] = uuid
+	ans["admin"] = admin
+
+	return ans
+
+}
+
+func GetLastPost() map[string]string {
+	ans := make(map[string]string, 5)
+	var id int
+	var postID, message, dataTime, name, pictureURL string
+
+	err := Db.QueryRow("SELECT * FROM posts ORDER BY id DESC LIMIT 1").Scan(&id, postID, &name, &message, &dataTime, &pictureURL)
+	if err != nil {
+		fmt.Println("Erreur SELECT fonction GetLastPost dataBase:")
+		//log.Fatal(err)
+	}
+	//ans["id"] = id
+	ans["postID"] = postID
+	ans["userName"] = name
+	ans["message"] = message
+	ans["dataTime"] = dataTime
+	ans["pictureURL"] = pictureURL
+
 	return ans
 
 }

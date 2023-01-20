@@ -153,6 +153,7 @@ func GoogleAuthRegister(code string, hashPassword string) (bool, string, string)
 
 }
 
+/* ------------------------------ GITHUB AUTH REGISTER -------------------------------- */
 func GitHubRegister(code string) (bool, string, string) {
 
 	data := url.Values{}
@@ -251,7 +252,7 @@ func GitHubRegister(code string) (bool, string, string) {
 
 }
 
-/*************************************** GIT */
+/* ------------------------------ GITHUB AUTH REGISTER -------------------------------- */
 func GitHubLog(code string) (bool, string, string, string) {
 
 	data := url.Values{}

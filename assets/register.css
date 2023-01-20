@@ -357,24 +357,11 @@ input[type="submit"] {
 }
 
 
-.logo_google,
-.logo_github {
-  cursor: pointer;
-  background: white;
-  border-radius: 10px;
+.bx {
+  margin-left: 60px;
 }
-
-.logo_google {
-  width: 2.5vh;
-  margin-left: 110px;
-}
-
-.logo_github {
-  width: 2.5vh;
-  margin-left: 50px;
-}   
 
 .authentifaction {
   display: flex;
-  margin-top: 100px;
+  margin-top: 50px;
 }

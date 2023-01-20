@@ -245,10 +245,14 @@ input[type="submit"] {
 }   
 
 .authentifaction {
-  display: flex;
-  margin-top: 70px;
+  margin-top: 20px;
+}
+
+.bx {
+  margin-left: 60px;
 }
 
 .button_a {
   margin-top: -10px;
 }
+

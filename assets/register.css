@@ -60,6 +60,7 @@ body {
 .caixa__login .caixa__login-input {
   position: relative;
   margin-top: -10px;
+  height: 95px;
 }
 
 .caixa__login .caixa__login-input input {
@@ -115,7 +116,7 @@ body {
 }
 
 .anime__button {
-  margin-top: 5px;
+  margin-top: -15px;
 }
 
 .caixa__login a span {
@@ -221,7 +222,7 @@ input[type="text"] {
 }
 
 
-.caixa__login a:hover {
+/* .caixa__login a:hover {
   background: #8b80f9;
   color: #fff;
   border-radius: 5px;
@@ -231,7 +232,7 @@ input[type="text"] {
 
 .anime__button {
   margin-top: 5px;
-}
+} */
 
 .caixa__login a span {
   position: absolute;
@@ -329,7 +330,7 @@ input[type="submit"] {
 }
 
 .register {
-	margin-top: 75px;
+  margin-top: 5px;
 	color: #fff;
 	font-size: 12px;
 	margin-left: 65px;
@@ -353,4 +354,27 @@ input[type="submit"] {
     height: 30px;
     width: 7px;
     margin-top: -32px;
+}
+
+
+.logo_google,
+.logo_github {
+  cursor: pointer;
+  background: white;
+  border-radius: 10px;
+}
+
+.logo_google {
+  width: 2.5vh;
+  margin-left: 110px;
+}
+
+.logo_github {
+  width: 2.5vh;
+  margin-left: 50px;
+}   
+
+.authentifaction {
+  display: flex;
+  margin-top: 100px;
 }

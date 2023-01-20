@@ -1,8 +1,8 @@
 package data
 
 import (
+	structure "Forum/Struct"
 	script "Forum/scripts"
-	"Forum/structure"
 	"database/sql"
 	"fmt"
 	"log"

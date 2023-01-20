@@ -15,6 +15,7 @@ import (
 	"github.com/gofrs/uuid"
 )
 
+/* ----------------------------------- GOOGLE AUTH LOG ---------------------------------- */
 func GoogleAuthLog(code string) (bool, string) {
 
 	fmt.Printf("code: %v\n", code)
@@ -95,6 +96,7 @@ func GoogleAuthLog(code string) (bool, string) {
 
 }
 
+/* ------------------------------ GOOGLE AUTH REGISTER -------------------------------- */
 func GoogleAuthRegister(code string, hashPassword string) (bool, string) {
 
 	fmt.Printf("code: %v\n", code)

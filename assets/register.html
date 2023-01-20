@@ -43,10 +43,15 @@
 			</a>
 
 		</form>
-		<form method="POST">
-			<input type="button" value="Authenticate with Google"
-				onclick="location.href='https://accounts.google.com/o/oauth2/v2/auth?scope=https://www.googleapis.com/auth/userinfo.profile+https://www.googleapis.com/auth/userinfo.email&access_type=offline&include_granted_scopes=false&response_type=code&state=state_parameter_passthrough_value&redirect_uri=https%3A//localhost:8080/register&client_id=760601264616-u9vo4s8hdistvmn6ia2goko3m6qhmff8.apps.googleusercontent.com'" />
-		</form>
+		<div class="authentifaction">
+			<form method="POST">
+				<img class="logo_google" src="/assets/logoG.png" type="button" onclick="location.href='https://accounts.google.com/o/oauth2/v2/auth?scope=https://www.googleapis.com/auth/userinfo.profile+https://www.googleapis.com/auth/userinfo.email&access_type=offline&include_granted_scopes=false&response_type=code&state=state_parameter_passthrough_value&redirect_uri=https%3A//localhost:8080/register&client_id=760601264616-u9vo4s8hdistvmn6ia2goko3m6qhmff8.apps.googleusercontent.com'" />
+			</form>
+			
+			<form method="POST">
+				<img class="logo_github" src="/assets/logoGit.png" type="button"  >
+			</form>
+		</div>
 		<div class="register">
 			<label for="login">You have an account ? <a href="/login">Login</a></label>
 		</div>
@@ -76,6 +81,8 @@
 
 			}
 		}
+
+
 		function displayBadMatching() {
 			const emailInput = document.getElementById("email")
 			const email_confirmInput = document.getElementById("email_confirm")
@@ -130,7 +137,7 @@
 					passwordInput.style.borderRadius = "10px"
 					passwordInput.style.marginTop = "10px"
 				} else {
-					labelEmailConfirm.innerHTML += "email doesn't match"
+					email_confirmInput.style.backgroundColor = "#BB6464"
 					passwordInput.disabled = true
 				}
 
@@ -144,7 +151,7 @@
 					passwordInput.style.marginTop = "10px"
 
 					if (passwordBytes >= 72) {
-						labelPassword.innerHTML = "password too long"
+						password.style.backgroundColor = "#BB6464"
 					} else {
 						if (passwordInput.value == password_confirmInput.value) {
 							btn.disabled = false
@@ -152,13 +159,14 @@
 
 
 						} else {
-							labelPasswordConfirm.innerHTML += "password doesn't match"
+							// labelPasswordConfirm.innerHTML += "password doesn't match"
+							password_confirm.style.backgroundColor = "#BB6464"
 							btn.disabled = true
 						}
 					}
 
 				} else {
-					labelPassword.innerHTML += "password too short"
+					// labelPassword.innerHTML += "password too short"
 					password_confirmInput.disabled = true
 					// password_confirmInput.style.backgroundColor = "grey"
 
@@ -166,7 +174,7 @@
 
 
 			} else {
-				labelEmail.innerText += "not a correct email adress"
+				// labelEmail.innerText += "not a correct email adress"
 				email_confirmInput.disabled = true
 				// email_confirmInput.style.backgroundColor = "grey"
 			}

@@ -56,6 +56,7 @@ func main() {
 	// Use the limiter as middleware for the "/" handler
 	http.Handle("/", tollbooth.LimitFuncHandler(lmt, home))
 	http.Handle("/profil", tollbooth.LimitFuncHandler(lmt, profil))
+	http.Handle("/comment", tollbooth.LimitFuncHandler(lmt, comment))
 	http.Handle("/login", tollbooth.LimitFuncHandler(lmt, login))
 	http.Handle("/register", tollbooth.LimitFuncHandler(lmt, register))
 	//http.Handle("/userAccount", tollbooth.LimitFuncHandler(lmt, userAccount))
@@ -491,7 +492,7 @@ func profil(w http.ResponseWriter, r *http.Request) {
 
 /*************************** FUNCTION USER ACCOUNT **********************************/
 
-/*func userAccount(w http.ResponseWriter, r *http.Request) {
+func userAccount(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
 		fmt.Fprintf(w, "ParseForm() err: %v", err)
 		return
@@ -509,4 +510,43 @@ func profil(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-}*/
+}
+
+/*************************** FUNCTION COMMENT **********************************/
+
+var comments []structure.Comment
+
+func preappendComment(d structure.Comment) {
+	comments = append(comments, structure.Comment{})
+	copy(comments[1:], comments)
+	comments[0] = d
+}
+
+func comment(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		fmt.Fprintf(w, "ParseForm() err: %v", err)
+		return
+	}
+	temp, err := template.ParseFiles("./assets/Commentaire/comment.html")
+	if err != nil {
+		log.Println("Error parsing template:", err)
+		return
+	}
+
+	name := r.FormValue("name")
+	message := r.FormValue("message")
+	if message != "" {
+		currentTime := time.Now().Format("15:04  2.Janv.2006")
+		preappendComment(structure.Comment{Name: name, Message: message, DateTime: currentTime})
+	}
+
+	for _, v := range comments {
+		fmt.Printf("v.DateTime: %v\n", v.DateTime)
+		fmt.Printf("v.Message: %v\n", v.Message)
+	}
+
+	if err := temp.ExecuteTemplate(w, "comment", comments); err != nil {
+		log.Println("Error executing template:", err)
+		return
+	}
+}

@@ -125,7 +125,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 			data.SetGoogleUserUUID(uEmail)
 			dataBase.AddSession(uName, uuidUser, cookie.Value)
 			http.Redirect(w, r, "/profil", http.StatusFound)
-			return
+			// return
 		}
 		if checkGitHubUserLoogged {
 			fmt.Println("STEP 1")
@@ -141,17 +141,17 @@ func login(w http.ResponseWriter, r *http.Request) {
 			dataBase.AddSession(GitHub_UserName, uuidGithubUser, cookie.Value)
 			fmt.Println("STEP 3")
 			http.Redirect(w, r, "/profil", http.StatusFound)
-			return
+			// return
 		}
 		http.Redirect(w, r, "/register", http.StatusFound)
-		return
+		// return
 
 	}
 
 	if r.Method == "POST" {
 		if err := r.ParseForm(); err != nil {
 			fmt.Fprintf(w, "ParseForm() err: %v", err)
-			return
+			// return
 		}
 
 		email := r.FormValue("email")
@@ -200,16 +200,16 @@ func login(w http.ResponseWriter, r *http.Request) {
 					log.Fatal(err)
 				}
 
-				return
+				// return
 
 			} else {
 				http.Redirect(w, r, "/register", http.StatusFound)
-				return
+				// return
 			}
 
 		} else {
 			fmt.Println("email empty && password empty!")
-			return
+			// return
 		}
 	} else if r.Method == "GET" {
 		t := template.New("login")
@@ -218,25 +218,9 @@ func login(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			log.Fatal(err)
 		}
-		return
+		// return
 
 	}
-
-	var uAccount structure.UserAccount
-	profil := data.GetUserProfil()
-
-	uAccount.Name = profil["name"]
-	// uAccount.UUID = profil["uuid"]
-	// cookie, err := r.Cookie("session")
-	// if err != nil {
-	// 	http.Redirect(w, r, "/profil", http.StatusFound)
-	// 	return
-	// }
-
-	data.DeleteSession(uAccount.Name)
-	fmt.Printf("username:%v n", uAccount.Name)
-
-	http.Redirect(w, r, "/profil", http.StatusFound)
 }
 
 /***************************** FUNCTION LOGOUT *****************************/
@@ -467,6 +451,30 @@ func home(w http.ResponseWriter, r *http.Request) {
 
 /*************************** FUNCTION PROFIL **********************************/
 func profil(w http.ResponseWriter, r *http.Request) {
+
+	if r.FormValue("logout") != "" {
+		var uAccount structure.UserAccount
+		profil := data.GetUserProfil()
+
+		uAccount.Name = profil["name"]
+		// uAccount.UUID = profil["uuid"]
+		// cookie, err := r.Cookie("session")
+		// if err != nil {
+		// 	http.Redirect(w, r, "/profil", http.StatusFound)
+		// 	return
+		// }
+
+		cookie := http.Cookie{
+			Value:  "",
+			Name:   "session",
+			MaxAge: -1,
+		}
+		http.SetCookie(w, &cookie)
+		data.DeleteSession(uAccount.Name)
+		fmt.Printf("username:%v n", uAccount.Name)
+
+		http.Redirect(w, r, "/login", http.StatusFound)
+	}
 
 	if err := r.ParseForm(); err != nil {
 		fmt.Fprintf(w, "ParseForm() err: %v", err)

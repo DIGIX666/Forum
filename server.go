@@ -396,7 +396,6 @@ func home(w http.ResponseWriter, r *http.Request) {
 		})
 
 		//Put the message in the dataBase
-
 		dataBase.UserPost(user.Name, message, script.GeneratePostID(), currentTime, picture)
 
 	}
@@ -442,30 +441,51 @@ func profil(w http.ResponseWriter, r *http.Request) {
 		user.Admin = false
 	}
 
+	fmt.Printf("user.Name: %v\n", user.Name)
+
+	ProfilFeed := data.ProfilFeed(user.Name)
+	user.Post = ProfilFeed
+
 	message := r.FormValue("message")
+	picture := r.FormValue("picture")
 
 	if message != "" {
-		currentTime := time.Now().Format("15:04  2.Janv.2006")
-		Posts := preappendPost(structure.Post{
+		currentTime := time.Now().Format("15:04  2-Janv-2006")
+		ProfilFeed = preappendPost(structure.Post{
 			PostID:   script.GeneratePostID(),
 			Name:     profil["name"],
 			Message:  message,
 			DateTime: currentTime,
+			Picture:  picture,
 		})
 
 		//Put the message in the dataBase
-		dataBase.UserPost(profil["name"], message, script.GeneratePostID(), currentTime, "")
+		dataBase.UserPost(user.Name, message, script.GeneratePostID(), currentTime, picture)
 
-		user.Post = Posts
+		//ProfilFeed = data.ProfilFeed(user.Name)
+
+		user.Post = ProfilFeed
 		user.Comment = []structure.Comment{}
 		user.Like = []structure.Like{}
 
+		if err = temp.ExecuteTemplate(w, "profil", user); err != nil {
+			log.Println("Error executing template:", err)
+			return
+		}
+
+	} else {
+
+		user.Comment = []structure.Comment{}
+		user.Like = []structure.Like{}
+
+		if err = temp.ExecuteTemplate(w, "profil", user); err != nil {
+			log.Println("Error executing template:", err)
+			return
+		}
+
 	}
 
-	if err = temp.ExecuteTemplate(w, "profil", user); err != nil {
-		log.Println("Error executing template:", err)
-		return
-	}
+	//fmt.Printf("ProfilFeed: %v\n", ProfilFeed)
 
 }
 

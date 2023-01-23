@@ -22,7 +22,7 @@ func GoogleAuthLog(code string) (bool, string, string, string) {
 	data.Set("client_id", "760601264616-u9vo4s8hdistvmn6ia2goko3m6qhmff8.apps.googleusercontent.com")
 	data.Set("client_secret", "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")
 	data.Set("code", code)
-	data.Set("redirect_uri", "https://localhost:8080/profil")
+	data.Set("redirect_uri", "https://localhost:8080/login")
 	data.Set("grant_type", "authorization_code")
 
 	responseGoogle, err := http.Post("https://oauth2.googleapis.com/token", "application/x-www-form-urlencoded", strings.NewReader(data.Encode()))

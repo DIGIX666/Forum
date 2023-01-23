@@ -402,3 +402,48 @@ func HomeFeed() []structure.Post {
 	return Posts
 
 }
+
+func ProfilFeed(userName string) []structure.Post {
+
+	rows, err := Db.Query("SELECT postid,message,datetime,picture FROM posts WHERE name = ?", userName)
+	if err != nil {
+		fmt.Println("Error in ProfilFeed Function Query didn't work in dataBase:")
+		log.Fatal(err)
+	}
+	var Posts []structure.Post
+
+	for rows.Next() {
+
+		var postID, message, dateTime, picture string
+
+		err = rows.Scan(&postID, &message, &dateTime, &picture)
+		if err != nil {
+			fmt.Println("Error ProfilFeed Function in rows.Scan:")
+			log.Fatal(err)
+		}
+
+		Posts = preappendPost(structure.Post{
+			PostID:   postID,
+			Name:     userName,
+			Message:  message,
+			DateTime: dateTime,
+			Picture:  picture,
+		})
+
+	}
+
+	fmt.Printf("Post in dataBase: %v\n", Posts)
+
+	return Posts
+
+}
+
+func ProfilFeedDelete(userName string) {
+
+	_, err := Db.Query("DELETE postid,message,datetime,picture FROM posts WHERE name != ?", userName)
+	if err != nil {
+		fmt.Println("Error in ProfilFeedDelete Function Query didn't work in dataBase:")
+		log.Fatal(err)
+	}
+
+}

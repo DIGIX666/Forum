@@ -25,10 +25,19 @@ type Post struct {
 	Message  string
 	DateTime string
 	Picture  string
+	Comment  Comment
+	Like     Like
+	Dislike  Dislike
 }
 
 type Like struct {
 	Name     string
+	Number   int
+	DateTime string
+}
+type Dislike struct {
+	Name     string
+	Number   int
 	DateTime string
 }
 

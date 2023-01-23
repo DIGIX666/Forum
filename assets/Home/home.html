@@ -115,7 +115,7 @@
             {{ range .Post }}
             <div class="album box">
               <div class="status-main">
-                <img src=""
+                <img src="https://media.istockphoto.com/id/1223671392/fr/vectoriel/photo-de-profil-par-d%C3%A9faut-avatar-photo-placeholder-illustration-de-vecteur.jpg?s=170667a&w=0&k=20&c=EqD6q8IUqwN_bgGec0UBhh3tk2Zuur5lezDDlQsGdPY="
                   class="status-img" />
                 <div class="album-detail">
                   <div class="album-title"><strong>{{.Name}}</strong> create new <span>post</span></div>
@@ -129,7 +129,7 @@
             
 
               <div class="album-actions">
-                <a href="#" class="album-action">
+                <a href="" class="album-action">
                   <button class="like">
                     <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"
                       stroke-linejoin="round" viewBox="0 0 24 24">
@@ -190,7 +190,7 @@
               </div>
 
               <div class="album-actions">
-                <a href="#" class="album-action">
+                <a href="" class="album-action">
                   <button class="like">
                     <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"
                       stroke-linejoin="round" viewBox="0 0 24 24">
@@ -200,7 +200,7 @@
                   </button>
                   <span class="like-count"></span>
                 </a>
-                <a href="#" class="album-action">
+                <a href="" class="album-action">
                   <button class="dislike">
                     <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"
                       stroke-linejoin="round" class="css-i6dzq1" viewBox="0 0 24 24">
@@ -209,7 +209,7 @@
                   </button>
                   <span class="dislike-count"></span>
                 </a>
-                <a href="#" class="album-action">
+                <a href="" class="album-action">
                   <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
                     class="css-i6dzq1" viewBox="0 0 24 24">
                     <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
@@ -239,11 +239,9 @@
             <path d="M22 6l-10 7L2 6" />
           </svg>
         </button>
-        <a href="/login">
+        <a href="/profil">
           <span class="account-user">{{.Name}}
-            <img
-              src="{{.Image}}"
-              class="account-profile">
+            <img src="{{.Image}}" class="account-profile">
           </span>
         </a>
       </div>
@@ -298,6 +296,7 @@
           likeButton.addEventListener("click", () => {
             like++;
             likeCount.innerHTML = like;
+            
             console.log(like)
           });
         }

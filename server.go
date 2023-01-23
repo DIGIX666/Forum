@@ -397,7 +397,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 		})
 
 		//Put the message in the dataBase
-		dataBase.UserPost(user.Name, message, script.GeneratePostID(), currentTime, picture)
+		dataBase.UserPost(user.Name, message, script.GeneratePostID(), user.Image, currentTime, picture)
 
 	}
 
@@ -461,7 +461,7 @@ func profil(w http.ResponseWriter, r *http.Request) {
 		})
 
 		//Put the message in the dataBase
-		dataBase.UserPost(user.Name, message, script.GeneratePostID(), currentTime, picture)
+		dataBase.UserPost(user.Name, message, script.GeneratePostID(), user.Image, currentTime, picture)
 
 		//ProfilFeed = data.ProfilFeed(user.Name)
 

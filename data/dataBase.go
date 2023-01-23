@@ -53,6 +53,7 @@ func CreateDataBase() {
 	_, err = Db.Exec(`CREATE TABLE IF NOT EXISTS posts (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         postid TEXT,
+		image TEXT,
         name TEXT,
         message TEXT,
         datetime TEXT,
@@ -238,11 +239,11 @@ func CheckUserLogin(email string, password string, uuid string) bool {
 
 }
 
-func UserPost(userName string, message string, postID string, dateTime string, pictureURL string) bool {
+func UserPost(userName string, message string, postID string, image string, dateTime string, pictureURL string) bool {
 
 	if pictureURL != "" {
 
-		_, err := Db.Exec("INSERT INTO posts (name, message, postid, datetime,picture) VALUES (?, ?, ?,?,?)", userName, message, postID, dateTime, pictureURL)
+		_, err := Db.Exec("INSERT INTO posts (name, message, postid,image, datetime,picture) VALUES (?, ?, ?,?,?)", userName, message, postID, image, dateTime, pictureURL)
 		if err != nil {
 			fmt.Println("Error Insert user Post to the dataBase:")
 			log.Fatal(err)
@@ -341,17 +342,18 @@ func GetUserProfil() map[string]string {
 }
 
 func GetLastPost() map[string]string {
-	ans := make(map[string]string, 5)
+	ans := make(map[string]string, 6)
 	var id int
-	var postID, message, dataTime, name, pictureURL string
+	var postID, message, dataTime, name, pictureURL, image string
 
-	err := Db.QueryRow("SELECT * FROM posts ORDER BY id DESC LIMIT 1").Scan(&id, &postID, &name, &message, &dataTime, &pictureURL)
+	err := Db.QueryRow("SELECT * FROM posts ORDER BY id DESC LIMIT 1").Scan(&id, &postID, &name, &message, &image, &dataTime, &pictureURL)
 	if err != nil {
 		fmt.Println("Erreur SELECT fonction GetLastPost dataBase:")
 		log.Fatal(err)
 	}
 	//ans["id"] = id
 	ans["postID"] = postID
+	ans["image"] = image
 	ans["userName"] = name
 	ans["message"] = message
 	ans["dataTime"] = dataTime
@@ -381,20 +383,21 @@ func HomeFeed() []structure.Post {
 
 	for rows.Next() {
 		var id int
-		var postID, userName, message, dateTime, picture string
+		var postID, userName, image, message, dateTime, picture string
 
-		err = rows.Scan(&id, &postID, &userName, &message, &dateTime, &picture)
+		err = rows.Scan(&id, &postID, &userName, &image, &message, &dateTime, &picture)
 		if err != nil {
 			fmt.Println("Error HomeFeed Function in rows.Scan:")
 			log.Fatal(err)
 		}
 
 		Posts = preappendPost(structure.Post{
-			PostID:   postID,
-			Name:     userName,
-			Message:  message,
-			DateTime: dateTime,
-			Picture:  picture,
+			PostID:    postID,
+			Name:      userName,
+			UserImage: image,
+			Message:   message,
+			DateTime:  dateTime,
+			Picture:   picture,
 		})
 
 	}
@@ -414,20 +417,21 @@ func ProfilFeed(userName string) []structure.Post {
 
 	for rows.Next() {
 
-		var postID, message, dateTime, picture string
+		var postID, message, dateTime, image, picture string
 
-		err = rows.Scan(&postID, &message, &dateTime, &picture)
+		err = rows.Scan(&postID, &message, &image, &dateTime, &picture)
 		if err != nil {
 			fmt.Println("Error ProfilFeed Function in rows.Scan:")
 			log.Fatal(err)
 		}
 
 		Posts = preappendPost(structure.Post{
-			PostID:   postID,
-			Name:     userName,
-			Message:  message,
-			DateTime: dateTime,
-			Picture:  picture,
+			PostID:    postID,
+			Name:      userName,
+			UserImage: image,
+			Message:   message,
+			DateTime:  dateTime,
+			Picture:   picture,
 		})
 
 	}

@@ -23,14 +23,15 @@ type Comment struct {
 }
 
 type Post struct {
-	PostID   string
-	Name     string
-	Message  string
-	DateTime string
-	Picture  string
-	Comment  Comment
-	Like     Like
-	Dislike  Dislike
+	PostID    string
+	Name      string
+	Message   string
+	UserImage string
+	DateTime  string
+	Picture   string
+	Comment   Comment
+	Like      Like
+	Dislike   Dislike
 }
 
 type Like struct {

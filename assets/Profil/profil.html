@@ -65,7 +65,7 @@
           <div class="main-container">
             <div class="profile">
               <div class="profile-avatar">
-                <img src="../images/beehive-37436.svg" alt="user picture" class="profile-img">
+                <img src={{.Image}} alt="user picture" class="profile-img">
                
                 <div class="profile-name">{{.Name}}</div>
                
@@ -84,7 +84,7 @@
                   <div class="status box">
                     <div class="status-menu"></div>
                     <div class="status-main">
-                      <img src="https://media.istockphoto.com/id/1223671392/fr/vectoriel/photo-de-profil-par-d%C3%A9faut-avatar-photo-placeholder-illustration-de-vecteur.jpg?s=170667a&w=0&k=20&c=EqD6q8IUqwN_bgGec0UBhh3tk2Zuur5lezDDlQsGdPY="
+                      <img src={{.Image}}
                         class="status-img">
                       <textarea class="status-textarea" name="message" placeholder="Write something ..."></textarea>
                     </div>
@@ -116,7 +116,7 @@
                 {{range .Post}}
                <div class="album box">
                   <div class="status-main">
-                    <img src="https://media.istockphoto.com/id/1223671392/fr/vectoriel/photo-de-profil-par-d%C3%A9faut-avatar-photo-placeholder-illustration-de-vecteur.jpg?s=170667a&w=0&k=20&c=EqD6q8IUqwN_bgGec0UBhh3tk2Zuur5lezDDlQsGdPY="
+                    <img src={{.UserImage}}
                       class="status-img" />
                     <div class="album-detail">
                     <div class="album-title"><strong>{{.Name}}</strong> create new <span>post</span></div>
@@ -227,7 +227,7 @@
             </button>
           
             <span class="account-user">{{.Name}}
-              <img src="https://media.istockphoto.com/id/1223671392/fr/vectoriel/photo-de-profil-par-d%C3%A9faut-avatar-photo-placeholder-illustration-de-vecteur.jpg?s=170667a&w=0&k=20&c=EqD6q8IUqwN_bgGec0UBhh3tk2Zuur5lezDDlQsGdPY=" class="account-profile">
+              <img src={{.Image}} class="account-profile">
             </span>
          
           </div>

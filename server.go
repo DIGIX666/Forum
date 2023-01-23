@@ -177,7 +177,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 				}
 
 				cookie := http.Cookie{
-					Expires: time.Now().Add(time.Minute),
+					Expires: time.Now().Add(time.Second),
 					Value:   uuidUser,
 					Name:    "session",
 				}
@@ -222,7 +222,51 @@ func login(w http.ResponseWriter, r *http.Request) {
 
 	}
 
+	var uAccount structure.UserAccount
+	profil := data.GetUserProfil()
+
+	uAccount.Name = profil["name"]
+	// uAccount.UUID = profil["uuid"]
+	// cookie, err := r.Cookie("session")
+	// if err != nil {
+	// 	http.Redirect(w, r, "/profil", http.StatusFound)
+	// 	return
+	// }
+
+	data.DeleteSession(uAccount.Name)
+	fmt.Printf("username:%v n", uAccount.Name)
+
+	http.Redirect(w, r, "/profil", http.StatusFound)
 }
+
+/***************************** FUNCTION LOGOUT *****************************/
+// func logout(w http.ResponseWriter, r *http.Request) {
+// 	// Supprime les informations de session de l'utilisateur
+// 	session, _ := store.Get(r, "session-name")
+// 	session.Options.MaxAge = -1
+// 	session.Save(r, w)
+
+// 	// Redirige l'utilisateur vers la page de connexion
+// 	http.Redirect(w, r, "/home", http.StatusFound)
+// }
+
+// func logout(w http.ResponseWriter, r *http.Request) {
+// 	cookie, err := r.Cookie("session")
+// 	if err != nil {
+// 		http.Redirect(w, r, "/profil", http.StatusFound)
+// 		return
+// 	}
+
+// 	dataBase.DeleteSession(cookie.Value)
+
+// 	cookie = &http.Cookie{
+// 		Name:   "session",
+// 		Value:  "",
+// 		MaxAge: -1,
+// 	}
+// 	http.SetCookie(w, cookie)
+// 	http.Redirect(w, r, "/profil", http.StatusFound)
+// }
 
 /*************************** FUNCTION REGISTER **********************************/
 

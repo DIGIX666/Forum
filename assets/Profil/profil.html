@@ -225,7 +225,11 @@
                 <path d="M22 6l-10 7L2 6" />
               </svg>
             </button>
-            <a class="account-user" href="/profil">Logout</a>
+
+            <form action="/profil" method="Post">
+            <button type="submit" value="logout" name="logout" class="account-user">Logout</button>
+            </form>
+
             <span class="account-user">{{.Name}}
               <img src={{.Image}} class="account-profile">
             </span>

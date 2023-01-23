@@ -118,7 +118,7 @@ func AddSession(name string, uuid string, cookie string) {
 
 func DeleteSession(name string) {
 
-	_, err := Db.Exec("DELETE FROM session")
+	_, err := Db.Exec("DELETE FROM session WHERE name = ?", name)
 	if err != nil {
 		fmt.Println("Erreur lors de la suppression de la session dans la base de données, func DeleteSession:")
 		log.Fatal(err)

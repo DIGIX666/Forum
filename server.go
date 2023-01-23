@@ -99,6 +99,11 @@ var uAccount []structure.UserAccount
 
 func login(w http.ResponseWriter, r *http.Request) {
 
+	if r.FormValue("login") != "" {
+		http.Redirect(w, r, "/", http.StatusFound)
+		return
+	}
+
 	if r.FormValue("code") != "" {
 
 		code := r.FormValue("code")
@@ -115,7 +120,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 				//	Expires: time.Now().Add(time.Minute),
 				Value:  uuidUser,
 				Name:   "session",
-				MaxAge: 10,
+				MaxAge: 1000,
 			}
 			http.SetCookie(w, &cookie)
 			//profil := data.GetUserProfil()
@@ -135,7 +140,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 				//Expires: time.Now().Add(time.Minute),
 				Value:  uuidGithubUser,
 				Name:   "session",
-				MaxAge: 10,
+				MaxAge: 1000,
 			}
 			http.SetCookie(w, &cookie)
 			dataBase.AddSession(GitHub_UserName, uuidGithubUser, cookie.Value)
@@ -177,9 +182,10 @@ func login(w http.ResponseWriter, r *http.Request) {
 				}
 
 				cookie := http.Cookie{
-					Expires: time.Now().Add(time.Second),
-					Value:   uuidUser,
-					Name:    "session",
+					//Expires: time.Now().Add(time.Second),
+					Value:  uuidUser,
+					Name:   "session",
+					MaxAge: 1000,
 				}
 				http.SetCookie(w, &cookie)
 
@@ -275,9 +281,10 @@ func register(w http.ResponseWriter, r *http.Request) {
 
 			uuidGitHubUser := data.SetGitHubUUID(userGitHubName)
 			cookie := http.Cookie{
-				Expires: time.Now().Add(time.Second),
-				Value:   uuidGitHubUser,
-				Name:    "session",
+				//Expires: time.Now().Add(time.Second),
+				Value:  uuidGitHubUser,
+				Name:   "session",
+				MaxAge: 1000,
 			}
 
 			http.SetCookie(w, &cookie)
@@ -291,9 +298,10 @@ func register(w http.ResponseWriter, r *http.Request) {
 		if checkGoogleUserRegistered && googleUserEmail != "" {
 			uuidGoogleUser := data.SetGoogleUserUUID(googleUserEmail)
 			cookie := http.Cookie{
-				Expires: time.Now().Add(time.Second),
-				Value:   uuidGoogleUser,
-				Name:    "session",
+				//Expires: time.Now().Add(time.Second),
+				Value:  uuidGoogleUser,
+				Name:   "session",
+				MaxAge: 1000,
 			}
 			http.SetCookie(w, &cookie)
 
@@ -349,7 +357,7 @@ func register(w http.ResponseWriter, r *http.Request) {
 						//Expires: time.Now().Add(time.Second),
 						Value:  uuidUser,
 						Name:   "session",
-						MaxAge: 10,
+						MaxAge: 1000,
 					}
 					http.SetCookie(w, &cookie)
 					data.AddSession("none", uuidUser, cookie.Value)
@@ -395,13 +403,15 @@ func home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err = r.Cookie("session")
-	if err != nil {
-		log.Fatal(err)
+	if user.Connected {
 
+		_, err = r.Cookie("session")
+		if err != nil {
+			fmt.Println("ERROR COOKIE SESSION !!!")
+			log.Fatal(err)
+
+		}
 	}
-
-	var user structure.UserAccount
 
 	profil := data.GetUserProfil()
 
@@ -473,7 +483,10 @@ func profil(w http.ResponseWriter, r *http.Request) {
 		data.DeleteSession(uAccount.Name)
 		fmt.Printf("username:%v n", uAccount.Name)
 
+		user.Connected = false
+
 		http.Redirect(w, r, "/login", http.StatusFound)
+		return
 	}
 
 	if err := r.ParseForm(); err != nil {
@@ -487,12 +500,10 @@ func profil(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err = r.Cookie("session")
-	if err != nil {
-		log.Fatal(err)
-		if err == http.ErrNoCookie {
-			http.Redirect(w, r, "/", http.StatusFound)
-
+	if user.Connected {
+		_, err = r.Cookie("session")
+		if err != nil {
+			log.Fatal(err)
 		}
 	}
 

@@ -41,7 +41,7 @@
             </svg>
             Home
           </a>
-
+{{if .Connected}}
           <a href="/profil">
             <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
               viewBox="0 0 24 24">
@@ -50,6 +50,7 @@
             </svg>
             Me
           </a>
+          {{end}}
         </div>
       </div>
 
@@ -75,6 +76,7 @@
         <div class="timeline">
           <div class="timeline-right">
             <!--------------.Écriture Post.----------->
+            {{if .Connected}}
             <form method="POST">
               <div class="status box">
                 <div class="status-menu"></div>
@@ -102,12 +104,14 @@
                 </div>
               </div>
             </form>
+            {{end}}
             <!--------------.FIN Écriture Post.----------->
 
             <hr class="hr">
 
 
             <!--------------.Armature Post.----------->
+            
             {{ range .Post }}
             <div class="album box">
               <div class="status-main">

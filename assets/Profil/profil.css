@@ -719,6 +719,7 @@ body {
   align-items: center;
   color: #64677a;
   font-weight: 600;
+  text-decoration: none;
 }
 .account-user span {
   font-size: 10px;

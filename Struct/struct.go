@@ -13,7 +13,10 @@ type UserAccount struct {
 type Comment struct {
 	Name      string
 	CommentID string
-	Content   string
+	Message   string
+	DateTime  string
+	Picture   string
+	// Content   string
 }
 
 type Post struct {

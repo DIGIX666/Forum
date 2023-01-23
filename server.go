@@ -374,6 +374,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 	user.Name = profil["name"]
 	user.Email = profil["email"]
 	user.Image = profil["userImage"]
+	fmt.Printf("User.Image : %v\n", user.Image)
 	user.UUID = profil["uuid"]
 	if profil["admin"] == "true" {
 		user.Admin = true
@@ -463,7 +464,7 @@ func profil(w http.ResponseWriter, r *http.Request) {
 		//Put the message in the dataBase
 		dataBase.UserPost(user.Name, message, script.GeneratePostID(), user.Image, currentTime, picture)
 
-		//ProfilFeed = data.ProfilFeed(user.Name)
+		ProfilFeed = data.ProfilFeed(user.Name)
 
 		user.Post = ProfilFeed
 		user.Comment = []structure.Comment{}

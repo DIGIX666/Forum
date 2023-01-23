@@ -20,6 +20,7 @@ import (
 )
 
 /****************************** FUNCTION ERREUR *******************************/
+var user structure.UserAccount
 
 func erreur(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" && r.URL.Path != "/register" && r.URL.Path != "/home" && r.URL.Path != "/error" && r.URL.Path != "/userAccount" {
@@ -111,11 +112,16 @@ func login(w http.ResponseWriter, r *http.Request) {
 			uuidGenerated, _ := uuid.NewV4()
 			uuidUser := uuidGenerated.String()
 			cookie := http.Cookie{
-				Expires: time.Now().Add(time.Minute),
-				Value:   uuidUser,
-				Name:    "session",
+				//	Expires: time.Now().Add(time.Minute),
+				Value:  uuidUser,
+				Name:   "session",
+				MaxAge: 10,
 			}
 			http.SetCookie(w, &cookie)
+			//profil := data.GetUserProfil()
+
+			user.Connected = true
+
 			data.SetGoogleUserUUID(uEmail)
 			dataBase.AddSession(uName, uuidUser, cookie.Value)
 			http.Redirect(w, r, "/profil", http.StatusFound)
@@ -126,9 +132,10 @@ func login(w http.ResponseWriter, r *http.Request) {
 			uuidGenerated, _ := uuid.NewV4()
 			uuidGithubUser := uuidGenerated.String()
 			cookie := http.Cookie{
-				Expires: time.Now().Add(time.Minute),
-				Value:   uuidGithubUser,
-				Name:    "session",
+				//Expires: time.Now().Add(time.Minute),
+				Value:  uuidGithubUser,
+				Name:   "session",
+				MaxAge: 10,
 			}
 			http.SetCookie(w, &cookie)
 			dataBase.AddSession(GitHub_UserName, uuidGithubUser, cookie.Value)
@@ -184,14 +191,6 @@ func login(w http.ResponseWriter, r *http.Request) {
 					log.Println("Erreur dans la selection des parametres utilisateur dans la fonction login: ")
 					log.Fatal(err)
 				}
-
-				uAccount = append(uAccount, structure.UserAccount{
-					Name:     uName,
-					Image:    uImage,
-					Email:    uEmail,
-					Password: uPassword,
-					Admin:    uAdmin,
-				})
 				data.AddSession(uName, userSession, cookie.Value)
 
 				t := template.New("profil")
@@ -319,9 +318,10 @@ func register(w http.ResponseWriter, r *http.Request) {
 					uuidGenerated, _ := uuid.NewV4()
 					uuidUser := uuidGenerated.String()
 					cookie := http.Cookie{
-						Expires: time.Now().Add(time.Second),
-						Value:   uuidUser,
-						Name:    "session",
+						//Expires: time.Now().Add(time.Second),
+						Value:  uuidUser,
+						Name:   "session",
+						MaxAge: 10,
 					}
 					http.SetCookie(w, &cookie)
 					data.AddSession("none", uuidUser, cookie.Value)
@@ -365,6 +365,12 @@ func home(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println("Error parsing template:", err)
 		return
+	}
+
+	_, err = r.Cookie("session")
+	if err != nil {
+		log.Fatal(err)
+
 	}
 
 	var user structure.UserAccount
@@ -417,6 +423,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 
 /*************************** FUNCTION PROFIL **********************************/
 func profil(w http.ResponseWriter, r *http.Request) {
+
 	if err := r.ParseForm(); err != nil {
 		fmt.Fprintf(w, "ParseForm() err: %v", err)
 		return
@@ -426,6 +433,15 @@ func profil(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println("Error parsing template:", err)
 		return
+	}
+
+	_, err = r.Cookie("session")
+	if err != nil {
+		log.Fatal(err)
+		if err == http.ErrNoCookie {
+			http.Redirect(w, r, "/", http.StatusFound)
+
+		}
 	}
 
 	var user structure.UserAccount
@@ -442,6 +458,7 @@ func profil(w http.ResponseWriter, r *http.Request) {
 	} else {
 		user.Admin = false
 	}
+	user.Connected = true
 
 	fmt.Printf("user.Name: %v\n", user.Name)
 

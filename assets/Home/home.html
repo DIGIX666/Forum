@@ -247,10 +247,13 @@
       </div>
       <div class="side-wrapper stories">
         <div class="side-title">NOTIFICATIONS</div>
-        <a href="/login"><button type="submit" class="status-share">Login in</button></a>
+        {{if .Connected}}Notification{{end}}
+        {{if not .Connected }}<a href="/login"><button type="submit" class="status-share">Login in</button></a>{{end}}
+     
         <div class="side-wrapper contacts">
           <div class="side-title">ACIVITÉS</div>
-          <a href="/login"><button type="submit" class="status-share">Login in</button></a>
+          {{if .Connected}}Activité{{end}}
+          {{if not .Connected}}<a href="/login"><button type="submit" class="status-share">Login in</button></a>{{end}}
         </div>
       </div>
       <!-----------------------------.FIN BLOCK DE DROITE.---------------------------->

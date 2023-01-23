@@ -243,7 +243,7 @@ func UserPost(userName string, message string, postID string, image string, date
 
 	if pictureURL != "" {
 
-		_, err := Db.Exec("INSERT INTO posts (name, message, postid,image, datetime,picture) VALUES (?, ?, ?,?,?)", userName, message, postID, image, dateTime, pictureURL)
+		_, err := Db.Exec("INSERT INTO posts (name, message, postid,image, datetime,picture) VALUES (?, ?, ?,?,?,?)", userName, message, postID, image, dateTime, pictureURL)
 		if err != nil {
 			fmt.Println("Error Insert user Post to the dataBase:")
 			log.Fatal(err)
@@ -255,7 +255,7 @@ func UserPost(userName string, message string, postID string, image string, date
 
 	} else {
 
-		_, err := Db.Exec("INSERT INTO posts (name, message, postid, datetime,picture) VALUES (?, ?, ?,?,?)", userName, message, postID, dateTime, "")
+		_, err := Db.Exec("INSERT INTO posts (name, message, postid,image, datetime,picture) VALUES (?, ?, ?,?,?,?)", userName, message, postID, image, dateTime, "")
 		if err != nil {
 			fmt.Println("Error Insert user Post to the dataBase:")
 			log.Fatal(err)
@@ -327,15 +327,19 @@ func GetUserProfil() map[string]string {
 
 	err = Db.QueryRow("SELECT image,email,admin FROM users WHERE name = ?", name).Scan(&userImage, &userEmail, &admin)
 	if err != nil {
-		fmt.Println("Erreur SELECT 2 fonction GetUserProfil dataBase:")
+		fmt.Println("Erreur SELECT #2 fonction GetUserProfil dataBase:")
 		// log.Fatal(err)
 	}
+
+	fmt.Printf("User IMAGE: %v\n", userImage)
 
 	ans["name"] = name
 	ans["email"] = userEmail
 	ans["userImage"] = userImage
 	ans["uuid"] = uuid
 	ans["admin"] = admin
+
+	fmt.Printf("ans: %v\n", ans)
 
 	return ans
 
@@ -383,9 +387,9 @@ func HomeFeed() []structure.Post {
 
 	for rows.Next() {
 		var id int
-		var postID, userName, image, message, dateTime, picture string
+		var postID, userName, message, image, dateTime, picture string
 
-		err = rows.Scan(&id, &postID, &userName, &image, &message, &dateTime, &picture)
+		err := rows.Scan(&id, &postID, &image, &userName, &message, &dateTime, &picture)
 		if err != nil {
 			fmt.Println("Error HomeFeed Function in rows.Scan:")
 			log.Fatal(err)
@@ -408,7 +412,7 @@ func HomeFeed() []structure.Post {
 
 func ProfilFeed(userName string) []structure.Post {
 
-	rows, err := Db.Query("SELECT postid,message,datetime,picture FROM posts WHERE name = ?", userName)
+	rows, err := Db.Query("SELECT id,postid,image,message,datetime,picture FROM posts WHERE name = ?", userName)
 	if err != nil {
 		fmt.Println("Error in ProfilFeed Function Query didn't work in dataBase:")
 		log.Fatal(err)
@@ -417,9 +421,11 @@ func ProfilFeed(userName string) []structure.Post {
 
 	for rows.Next() {
 
+		var id int
+
 		var postID, message, dateTime, image, picture string
 
-		err = rows.Scan(&postID, &message, &image, &dateTime, &picture)
+		err := rows.Scan(&id, &postID, &image, &message, &dateTime, &picture)
 		if err != nil {
 			fmt.Println("Error ProfilFeed Function in rows.Scan:")
 			log.Fatal(err)
@@ -435,8 +441,6 @@ func ProfilFeed(userName string) []structure.Post {
 		})
 
 	}
-
-	fmt.Printf("Post in dataBase: %v\n", Posts)
 
 	return Posts
 

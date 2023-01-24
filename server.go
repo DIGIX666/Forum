@@ -286,7 +286,7 @@ func register(w http.ResponseWriter, r *http.Request) {
 			cookie := http.Cookie{
 				Value:  uuidGitHubUser,
 				Name:   "session",
-				MaxAge: 10000,
+				MaxAge: 100000,
 			}
 
 			http.SetCookie(w, &cookie)
@@ -303,7 +303,7 @@ func register(w http.ResponseWriter, r *http.Request) {
 			cookie := http.Cookie{
 				Value:  uuidGoogleUser,
 				Name:   "session",
-				MaxAge: 10000,
+				MaxAge: 100000,
 			}
 			http.SetCookie(w, &cookie)
 
@@ -355,7 +355,7 @@ func register(w http.ResponseWriter, r *http.Request) {
 					cookie := http.Cookie{
 						Value:  uuidUser,
 						Name:   "session",
-						MaxAge: 10000,
+						MaxAge: 100000,
 					}
 					user.Connected = true
 					Posts.Connected = true
@@ -371,7 +371,7 @@ func register(w http.ResponseWriter, r *http.Request) {
 					return
 				}
 			} else {
-				fmt.Println("problem to Register ! maybe email already exist !")
+				http.Redirect(w, r, "/login", http.StatusFound)
 				return
 			}
 		}
@@ -403,7 +403,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 		log.Println("Error parsing template:", err)
 		return
 	}
-	user.Connected = true
+	//user.Connected = true
 	if user.Connected {
 		_, err = r.Cookie("session")
 		if err != nil {
@@ -473,7 +473,6 @@ func profil(w http.ResponseWriter, r *http.Request) {
 		data.DeleteSession(user.Name)
 		user.Connected = false
 		Posts.Connected = false
-
 		http.Redirect(w, r, "/", http.StatusFound)
 		return
 	}
@@ -488,8 +487,8 @@ func profil(w http.ResponseWriter, r *http.Request) {
 		_, err = r.Cookie("session")
 		if err != nil {
 			user.Connected = false
-			data.DeleteSession(user.Name)
 			Posts.Connected = false
+			data.DeleteSession(user.Name)
 			http.Redirect(w, r, "/", http.StatusFound)
 			return
 		}
@@ -506,7 +505,6 @@ func profil(w http.ResponseWriter, r *http.Request) {
 	} else {
 		user.Admin = false
 	}
-
 	user.Connected = true
 
 	message := r.FormValue("message")

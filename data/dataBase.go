@@ -12,6 +12,14 @@ import (
 )
 
 var uAccount []structure.UserAccount
+var posts []structure.Post
+
+func preappendPost(c structure.Post) []structure.Post {
+	posts = append(posts, structure.Post{})
+	copy(posts[1:], posts)
+	posts[0] = c
+	return posts
+}
 
 var Db *sql.DB
 
@@ -22,10 +30,9 @@ func CreateDataBase() {
 	if err != nil {
 		fmt.Println("Erreur ouverture de la base de donnée à la creation de la table:")
 		log.Fatal(err)
-
 	}
 
-	_, err = Db.Exec(`CREATE TABLE IF NOT EXISTS users 
+	_, err = Db.Exec(`CREATE TABLE IF NOT EXISTS users
         (id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT,
         image TEXT,
@@ -50,6 +57,17 @@ func CreateDataBase() {
 		log.Fatal(err)
 	}
 
+	_, err = Db.Exec(`CREATE TABLE IF NOT EXISTS session (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		name TEXT,
+		uuid TEXT,
+		cookie TEXT
+		)`)
+	if err != nil {
+		fmt.Println("erreur creation de table session")
+		log.Fatal(err)
+	}
+
 	_, err = Db.Exec(`CREATE TABLE IF NOT EXISTS posts (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         postid TEXT,
@@ -64,27 +82,30 @@ func CreateDataBase() {
 		log.Fatal(err)
 	}
 
-	_, err = Db.Exec(`CREATE TABLE IF NOT EXISTS session (
-		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		name TEXT,
-		uuid TEXT,
-		cookie TEXT
-		)`)
-	if err != nil {
-		fmt.Println("erreur creation de table session")
-		log.Fatal(err)
-	}
-
 	_, err = Db.Exec(`CREATE TABLE IF NOT EXISTS likes (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT,
-        datetime TEXT
+		username TEXT,
+        datetime TEXT,
+		postid_id INTEGER,
+		FOREIGN KEY (postid_id) REFERENCES posts(postid)
+
     )`)
 	if err != nil {
 		log.Println("erreur creation de table likes")
 		log.Fatal(err)
 	}
 
+	_, err = Db.Exec(`CREATE TABLE IF NOT EXISTS dislikes (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+		username TEXT,
+        datetime TEXT,
+		postid_id INTEGER,
+		FOREIGN KEY (postid_id) REFERENCES posts(postid)
+    )`)
+	if err != nil {
+		log.Println("erreur creation de table dislikes")
+		log.Fatal(err)
+	}
 }
 
 func AddSession(name string, uuid string, cookie string) {
@@ -171,7 +192,6 @@ func DataBaseRegister(email string, password string) bool {
 	if !checkExisting {
 		return true
 	} else {
-
 		return false
 	}
 
@@ -218,7 +238,6 @@ func CheckGoogleUserLogin(email string, email_verified string, uuid string) bool
 			return true
 		}
 	}
-
 }
 
 func CheckUserLogin(email string, password string, uuid string) bool {
@@ -257,13 +276,13 @@ func UserPost(userName string, message string, postID string, image string, date
 			fmt.Println("Error Insert user Post to the dataBase:")
 			log.Fatal(err)
 		} else {
+
 			return true
 		}
 
 		return false
 
 	} else {
-
 		_, err := Db.Exec("INSERT INTO posts (name, message, postid,image, datetime,picture) VALUES (?, ?, ?,?,?,?)", userName, message, postID, image, dateTime, "")
 		if err != nil {
 			fmt.Println("Error Insert user Post to the dataBase:")
@@ -271,11 +290,8 @@ func UserPost(userName string, message string, postID string, image string, date
 		} else {
 			return true
 		}
-
 		return false
-
 	}
-
 }
 
 func SetGoogleUserUUID(userEmail string) string {
@@ -288,7 +304,6 @@ func SetGoogleUserUUID(userEmail string) string {
 		fmt.Println(err)
 	}
 	return uuid
-
 }
 
 func SetGitHubUUID(userName string) string {
@@ -298,27 +313,37 @@ func SetGitHubUUID(userName string) string {
 
 	_, err := Db.Exec("UPDATE users SET UUID = ? WHERE name = ?", uuid, userName)
 	if err != nil {
+		fmt.Println("Error function SetGitUUID dataBase:")
 		fmt.Println(err)
 	}
 	return uuid
 
 }
 
-/*func GetUserProfil(uName string)  {
+func AddLikes(userName string, postID string, dateTime string) {
 
-	var userIdDB int
-
-
-
-	err := Db.QueryRow("SELECT id,image, email, UUID, admin, password FROM users WHERE name = ?", uName).Scan(&userIdDB, &profil.Image, &profil.Email, &profil.UUID, &profil.Admin, &profil.Password)
+	_, err := Db.Exec("INSERT INTO likes (username,numberlikes,postid,datetime) VALUES (?,?,?,?)", userName, postID, dateTime)
 	if err != nil {
-		fmt.Println("Error when Selecting user profil from userForum.Db")
+		fmt.Println("Error function AddLikes dataBase:")
+		log.Fatal(err)
+	}
+}
+
+func NumberOFLikesPost(postID string) int {
+
+	var numberLikes int
+	err := Db.QueryRow("COUNT (*) FROM likes").Scan(&numberLikes)
+	if err != nil {
+		fmt.Println("Error SELECT From NumberODLikes dataBase:")
 		log.Fatal(err)
 	}
 
-	return
+	return numberLikes
+}
 
-}*/
+func AddDisLikes() {
+
+}
 
 func GetUserProfil() map[string]string {
 
@@ -329,7 +354,7 @@ func GetUserProfil() map[string]string {
 	err := Db.QueryRow("SELECT * FROM session ORDER BY id DESC LIMIT 1").Scan(&id, &name, &uuid, &cookie)
 	if err != nil {
 		fmt.Println("Erreur SELECT fonction GetUserProfil dataBase:")
-		// log.Fatal(err)
+		log.Fatal(err)
 	}
 
 	var userImage, userEmail, admin string
@@ -337,7 +362,7 @@ func GetUserProfil() map[string]string {
 	err = Db.QueryRow("SELECT image,email,admin FROM users WHERE name = ?", name).Scan(&userImage, &userEmail, &admin)
 	if err != nil {
 		fmt.Println("Erreur SELECT #2 fonction GetUserProfil dataBase:")
-		// log.Fatal(err)
+		log.Fatal(err)
 	}
 
 	fmt.Printf("User IMAGE: %v\n", userImage)
@@ -349,15 +374,15 @@ func GetUserProfil() map[string]string {
 	ans["admin"] = admin
 
 	fmt.Printf("ans: %v\n", ans)
-
 	return ans
-
 }
 
 func GetLastPost() map[string]string {
 	ans := make(map[string]string, 6)
 	var id int
 	var postID, message, dataTime, name, pictureURL, image string
+
+	//var Post []structure.Post
 
 	err := Db.QueryRow("SELECT * FROM posts ORDER BY id DESC LIMIT 1").Scan(&id, &postID, &name, &message, &image, &dataTime, &pictureURL)
 	if err != nil {
@@ -372,17 +397,16 @@ func GetLastPost() map[string]string {
 	ans["dataTime"] = dataTime
 	ans["pictureURL"] = pictureURL
 
+	/*Post = preappendPost(structure.Post{
+		PostID:    postID,
+		Name:      name,
+		UserImage: image,
+		Message:   message,
+		DateTime:  dataTime,
+		Picture:   pictureURL,
+	})*/
+
 	return ans
-
-}
-
-var posts []structure.Post
-
-func preappendPost(c structure.Post) []structure.Post {
-	posts = append(posts, structure.Post{})
-	copy(posts[1:], posts)
-	posts[0] = c
-	return posts
 }
 
 func HomeFeed() []structure.Post {
@@ -393,17 +417,16 @@ func HomeFeed() []structure.Post {
 		log.Fatal(err)
 	}
 	var Posts []structure.Post
+	var id int
+	var postID, userName, message, image, dateTime, picture string
 
 	for rows.Next() {
-		var id int
-		var postID, userName, message, image, dateTime, picture string
 
 		err := rows.Scan(&id, &postID, &image, &userName, &message, &dateTime, &picture)
 		if err != nil {
 			fmt.Println("Error HomeFeed Function in rows.Scan:")
 			log.Fatal(err)
 		}
-
 		Posts = preappendPost(structure.Post{
 			PostID:    postID,
 			Name:      userName,
@@ -414,7 +437,6 @@ func HomeFeed() []structure.Post {
 		})
 
 	}
-
 	return Posts
 
 }
@@ -450,9 +472,7 @@ func ProfilFeed(userName string) []structure.Post {
 		})
 
 	}
-
 	return Posts
-
 }
 
 func ProfilFeedDelete(userName string) {
@@ -462,5 +482,4 @@ func ProfilFeedDelete(userName string) {
 		fmt.Println("Error in ProfilFeedDelete Function Query didn't work in dataBase:")
 		log.Fatal(err)
 	}
-
 }

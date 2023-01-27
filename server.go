@@ -410,7 +410,6 @@ func home(w http.ResponseWriter, r *http.Request) {
 		log.Println("Error parsing template:", err)
 		return
 	}
-	//user.Connected = true
 	if user.Connected {
 		_, err = r.Cookie("session")
 		if err != nil {

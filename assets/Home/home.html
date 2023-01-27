@@ -154,17 +154,14 @@
                 </a>
               </form>
                 {{end}}
-                {{if .Connected}}
                 <form action="/" method="POST">
                   <a href="/comment" class="album-action">
                     <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
                       class="css-i6dzq1" viewBox="0 0 24 24">
                       <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
                     </svg>
-  
                   </a>
                 </form>
-                {{end}}
               </div>
             </div>
             {{end}}
@@ -199,40 +196,8 @@
 
               <div class="album-actions">
                 <!--If not Connected just show the number of likes dislikes comments-->
-                {{if not .Connected}}
-                
-                  <button class="like">
-                    <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-                      <path  d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
-                    </svg>
-                  </button>
-                  <span class="like-count">
-                    {{ range .Post}}{{range .AllLikes}}{{.NumberOfLikes}}{{end}}{{end}}
-                  </span>
-               
-                {{end}}
-                {{if not .Connected}}
-                
-                  <button class="dislike">
-                    <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"
-                      stroke-linejoin="round" class="css-i6dzq1" viewBox="0 0 24 24">
-                      <path d="M18 6L6 18M6 6l12 12" />
-                    </svg>
-                  </button>
-                  <span class="dislike-count">{{ range .Post}} {{range .AllDislikes}}{{.NumberOfDislikes}}{{end}} {{end}}</span>
-               
-                {{end}}
-                {{if not .Connected}}
-                
-                  <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
-                    class="css-i6dzq1" viewBox="0 0 24 24">
-                    <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
-                  </svg>
-                  
-               
-                {{end}}
                 <!---If Connected you can click on like/dislike/comment-->
-                {{if .Connected}}
+                
                 <a href="" class="album-action">
                   <button class="like">
                     <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"
@@ -243,8 +208,9 @@
                   </button>
                   <span class="like-count"></span>
                 </a>
-                {{end}}
-                {{if .Connected}}
+                
+
+                
                 <a href="" class="album-action">
                   <button class="dislike">
                     <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"
@@ -254,8 +220,9 @@
                   </button>
                   <span class="dislike-count"></span>
                 </a>
-                {{end}}
-                {{if .Connected}}
+                
+
+                
                 <a href="" class="album-action">
                   <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
                     class="css-i6dzq1" viewBox="0 0 24 24">
@@ -263,7 +230,7 @@
                   </svg>
                   1
                 </a>
-                {{end}}
+                
               </div>
             </div>
           </div>
@@ -295,6 +262,10 @@
       </a>
        {{end}}
        {{if not .Connected}}
+       <a href="/register">
+        <span class="account-user"> Register 
+        </span>
+      </a>
        <a href="/login">
         <span class="account-user"> Login 
          <img src="../images/beehive-37436.svg" class="account-profile">

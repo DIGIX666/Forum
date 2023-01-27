@@ -36,6 +36,14 @@ body {
 } */
 
 
+.button__login {
+  background: transparent;
+  cursor: pointer;
+  border: none;
+  margin-left: 60px;
+}
+
+
 .caixa__login {
   position: absolute;
   top: 50%;
@@ -119,6 +127,7 @@ body {
   display: block;
 }
 
+
 .caixa__login a span:nth-child(1) {
   top: 0;
   left: -100%;
@@ -127,6 +136,17 @@ body {
   background: linear-gradient(90deg, transparent, #8b80f9);
   animation: animacaoBotao1 1s linear infinite;
 }
+
+
+.account-button {
+  border: 0;
+  background: 0;
+  color: #64677a;
+  padding: 0;
+  cursor: pointer;
+  position: relative;
+ }
+
 
 @keyframes animacaoBotao1 {
   0% {

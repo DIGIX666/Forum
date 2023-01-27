@@ -74,7 +74,6 @@
       <div class="main-container">
         <div class="profile">
           <div class="profile-avatar">
-           
             <img src="{{.Image}}" alt="user picture" class="profile-img">
            
             <div class="profile-name">{{.Name}}</div>
@@ -126,10 +125,9 @@
             {{range .Post}}
             <div class="album box">
               <div class="status-main">
-                 <img src="{{.UserImage}}" class="status-img">  
+                 <img src="{{.UserImage}}" class="status-img"> 
                 <div class="album-detail">
-                  <div class="album-title"><strong>{{.Name}}</strong> create new <span>post</span></div>
-
+                  <div class="album-title"><strong>{{.Name}}</strong>create new<span>post</span></div>
                   <div class="album-date">{{.DateTime}}</div>
                 </div>
               </div>
@@ -138,12 +136,11 @@
               <div class="album-actions">
                 
                 <a href="" class="album-action">
-                  <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
-                    viewBox="0 0 24 24">
+                  <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
                     <path
                       d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
                   </svg>
-                  {{range .AllLikes}}{{.NumberOfLikes}}{{end}}
+                {{range .AllLikes}}{{.NumberOfLikes}}{{end}}
                 </a>
               
                 
@@ -175,8 +172,7 @@
             <!--------------. Armature Post1 Précréer.----------->
             <div class="album box">
               <div class="status-main">
-                <img
-                  src="https://media.istockphoto.com/id/1223671392/fr/vectoriel/photo-de-profil-par-d%C3%A9faut-avatar-photo-placeholder-illustration-de-vecteur.jpg?s=170667a&w=0&k=20&c=EqD6q8IUqwN_bgGec0UBhh3tk2Zuur5lezDDlQsGdPY="
+                <img src="{{.Image}}"
                   class="status-img" />
                 <div class="album-detail">
 
@@ -214,7 +210,7 @@
                 </a>
                
                 
-                <a href="" class="album-actiifon">
+                <a href="" class="album-action">
                   <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
                     class="css-i6dzq1" viewBox="0 0 24 24">
                     <path d="M18 6L6 18M6 6l12 12" />
@@ -223,7 +219,7 @@
                 </a>
                
                 
-                <a href="" class="album-action">
+                <a href="/comment" class="album-action">
                   <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
                     class="css-i6dzq1" viewBox="0 0 24 24">
                     <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />

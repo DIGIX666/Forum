@@ -129,7 +129,9 @@ func login(w http.ResponseWriter, r *http.Request) {
 			http.SetCookie(w, &cookie)
 
 			user.Connected = true
-			Posts.Connected = true
+			for _, v := range user.Post {
+				v.Connected = true
+			}
 
 			data.SetGoogleUserUUID(uEmail)
 			dataBase.AddSession(uName, uuidUser, cookie.Value)
@@ -148,7 +150,9 @@ func login(w http.ResponseWriter, r *http.Request) {
 			}
 			http.SetCookie(w, &cookie)
 			user.Connected = true
-			Posts.Connected = true
+			for _, v := range user.Post {
+				v.Connected = true
+			}
 			dataBase.AddSession(GitHub_UserName, uuidGithubUser, cookie.Value)
 
 			http.Redirect(w, r, "/profil", http.StatusFound)
@@ -205,7 +209,9 @@ func login(w http.ResponseWriter, r *http.Request) {
 				user.Connected = true
 				data.AddSession(uName, userSession, cookie.Value)
 
-				Posts.Connected = true
+				for _, v := range user.Post {
+					v.Connected = true
+				}
 
 				http.Redirect(w, r, "/", http.StatusFound)
 				return
@@ -292,8 +298,10 @@ func register(w http.ResponseWriter, r *http.Request) {
 			http.SetCookie(w, &cookie)
 			data.AddSession(userGitHubName, uuidGitHubUser, cookie.Value)
 			user.Connected = true
-			Posts.Connected = true
-			Posts.Connected = true
+			for _, v := range user.Post {
+				v.Connected = true
+			}
+
 			http.Redirect(w, r, "/", http.StatusFound)
 			return
 		}
@@ -310,7 +318,9 @@ func register(w http.ResponseWriter, r *http.Request) {
 			data.AddSession(userGoogleName, uuidGoogleUser, cookie.Value)
 
 			user.Connected = true
-			Posts.Connected = true
+			for _, v := range user.Post {
+				v.Connected = true
+			}
 
 			http.Redirect(w, r, "/", http.StatusFound)
 			return
@@ -340,15 +350,10 @@ func register(w http.ResponseWriter, r *http.Request) {
 
 		hashPassword := script.GenerateHash(password)
 
-		//fmt.Printf("email: %v\n", email)
-		//fmt.Printf("hashPassword: %v\n", hashPassword)
-		//compare := script.ComparePassword(hashPassword, password)
-
 		if email != "" && password != "" {
+
 			checkRegister := dataBase.DataBaseRegister(email, hashPassword)
-
 			if checkRegister {
-
 				if r.Method == "POST" {
 					uuidGenerated, _ := uuid.NewV4()
 					uuidUser := uuidGenerated.String()
@@ -358,7 +363,9 @@ func register(w http.ResponseWriter, r *http.Request) {
 						MaxAge: 100000,
 					}
 					user.Connected = true
-					Posts.Connected = true
+					for _, v := range user.Post {
+						v.Connected = true
+					}
 					http.SetCookie(w, &cookie)
 					data.AddSession("none", uuidUser, cookie.Value)
 					_, err := data.Db.Exec("UPDATE users SET UUID = ? WHERE email = ?", uuidUser, email)
@@ -408,18 +415,23 @@ func home(w http.ResponseWriter, r *http.Request) {
 		_, err = r.Cookie("session")
 		if err != nil {
 			user.Connected = false
-			Posts.Connected = false
+			for _, v := range user.Post {
+				v.Connected = false
+			}
 			data.DeleteSession(user.Name)
 			http.Redirect(w, r, "/", http.StatusFound)
 			return
 		}
 		profil = data.GetUserProfil()
+		for _, v := range user.Post {
+			v.Connected = true
+		}
+
 	}
 
 	user.Name = profil["name"]
 	user.Email = profil["email"]
 	user.Image = profil["userImage"]
-	fmt.Printf("User.Image : %v\n", user.Image)
 	user.UUID = profil["uuid"]
 	if profil["admin"] == "true" {
 		user.Admin = true
@@ -431,14 +443,15 @@ func home(w http.ResponseWriter, r *http.Request) {
 	picture := r.FormValue("picture")
 	message := r.FormValue("message")
 
-	if message != "" && Posts.Connected {
+	if message != "" && user.Connected {
 		currentTime := time.Now().Format("15:04  2-Janv-2006")
 		user.Post = preappendPost(structure.Post{
-			PostID:   script.GeneratePostID(),
-			Name:     user.Name,
-			Message:  message,
-			DateTime: currentTime,
-			Picture:  picture,
+			PostID:    script.GeneratePostID(),
+			Name:      user.Name,
+			Message:   message,
+			DateTime:  currentTime,
+			Picture:   picture,
+			Connected: true,
 		})
 		//Put the message in the dataBase
 		dataBase.UserPost(user.Name, message, script.GeneratePostID(), user.Image, currentTime, picture)
@@ -472,9 +485,14 @@ func profil(w http.ResponseWriter, r *http.Request) {
 		http.SetCookie(w, &cookie)
 		data.DeleteSession(user.Name)
 		user.Connected = false
-		Posts.Connected = false
+		for _, v := range user.Post {
+			v.Connected = false
+		}
 		http.Redirect(w, r, "/", http.StatusFound)
 		return
+	}
+	for _, v := range user.Post {
+		v.Connected = true
 	}
 
 	temp, err := template.ParseFiles("./assets/Profil/profil.html")
@@ -487,7 +505,9 @@ func profil(w http.ResponseWriter, r *http.Request) {
 		_, err = r.Cookie("session")
 		if err != nil {
 			user.Connected = false
-			Posts.Connected = false
+			for _, v := range user.Post {
+				v.Connected = false
+			}
 			data.DeleteSession(user.Name)
 			http.Redirect(w, r, "/", http.StatusFound)
 			return
@@ -505,7 +525,6 @@ func profil(w http.ResponseWriter, r *http.Request) {
 	} else {
 		user.Admin = false
 	}
-	user.Connected = true
 
 	message := r.FormValue("message")
 	picture := r.FormValue("picture")

@@ -167,6 +167,7 @@
              
             </div>
             {{end}}
+            {{end}}
           
             <!--------------. FIN Armature Post.----------->
 
@@ -174,11 +175,9 @@
 
             <div class="album box">
               <div class="status-main">
-                {{if .Connected}}<img src="{{.Image}}" class="status-img">{{end}}{{if not .Connected}}<img
-                  src="../images/beehive-37436.svg" class="status-img">{{end}}
+                {{if .Connected}}<img src="{{.Image}}" class="status-img">{{end}}{{if not .Connected}}<img src="../images/beehive-37436.svg" class="status-img">{{end}}
                 <div class="album-detail">
-                  <div class="album-title">{{if .Connected}}<strong>{{.Name}}</strong>{{end}} {{if not
-                    .Connected}}<strong>{{.Name}}</strong>{{end}} create new <span>post</span></div>
+                  <div class="album-title">{{if .Connected}}<strong>{{.Name}}</strong>{{end}} {{if not .Connected}}<strong>{{.Name}}</strong>{{end}} create new <span>post</span></div>
 
                   <div class="album-date">11 Janv 2023 </div>
                 </div>

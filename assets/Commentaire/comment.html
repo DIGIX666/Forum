@@ -76,26 +76,10 @@
         <div class="timeline">
           <div class="timeline-right">
              <!--------------.Armature Post.----------->
-             <!-- {{ range .}}
-             <div class="album box">
-               <div class="status-main">
-                 <img
-                   src="{{.Picture}}"
-                   class="status-img" />
-                 <div class="album-detail">
-                   <div class="album-title"><strong>{{.Name}}</strong> create new <span>post</span></div>
- 
-                   <div class="album-date">{{.DateTime}}</div>
-                 
-                 </div>
-               </div>
-               
-               <div class="album-content">{{.Message}}</div>
-             </div>
-             {{end}} -->
+
              <!--------------. FIN Armature Post.----------->
             <!--------------.Écriture Post.----------->
-            <form method="POST">
+            <form action="/comment" method="POST">
               <div class="status box">
                 <div class="status-menu"></div>
                 <div class="status-main">
@@ -110,9 +94,6 @@
             {{ range .}}
              <div class="album box">
                <div class="status-main">
-                 <img
-                   src="{{.Picture}}"
-                   class="status-img" />
                  <div class="album-detail">
                    <div class="album-title"><strong>{{.Name}}</strong> create new <span>comment</span></div>
  
@@ -125,68 +106,7 @@
              </div>
              {{end}}
             <!--------------.FIN Écriture Post.----------->
-
-            <!--------------. Armature Post1 Précréer.----------->
-           
-            <!-- <div class="album box"> -->
-              <!-- <div class="status-main">
-                <img
-                  src="../images/beehive-37436.svg"
-                  class="status-img" />
-                <div class="album-detail">
-                  <div class="album-title"><strong>Profil</strong> create new <span>post</span></div>
-
-                  <div class="album-date">11:10 11.janv.2023</div>
-                </div>
-              </div>
-              <div class="album-content">Hello guys
-                <div class="album-photos">
-                  <img
-                    src="https://images.unsplash.com/photo-1508179719682-dbc62681c355?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2378&q=80"
-                    alt="" class="album-photo" />
-                  <div class="album-right">
-                    <img
-                      src="https://images.unsplash.com/photo-1502872364588-894d7d6ddfab?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2250&q=80"
-                      alt="" class="album-photo" />
-                    <img
-                      src="https://images.unsplash.com/photo-1566737236500-c8ac43014a67?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1950&q=80"
-                      alt="" class="album-photo" />
-                  </div>
-                </div>
-              </div>
-
-              <div class="album-actions">
-                <a href="#" class="album-action">
-                  <button class="like">
-                    <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"
-                      stroke-linejoin="round" viewBox="0 0 24 24">
-                      <path
-                        d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
-                    </svg>
-                  </button>
-                  <span class="like-count"></span>
-                </a>
-                <a href="#" class="album-action">
-                  <button class="dislike">
-                    <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"
-                      stroke-linejoin="round" class="css-i6dzq1" viewBox="0 0 24 24">
-                      <path d="M18 6L6 18M6 6l12 12" />
-                    </svg>
-                  </button>
-                  <span class="dislike-count"></span>
-                </a>
-                <a href="#" class="album-action">
-                  <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
-                    class="css-i6dzq1" viewBox="0 0 24 24">
-                    <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
-                  </svg>
-                  1
-                </a>
-              </div> -->
-            <!-- </div> -->
           </div>
-          <!-----------------.FIN Armature Post1 Précréer.------------>
-
         </div>
       </div>
     </div>

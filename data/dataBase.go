@@ -51,8 +51,7 @@ func CreateDataBase() {
         name TEXT,
         commentid TEXT,
         content TEXT,
-		post_id INTEGER,
-		FOREIGN KEY (post_id) REFERENCES posts(id)
+		date TEXT
     )`)
 	if err != nil {
 		log.Println("erreur creation de table comments")
@@ -295,6 +294,17 @@ func UserPost(userName string, message string, postID string, image string, date
 		}
 		return false
 	}
+}
+
+func UserComment(userName string, message string, CommentID string, dateTime string) bool {
+	_, err := Db.Exec("INSERT INTO comments (name, content, commentid, date) VALUES (?, ?, ?, ?)", userName, message, CommentID, dateTime)
+	if err != nil {
+		fmt.Println("Error Insert user Comment to the dataBase:")
+		log.Fatal(err)
+	} else {
+		return true
+	}
+	return false
 }
 
 func SetGoogleUserUUID(userEmail string) string {

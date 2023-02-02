@@ -128,9 +128,8 @@ func login(w http.ResponseWriter, r *http.Request) {
 			http.SetCookie(w, &cookie)
 
 			user.Connected = true
-			for _, v := range user.Post {
-				v.Connected = true
-			}
+			Posts.Connected = true
+			userComment.Connected = true
 
 			data.SetGoogleUserUUID(uEmail)
 			dataBase.AddSession(uName, uuidUser, cookie.Value)
@@ -149,9 +148,8 @@ func login(w http.ResponseWriter, r *http.Request) {
 			}
 			http.SetCookie(w, &cookie)
 			user.Connected = true
-			for _, v := range user.Post {
-				v.Connected = true
-			}
+			Posts.Connected = true
+			userComment.Connected = true
 			dataBase.AddSession(GitHub_UserName, uuidGithubUser, cookie.Value)
 
 			http.Redirect(w, r, "/profil", http.StatusFound)
@@ -208,9 +206,8 @@ func login(w http.ResponseWriter, r *http.Request) {
 				user.Connected = true
 				data.AddSession(uName, userSession, cookie.Value)
 
-				for _, v := range user.Post {
-					v.Connected = true
-				}
+				Posts.Connected = true
+				userComment.Connected = true
 
 				http.Redirect(w, r, "/", http.StatusFound)
 				return
@@ -297,10 +294,8 @@ func register(w http.ResponseWriter, r *http.Request) {
 			http.SetCookie(w, &cookie)
 			data.AddSession(userGitHubName, uuidGitHubUser, cookie.Value)
 			user.Connected = true
-			for _, v := range user.Post {
-				v.Connected = true
-			}
-
+			Posts.Connected = true
+			userComment.Connected = true
 			http.Redirect(w, r, "/", http.StatusFound)
 			return
 		}
@@ -317,9 +312,8 @@ func register(w http.ResponseWriter, r *http.Request) {
 			data.AddSession(userGoogleName, uuidGoogleUser, cookie.Value)
 
 			user.Connected = true
-			for _, v := range user.Post {
-				v.Connected = true
-			}
+			Posts.Connected = true
+			userComment.Connected = true
 
 			http.Redirect(w, r, "/", http.StatusFound)
 			return
@@ -362,9 +356,8 @@ func register(w http.ResponseWriter, r *http.Request) {
 						MaxAge: 100000,
 					}
 					user.Connected = true
-					for _, v := range user.Post {
-						v.Connected = true
-					}
+					Posts.Connected = true
+					userComment.Connected = true
 					http.SetCookie(w, &cookie)
 					data.AddSession("none", uuidUser, cookie.Value)
 					_, err := data.Db.Exec("UPDATE users SET UUID = ? WHERE email = ?", uuidUser, email)
@@ -454,9 +447,6 @@ func home(w http.ResponseWriter, r *http.Request) {
 		dataBase.UserPost(user.Name, message, script.GeneratePostID(), user.Image, currentTime, picture)
 
 	}
-
-	user.Comment = []structure.Comment{}
-
 	err = temp.ExecuteTemplate(w, "home", user)
 	if err != nil {
 		log.Fatal(err)
@@ -481,9 +471,8 @@ func profil(w http.ResponseWriter, r *http.Request) {
 		http.SetCookie(w, &cookie)
 		data.DeleteSession(user.Name)
 		user.Connected = false
-		for _, v := range user.Post {
-			v.Connected = false
-		}
+		Posts.Connected = false
+		userComment.Connected = false
 		http.Redirect(w, r, "/", http.StatusFound)
 		return
 	}
@@ -505,6 +494,8 @@ func profil(w http.ResponseWriter, r *http.Request) {
 				v.Connected = false
 			}
 			data.DeleteSession(user.Name)
+			Posts.Connected = false
+			userComment.Connected = false
 			http.Redirect(w, r, "/", http.StatusFound)
 			return
 		}
@@ -539,8 +530,6 @@ func profil(w http.ResponseWriter, r *http.Request) {
 
 	}
 
-	user.Comment = []structure.Comment{}
-
 	if err = temp.ExecuteTemplate(w, "profil", user); err != nil {
 		log.Println("Error executing template:", err)
 		return
@@ -574,10 +563,11 @@ func userAccount(w http.ResponseWriter, r *http.Request) {
 
 var comments []structure.Comment
 
-func preappendComment(d structure.Comment) {
+func preappendComment(d structure.Comment) []structure.Comment {
 	comments = append(comments, structure.Comment{})
 	copy(comments[1:], comments)
 	comments[0] = d
+	return comments
 }
 
 func comment(w http.ResponseWriter, r *http.Request) {
@@ -606,5 +596,18 @@ func comment(w http.ResponseWriter, r *http.Request) {
 	if err := temp.ExecuteTemplate(w, "comment", comments); err != nil {
 		log.Println("Error executing template:", err)
 		return
+	}
+
+	if message != "" && userComment.Connected {
+		currentTime := time.Now().Format("15:04  2-Janv-2006")
+		user.Comment = preappendComment(structure.Comment{
+			CommentID: script.GenerateCommentID(),
+			Name:      user.Name,
+			Message:   message,
+			DateTime:  currentTime,
+		})
+		//Put the message in the dataBase
+		dataBase.UserComment(user.Name, message, script.GenerateCommentID(), currentTime)
+
 	}
 }

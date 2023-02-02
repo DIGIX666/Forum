@@ -50,7 +50,9 @@ func CreateDataBase() {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT,
         commentid TEXT,
-        content TEXT
+        content TEXT,
+		post_id INTEGER,
+		FOREIGN KEY (post_id) REFERENCES posts(id)
     )`)
 	if err != nil {
 		log.Println("erreur creation de table comments")
@@ -76,6 +78,7 @@ func CreateDataBase() {
         message TEXT,
         datetime TEXT,
 		picture TEXT
+
     )`)
 	if err != nil {
 		log.Println("erreur creation de table posts")

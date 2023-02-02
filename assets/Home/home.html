@@ -123,11 +123,9 @@
               </div>
 
               <div class="album-content">{{.Message}}</div>
-
               
               <div class="album-actions">
                 {{if .Connected}}
-
                <form action="/" method="POST">
                 <a href="" class="album-action">
                   <button name="like" value="like" class="like">
@@ -163,10 +161,10 @@
                     </svg>
                   </a>
                 </form>
+                {{end}}
               </div>
-             
             </div>
-            {{end}}
+            
             {{end}}
           
             <!--------------. FIN Armature Post.----------->
@@ -279,15 +277,17 @@
       </div>
       <div class="side-wrapper stories">
         <div class="side-title">NOTIFICATIONS</div>
-        {{if .Connected}}Notification{{end}}
+        
         {{if not .Connected }}<a href="/login"><button type="submit" class="status-share">Login in</button></a>{{end}}
 
         <div class="side-wrapper contacts">
           <div class="side-title">ACIVITÉS</div>
-          {{if .Connected}}Activité{{end}}
+          
           {{if not .Connected}}<a href="/login"><button type="submit" class="status-share">Login in</button></a>{{end}}
         </div>
       </div>
+    </div>
+
 
       <!-----------------------------.FIN BLOCK DE DROITE.---------------------------->
 
@@ -312,9 +312,6 @@
             console.log(like)
           });
         }
-
-
-
 
         function dislike() {
           let buttonLike = document.querySelector(".dislike")

@@ -424,7 +424,6 @@ func home(w http.ResponseWriter, r *http.Request) {
 		for _, v := range user.Post {
 			v.Connected = true
 		}
-
 	}
 
 	user.Name = profil["name"]
@@ -462,7 +461,6 @@ func home(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Fatal(err)
 	}
-
 }
 
 /*************************** FUNCTION PROFIL **********************************/

@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+
 	"text/template"
 	"time"
 
@@ -434,9 +435,10 @@ func home(w http.ResponseWriter, r *http.Request) {
 	message := r.FormValue("message")
 
 	if message != "" && user.Connected {
+		postid := script.GeneratePostID()
 		currentTime := time.Now().Format("15:04  2-Janv-2006")
 		user.Post = preappendPost(structure.Post{
-			PostID:    script.GeneratePostID(),
+			PostID:    postid,
 			Name:      user.Name,
 			Message:   message,
 			DateTime:  currentTime,
@@ -444,7 +446,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 			Connected: true,
 		})
 		//Put the message in the dataBase
-		dataBase.UserPost(user.Name, message, script.GeneratePostID(), user.Image, currentTime, picture)
+		dataBase.UserPost(user.Name, message, postid, user.Image, currentTime, picture)
 
 	}
 	err = temp.ExecuteTemplate(w, "home", user)
@@ -561,53 +563,44 @@ func userAccount(w http.ResponseWriter, r *http.Request) {
 
 /*************************** FUNCTION COMMENT **********************************/
 
-var comments []structure.Comment
-
-func preappendComment(d structure.Comment) []structure.Comment {
-	comments = append(comments, structure.Comment{})
-	copy(comments[1:], comments)
-	comments[0] = d
-	return comments
-}
-
 func comment(w http.ResponseWriter, r *http.Request) {
-	if err := r.ParseForm(); err != nil {
-		fmt.Fprintf(w, "ParseForm() err: %v", err)
-		return
-	}
 	temp, err := template.ParseFiles("./assets/Commentaire/comment.html")
 	if err != nil {
 		log.Println("Error parsing template:", err)
 		return
 	}
 
-	name := r.FormValue("name")
-	message := r.FormValue("message")
-	if message != "" {
-		currentTime := time.Now().Format("15:04  2.Janv.2006")
-		preappendComment(structure.Comment{Name: name, Message: message, DateTime: currentTime})
-	}
+	if r.Method == "POST" {
 
-	for _, v := range comments {
-		fmt.Printf("v.DateTime: %v\n", v.DateTime)
-		fmt.Printf("v.Message: %v\n", v.Message)
-	}
+		if err := r.ParseForm(); err != nil {
+			fmt.Fprintf(w, "ParseForm() err: %v", err)
+			return
+		}
 
-	if err := temp.ExecuteTemplate(w, "comment", comments); err != nil {
-		log.Println("Error executing template:", err)
-		return
-	}
+		message := r.FormValue("message")
+		postID := r.FormValue("Post_values")
+		fmt.Printf("postID: %v\n", postID)
+		//postid, _ := strconv.Atoi(postID)
+		//fmt.Printf("postid: %v\n", postid)
 
-	if message != "" && userComment.Connected {
-		currentTime := time.Now().Format("15:04  2-Janv-2006")
-		user.Comment = preappendComment(structure.Comment{
-			CommentID: script.GenerateCommentID(),
-			Name:      user.Name,
-			Message:   message,
-			DateTime:  currentTime,
-		})
+		currentTime := time.Now().Format("15:04  2-Jan-2006")
+
 		//Put the message in the dataBase
-		dataBase.UserComment(user.Name, message, script.GenerateCommentID(), currentTime)
+		v := dataBase.UserComment(user.Name, message, script.GenerateCommentID(), currentTime, postID)
+		fmt.Printf("User Comment: %v\n", v)
+
+		http.Redirect(w, r, "/comment?postid="+postID, http.StatusSeeOther)
+
+	} else if r.Method == "GET" {
+		postid := r.URL.Query().Get("postid")
+
+		if err := temp.ExecuteTemplate(w, "comment", map[string]any{
+			"PostID":   postid,
+			"Comments": data.GetPostComment(postid),
+		}); err != nil {
+			log.Println("Error executing template:", err)
+			return
+		}
 
 	}
 }

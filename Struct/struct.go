@@ -20,6 +20,7 @@ type Comment struct {
 	CommentID string
 	Message   string
 	DateTime  string
+	PostID    string
 	Connected bool
 }
 

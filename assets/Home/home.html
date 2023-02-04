@@ -123,7 +123,7 @@
               </div>
 
               <div class="album-content">{{.Message}}</div>
-              
+
               <div class="album-actions">
                 {{if .Connected}}
                <form action="/" method="POST">
@@ -153,14 +153,16 @@
               </form>
                 {{end}}
                 {{if .Connected}}
-                <form action="/" method="POST">
-                  <a href="/comment" class="album-action">
+               
+                  <a href="/comment?postid={{.PostID}}">Comment</a>
+                  
+                    
                     <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"
                       stroke-linejoin="round" class="css-i6dzq1" viewBox="0 0 24 24">
                       <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
                     </svg>
-                  </a>
-                </form>
+                  
+              
                 {{end}}
               </div>
             </div>

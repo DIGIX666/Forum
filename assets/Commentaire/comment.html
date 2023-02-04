@@ -80,18 +80,19 @@
              <!--------------. FIN Armature Post.----------->
             <!--------------.Écriture Post.----------->
             <form action="/comment" method="POST">
+            <input type="text" value="{{.PostID}}" name="Post_values">
               <div class="status box">
                 <div class="status-menu"></div>
                 <div class="status-main">
                   <textarea class="status-textarea" name="message" placeholder="Write something ..."></textarea>
                 </div>
                 <div class="status-actions">
-                  <button type="submit" class="status-share">Send</button>
+                  <button type="submit"  class="status-share">Send</button>
                 </div>
               </div>
             </form>
 
-            {{ range .}}
+            {{ range .Comments}}
              <div class="album box">
                <div class="status-main">
                  <div class="album-detail">

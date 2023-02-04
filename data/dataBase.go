@@ -51,10 +51,27 @@ func CreateDataBase() {
         name TEXT,
         commentid TEXT,
         content TEXT,
-		date TEXT
+		date TEXT,
+		post_id TEXT
     )`)
 	if err != nil {
 		log.Println("erreur creation de table comments")
+		log.Fatal(err)
+	}
+
+	_, err = Db.Exec(`CREATE TABLE IF NOT EXISTS posts (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        postid TEXT,
+		image TEXT,
+        name TEXT,
+        message TEXT,
+        datetime TEXT,
+		picture TEXT
+
+    )`)
+
+	if err != nil {
+		log.Println("erreur creation de table posts")
 		log.Fatal(err)
 	}
 
@@ -69,27 +86,12 @@ func CreateDataBase() {
 		log.Fatal(err)
 	}
 
-	_, err = Db.Exec(`CREATE TABLE IF NOT EXISTS posts (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        postid TEXT,
-		image TEXT,
-        name TEXT,
-        message TEXT,
-        datetime TEXT,
-		picture TEXT
-
-    )`)
-	if err != nil {
-		log.Println("erreur creation de table posts")
-		log.Fatal(err)
-	}
-
 	_, err = Db.Exec(`CREATE TABLE IF NOT EXISTS likes (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
 		username TEXT,
         datetime TEXT,
-		postid_id INTEGER,
-		FOREIGN KEY (postid_id) REFERENCES posts(postid)
+		post_id INTEGER,
+		FOREIGN KEY (post_id) REFERENCES posts(postid)
 
     )`)
 	if err != nil {
@@ -101,8 +103,8 @@ func CreateDataBase() {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
 		username TEXT,
         datetime TEXT,
-		postid_id INTEGER,
-		FOREIGN KEY (postid_id) REFERENCES posts(postid)
+		post_id INTEGER,
+		FOREIGN KEY (post_id) REFERENCES posts(postid)
     )`)
 	if err != nil {
 		log.Println("erreur creation de table dislikes")
@@ -296,8 +298,8 @@ func UserPost(userName string, message string, postID string, image string, date
 	}
 }
 
-func UserComment(userName string, message string, CommentID string, dateTime string) bool {
-	_, err := Db.Exec("INSERT INTO comments (name, content, commentid, date) VALUES (?, ?, ?, ?)", userName, message, CommentID, dateTime)
+func UserComment(userName string, message string, CommentID string, dateTime string, postID string) bool {
+	_, err := Db.Exec("INSERT INTO comments (name, content, commentid, date,post_id) VALUES (?, ?, ?, ?,?)", userName, message, CommentID, dateTime, postID)
 	if err != nil {
 		fmt.Println("Error Insert user Comment to the dataBase:")
 		log.Fatal(err)
@@ -451,6 +453,48 @@ func HomeFeed() []structure.Post {
 
 	}
 	return Posts
+
+}
+
+func prependComment(x []structure.Comment, y structure.Comment) []structure.Comment {
+	x = append(x, structure.Comment{})
+	copy(x[1:], x)
+	x[0] = y
+	return x
+}
+func GetPostComment(postID string) []structure.Comment {
+
+	rows, err := Db.Query("SELECT * FROM comments WHERE post_id = ?", postID)
+	if err != nil {
+		fmt.Println("Error in GetPostCommnet Query didn't work:")
+		log.Fatal(err)
+	}
+
+	var ans []structure.Comment
+
+	var _id int
+
+	var name, commentid, content, date, post_id string
+
+	for rows.Next() {
+
+		err := rows.Scan(&_id, &name, &commentid, &content, &date, &post_id)
+		if err != nil {
+			fmt.Println("Error GetPostComment Function in rows.Scan:")
+			log.Fatal(err)
+		}
+
+		ans = prependComment(ans, structure.Comment{
+			Message:   content,
+			Name:      name,
+			DateTime:  date,
+			CommentID: commentid,
+			PostID:    post_id,
+			Connected: false,
+		})
+	}
+
+	return ans
 
 }
 

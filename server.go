@@ -25,6 +25,7 @@ var like structure.Likes
 var dislike structure.Dislikes
 var userComment structure.Comment
 var Posts structure.Post
+var uAccount []structure.UserAccount
 
 func erreur(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" && r.URL.Path != "/register" && r.URL.Path != "/home" && r.URL.Path != "/error" && r.URL.Path != "/userAccount" {
@@ -50,6 +51,7 @@ func erreur(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	dataBase.CreateDataBase()
+	user.Post = data.HomeFeed()
 	defer data.Db.Close()
 
 	fileServer := http.FileServer(http.Dir("./assets"))
@@ -96,8 +98,6 @@ func main() {
 		}
 	}
 }
-
-var uAccount []structure.UserAccount
 
 /***************************** FUNCTION LOGIN *****************************/
 
@@ -403,6 +403,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 		log.Println("Error parsing template:", err)
 		return
 	}
+
 	if user.Connected {
 		_, err = r.Cookie("session")
 		if err != nil {
@@ -415,44 +416,50 @@ func home(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		profil = data.GetUserProfil()
+		user.Connected = true
 		for _, v := range user.Post {
 			v.Connected = true
 		}
-	}
 
-	user.Name = profil["name"]
-	user.Email = profil["email"]
-	user.Image = profil["userImage"]
-	user.UUID = profil["uuid"]
-	if profil["admin"] == "true" {
-		user.Admin = true
+		user.Name = profil["name"]
+		user.Email = profil["email"]
+		user.Image = profil["userImage"]
+		user.UUID = profil["uuid"]
+		if profil["admin"] == "true" {
+			user.Admin = true
+		} else {
+			user.Admin = false
+		}
 
-	} else {
-		user.Admin = false
-	}
-
-	picture := r.FormValue("picture")
-	message := r.FormValue("message")
-
-	if message != "" && user.Connected {
+		picture := r.FormValue("picture")
+		message := r.FormValue("message")
 		postid := script.GeneratePostID()
-		currentTime := time.Now().Format("15:04  2-Janv-2006")
-		user.Post = preappendPost(structure.Post{
-			PostID:    postid,
-			Name:      user.Name,
-			Message:   message,
-			DateTime:  currentTime,
-			Picture:   picture,
-			Connected: true,
-		})
-		//Put the message in the dataBase
-		dataBase.UserPost(user.Name, message, postid, user.Image, currentTime, picture)
 
+		if message != "" {
+			currentTime := time.Now().Format("15:04  2-Janv-2006")
+			user.Post = preappendPost(structure.Post{
+				PostID:          postid,
+				Name:            user.Name,
+				Message:         message,
+				DateTime:        currentTime,
+				Picture:         picture,
+				NumberOfComment: data.NumberOfComment(postid),
+				Connected:       user.Connected,
+				UserImage:       user.Image,
+			})
+
+			fmt.Printf("data.NumberOfComment(postid): %v\n", data.NumberOfComment(postid))
+
+			//Put the message in the dataBase
+			dataBase.UserPost(user.Name, message, postid, user.Image, currentTime, picture)
+		}
 	}
+
 	err = temp.ExecuteTemplate(w, "home", user)
 	if err != nil {
 		log.Fatal(err)
 	}
+
 }
 
 /*************************** FUNCTION PROFIL **********************************/
@@ -517,46 +524,23 @@ func profil(w http.ResponseWriter, r *http.Request) {
 
 	message := r.FormValue("message")
 	picture := r.FormValue("picture")
-
+	postid := script.GeneratePostID()
 	if message != "" {
 		currentTime := time.Now().Format("15:04  2-Janv-2006")
 		user.Post = preappendPost(structure.Post{
-			PostID:   script.GeneratePostID(),
-			Name:     profil["name"],
+			PostID:   postid,
+			Name:     user.Name,
 			Message:  message,
 			DateTime: currentTime,
 			Picture:  picture,
 		})
 		//Put the message in the dataBase
-		dataBase.UserPost(user.Name, message, script.GeneratePostID(), user.Image, currentTime, picture)
-
+		dataBase.UserPost(user.Name, message, postid, user.Image, currentTime, picture)
 	}
 
 	if err = temp.ExecuteTemplate(w, "profil", user); err != nil {
 		log.Println("Error executing template:", err)
 		return
-	}
-
-}
-
-/*************************** FUNCTION USER ACCOUNT **********************************/
-
-func userAccount(w http.ResponseWriter, r *http.Request) {
-	if err := r.ParseForm(); err != nil {
-		fmt.Fprintf(w, "ParseForm() err: %v", err)
-		return
-	}
-
-	var userAccount []structure.UserAccount
-
-	t := template.New("userAccount")
-	t = template.Must(t.ParseFiles("./assets/userAccount.html"))
-
-	for _, v := range userAccount {
-		err := t.ExecuteTemplate(w, "userAccount", v)
-		if err != nil {
-			log.Fatal(err)
-		}
 	}
 
 }
@@ -592,6 +576,7 @@ func comment(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/comment?postid="+postID, http.StatusSeeOther)
 
 	} else if r.Method == "GET" {
+
 		postid := r.URL.Query().Get("postid")
 
 		if err := temp.ExecuteTemplate(w, "comment", map[string]any{

@@ -13,6 +13,7 @@ import (
 
 var uAccount []structure.UserAccount
 var posts []structure.Post
+var user structure.UserAccount
 
 func preappendPost(c structure.Post) []structure.Post {
 	posts = append(posts, structure.Post{})
@@ -66,7 +67,8 @@ func CreateDataBase() {
         name TEXT,
         message TEXT,
         datetime TEXT,
-		picture TEXT
+		picture TEXT,
+		count INTEGER DEFAULT 0
 
     )`)
 
@@ -273,13 +275,31 @@ func CheckUserLogin(email string, password string, uuid string) bool {
 
 func UserPost(userName string, message string, postID string, image string, dateTime string, pictureURL string) bool {
 
+	NumberOfComment := 0
+
 	if pictureURL != "" {
 
-		_, err := Db.Exec("INSERT INTO posts (name, message, postid,image, datetime,picture) VALUES (?, ?, ?,?,?,?)", userName, message, postID, image, dateTime, pictureURL)
+		_, err := Db.Exec("INSERT INTO posts (name, message, postid,image, datetime,picture) VALUES (?, ?, ?,?,?)", userName, message, postID, image, dateTime, pictureURL)
 		if err != nil {
 			fmt.Println("Error Insert user Post to the dataBase:")
 			log.Fatal(err)
 		} else {
+
+			/*err := Db.QueryRow("SELECT COUNT(*) FROM comments WHERE post_id = ?", postID).Scan(&NumberOfComment)
+			if err != nil {
+				fmt.Println("Error UserPost error rows function in DataBase:")
+				log.Fatal(err)
+			}*/
+
+			user.Post = preappendPost(structure.Post{
+				PostID:          postID,
+				Name:            userName,
+				Message:         message,
+				DateTime:        dateTime,
+				Picture:         pictureURL,
+				NumberOfComment: NumberOfComment,
+				Connected:       true,
+			})
 
 			return true
 		}
@@ -292,6 +312,22 @@ func UserPost(userName string, message string, postID string, image string, date
 			fmt.Println("Error Insert user Post to the dataBase:")
 			log.Fatal(err)
 		} else {
+			/*err := Db.QueryRow("SELECT COUNT(*) FROM comments WHERE post_id = ?", postID).Scan(&NumberOfComment)
+			if err != nil {
+				fmt.Println("Error UserPost error rows function in DataBase:")
+				log.Fatal(err)
+			}*/
+
+			user.Post = preappendPost(structure.Post{
+				PostID:          postID,
+				Name:            userName,
+				Message:         message,
+				DateTime:        dateTime,
+				Picture:         "",
+				NumberOfComment: NumberOfComment,
+				Connected:       true,
+			})
+
 			return true
 		}
 		return false
@@ -347,17 +383,13 @@ func AddLikes(userName string, postID string, dateTime string) {
 func NumberOFLikesPost(postID string) int {
 
 	var numberLikes int
-	err := Db.QueryRow("COUNT (*) FROM likes").Scan(&numberLikes)
+	err := Db.QueryRow("SELECT COUNT (*) FROM likes").Scan(&numberLikes)
 	if err != nil {
 		fmt.Println("Error SELECT From NumberODLikes dataBase:")
 		log.Fatal(err)
 	}
 
 	return numberLikes
-}
-
-func AddDisLikes() {
-
 }
 
 func GetUserProfil() map[string]string {
@@ -432,23 +464,24 @@ func HomeFeed() []structure.Post {
 		log.Fatal(err)
 	}
 	var Posts []structure.Post
-	var id int
+	var id, NumberOfComment int
 	var postID, userName, message, image, dateTime, picture string
 
 	for rows.Next() {
 
-		err := rows.Scan(&id, &postID, &image, &userName, &message, &dateTime, &picture)
+		err := rows.Scan(&id, &postID, &image, &userName, &message, &dateTime, &picture, &NumberOfComment)
 		if err != nil {
 			fmt.Println("Error HomeFeed Function in rows.Scan:")
 			log.Fatal(err)
 		}
 		Posts = preappendPost(structure.Post{
-			PostID:    postID,
-			Name:      userName,
-			UserImage: image,
-			Message:   message,
-			DateTime:  dateTime,
-			Picture:   picture,
+			PostID:          postID,
+			Name:            userName,
+			UserImage:       image,
+			Message:         message,
+			DateTime:        dateTime,
+			Picture:         picture,
+			NumberOfComment: NumberOfComment,
 		})
 
 	}
@@ -462,6 +495,7 @@ func prependComment(x []structure.Comment, y structure.Comment) []structure.Comm
 	x[0] = y
 	return x
 }
+
 func GetPostComment(postID string) []structure.Comment {
 
 	rows, err := Db.Query("SELECT * FROM comments WHERE post_id = ?", postID)
@@ -496,6 +530,18 @@ func GetPostComment(postID string) []structure.Comment {
 
 	return ans
 
+}
+
+func NumberOfComment(postID string) int {
+
+	var NumberComment int
+	err := Db.QueryRow("SELECT COUNT (*) FROM comments WHERE post_id = ?", postID).Scan(&NumberComment)
+	if err != nil {
+		fmt.Println("Error SELECT From NumberOfComment dataBase:")
+		log.Fatal(err)
+	}
+
+	return NumberComment
 }
 
 func ProfilFeed(userName string) []structure.Post {

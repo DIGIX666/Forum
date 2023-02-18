@@ -25,16 +25,17 @@ type Comment struct {
 }
 
 type Post struct {
-	PostID      string
-	Name        string
-	Message     string
-	UserImage   string
-	DateTime    string
-	Picture     string
-	Comment     Comment
-	Connected   bool
-	AllLikes    []Likes
-	AllDislikes []Dislikes
+	PostID          string
+	Name            string
+	Message         string
+	UserImage       string
+	DateTime        string
+	Picture         string
+	Comment         Comment
+	NumberOfComment int
+	Connected       bool
+	AllLikes        []Likes
+	AllDislikes     []Dislikes
 }
 
 type UserLikes struct {

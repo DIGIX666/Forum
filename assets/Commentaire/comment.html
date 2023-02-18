@@ -80,7 +80,7 @@
              <!--------------. FIN Armature Post.----------->
             <!--------------.Écriture Post.----------->
             <form action="/comment" method="POST">
-            <input type="text" value="{{.PostID}}" name="Post_values">
+            <input type="hidden" value="{{.PostID}}" name="Post_values">
               <div class="status box">
                 <div class="status-menu"></div>
                 <div class="status-main">

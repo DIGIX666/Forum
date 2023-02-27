@@ -1,0 +1,10 @@
+# Dossiers à ignorer
+
+
+# Fichiers à ignorer
+*.DS_Store
+*.dll
+*.exe
+*.war
+*.jar
+*.db

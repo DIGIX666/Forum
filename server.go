@@ -235,35 +235,6 @@ func login(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-/***************************** FUNCTION LOGOUT *****************************/
-// func logout(w http.ResponseWriter, r *http.Request) {
-// 	// Supprime les informations de session de l'utilisateur
-// 	session, _ := store.Get(r, "session-name")
-// 	session.Options.MaxAge = -1
-// 	session.Save(r, w)
-
-// 	// Redirige l'utilisateur vers la page de connexion
-// 	http.Redirect(w, r, "/home", http.StatusFound)
-// }
-
-// func logout(w http.ResponseWriter, r *http.Request) {
-// 	cookie, err := r.Cookie("session")
-// 	if err != nil {
-// 		http.Redirect(w, r, "/profil", http.StatusFound)
-// 		return
-// 	}
-
-// 	dataBase.DeleteSession(cookie.Value)
-
-// 	cookie = &http.Cookie{
-// 		Name:   "session",
-// 		Value:  "",
-// 		MaxAge: -1,
-// 	}
-// 	http.SetCookie(w, cookie)
-// 	http.Redirect(w, r, "/profil", http.StatusFound)
-// }
-
 /*************************** FUNCTION REGISTER **********************************/
 
 func register(w http.ResponseWriter, r *http.Request) {

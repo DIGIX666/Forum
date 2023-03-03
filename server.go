@@ -328,6 +328,7 @@ func register(w http.ResponseWriter, r *http.Request) {
 		}
 	} else {
 		fmt.Println("Receive no code !")
+
 		if r.Method == "GET" {
 			t := template.New("register")
 			t = template.Must(t.ParseFiles("./assets/register.html"))

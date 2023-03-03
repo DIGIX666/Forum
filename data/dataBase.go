@@ -226,7 +226,6 @@ func DataBaseLogin(email string, password string, uuid string) bool {
 		fmt.Println("pas le bon mot de passe")
 		return false
 	}
-
 }
 
 func CheckGoogleUserLogin(email string, email_verified string, uuid string) bool {
@@ -273,13 +272,12 @@ func CheckUserLogin(email string, password string, uuid string) bool {
 
 }
 
-func UserPost(userName string, message string, postID string, image string, dateTime string, pictureURL string) bool {
-
+func UserPost(userName string, message string, postID string, image string, dateTime string, pictureURL string) (bool, []structure.Post) {
 	NumberOfComment := 0
 
 	if pictureURL != "" {
 
-		_, err := Db.Exec("INSERT INTO posts (name, message, postid,image, datetime,picture) VALUES (?, ?, ?,?,?)", userName, message, postID, image, dateTime, pictureURL)
+		_, err := Db.Exec("INSERT INTO posts (name, message, postid,image, datetime,picture) VALUES (?, ?, ?,?,?,?)", userName, message, postID, image, dateTime, pictureURL)
 		if err != nil {
 			fmt.Println("Error Insert user Post to the dataBase:")
 			log.Fatal(err)
@@ -301,10 +299,10 @@ func UserPost(userName string, message string, postID string, image string, date
 				Connected:       true,
 			})
 
-			return true
+			return true, user.Post
 		}
 
-		return false
+		return false, user.Post
 
 	} else {
 		_, err := Db.Exec("INSERT INTO posts (name, message, postid,image, datetime,picture) VALUES (?, ?, ?,?,?,?)", userName, message, postID, image, dateTime, "")
@@ -328,11 +326,13 @@ func UserPost(userName string, message string, postID string, image string, date
 				Connected:       true,
 			})
 
-			return true
+			return true, user.Post
 		}
-		return false
+		return false, user.Post
 	}
 }
+
+func GetUserPost()
 
 func UserComment(userName string, message string, CommentID string, dateTime string, postID string) bool {
 	_, err := Db.Exec("INSERT INTO comments (name, content, commentid, date,post_id) VALUES (?, ?, ?, ?,?)", userName, message, CommentID, dateTime, postID)
@@ -421,38 +421,6 @@ func GetUserProfil() map[string]string {
 	ans["admin"] = admin
 
 	fmt.Printf("ans: %v\n", ans)
-	return ans
-}
-
-func GetLastPost() map[string]string {
-	ans := make(map[string]string, 6)
-	var id int
-	var postID, message, dataTime, name, pictureURL, image string
-
-	//var Post []structure.Post
-
-	err := Db.QueryRow("SELECT * FROM posts ORDER BY id DESC LIMIT 1").Scan(&id, &postID, &name, &message, &image, &dataTime, &pictureURL)
-	if err != nil {
-		fmt.Println("Erreur SELECT fonction GetLastPost dataBase:")
-		log.Fatal(err)
-	}
-	//ans["id"] = id
-	ans["postID"] = postID
-	ans["image"] = image
-	ans["userName"] = name
-	ans["message"] = message
-	ans["dataTime"] = dataTime
-	ans["pictureURL"] = pictureURL
-
-	/*Post = preappendPost(structure.Post{
-		PostID:    postID,
-		Name:      name,
-		UserImage: image,
-		Message:   message,
-		DateTime:  dataTime,
-		Picture:   pictureURL,
-	})*/
-
 	return ans
 }
 

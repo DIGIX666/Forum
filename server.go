@@ -124,7 +124,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 
 				Value:  uuidUser,
 				Name:   "session",
-				MaxAge: 10000,
+				MaxAge: 7200,
 			}
 			http.SetCookie(w, &cookie)
 
@@ -144,7 +144,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 
 				Value:  uuidGithubUser,
 				Name:   "session",
-				MaxAge: 10000,
+				MaxAge: 7200,
 			}
 			http.SetCookie(w, &cookie)
 			user.Connected = true
@@ -190,7 +190,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 				cookie := http.Cookie{
 					Value:  uuidUser,
 					Name:   "session",
-					MaxAge: 10000,
+					MaxAge: 7200,
 				}
 				http.SetCookie(w, &cookie)
 
@@ -286,7 +286,7 @@ func register(w http.ResponseWriter, r *http.Request) {
 			cookie := http.Cookie{
 				Value:  uuidGitHubUser,
 				Name:   "session",
-				MaxAge: 10000,
+				MaxAge: 600,
 			}
 
 			http.SetCookie(w, &cookie)
@@ -303,7 +303,7 @@ func register(w http.ResponseWriter, r *http.Request) {
 			cookie := http.Cookie{
 				Value:  uuidGoogleUser,
 				Name:   "session",
-				MaxAge: 10000,
+				MaxAge: 600,
 			}
 			http.SetCookie(w, &cookie)
 
@@ -355,7 +355,7 @@ func register(w http.ResponseWriter, r *http.Request) {
 					cookie := http.Cookie{
 						Value:  uuidUser,
 						Name:   "session",
-						MaxAge: 10000,
+						MaxAge: 800,
 					}
 					user.Connected = true
 					Posts.Connected = true
@@ -537,25 +537,25 @@ func profil(w http.ResponseWriter, r *http.Request) {
 
 /*************************** FUNCTION USER ACCOUNT **********************************/
 
-func userAccount(w http.ResponseWriter, r *http.Request) {
-	if err := r.ParseForm(); err != nil {
-		fmt.Fprintf(w, "ParseForm() err: %v", err)
-		return
-	}
+// func userAccount(w http.ResponseWriter, r *http.Request) {
+// 	if err := r.ParseForm(); err != nil {
+// 		fmt.Fprintf(w, "ParseForm() err: %v", err)
+// 		return
+// 	}
 
-	var userAccount []structure.UserAccount
+// 	var userAccount []structure.UserAccount
 
-	t := template.New("userAccount")
-	t = template.Must(t.ParseFiles("./assets/userAccount.html"))
+// 	t := template.New("userAccount")
+// 	t = template.Must(t.ParseFiles("./assets/userAccount.html"))
 
-	for _, v := range userAccount {
-		err := t.ExecuteTemplate(w, "userAccount", v)
-		if err != nil {
-			log.Fatal(err)
-		}
-	}
+// 	for _, v := range userAccount {
+// 		err := t.ExecuteTemplate(w, "userAccount", v)
+// 		if err != nil {
+// 			log.Fatal(err)
+// 		}
+// 	}
 
-}
+// }
 
 /*************************** FUNCTION COMMENT **********************************/
 

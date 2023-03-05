@@ -22,8 +22,9 @@ import (
 
 /****************************** FUNCTION ERREUR *******************************/
 var user structure.UserAccount
-var like structure.Likes
-var dislike structure.Dislikes
+
+// var like structure.Likes
+// var dislike structure.Dislikes
 var userComment structure.Comment
 var Posts structure.Post
 
@@ -131,12 +132,12 @@ func login(w http.ResponseWriter, r *http.Request) {
 			user.Connected = true
 			Posts.Connected = true
 			userComment.Connected = true
-
 			data.SetGoogleUserUUID(uEmail)
 			dataBase.AddSession(uName, uuidUser, cookie.Value)
 			http.Redirect(w, r, "/profil", http.StatusFound)
 			return
 		}
+
 		if checkGitHubUserLoogged {
 
 			uuidGenerated, _ := uuid.NewV4()
@@ -259,7 +260,7 @@ func register(w http.ResponseWriter, r *http.Request) {
 			cookie := http.Cookie{
 				Value:  uuidGitHubUser,
 				Name:   "session",
-				MaxAge: 100000,
+				MaxAge: 60,
 			}
 
 			http.SetCookie(w, &cookie)
@@ -349,7 +350,6 @@ func register(w http.ResponseWriter, r *http.Request) {
 }
 
 /*************************** FUNCTION HOME **********************************/
-
 var posts []structure.Post
 
 func preappendPost(c structure.Post) []structure.Post {
@@ -375,6 +375,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 				UserImage: user.Image,
 				Connected: true,
 			})
+
 			file, header, err := r.FormFile("myFile")
 			imageName := ""
 			if err != nil {

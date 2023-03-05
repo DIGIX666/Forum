@@ -86,6 +86,7 @@ func CreateDataBase() {
 		username TEXT,
         datetime TEXT,
 		post_id INTEGER,
+		count INTEGER DEFAULT 0,
 		FOREIGN KEY (post_id) REFERENCES posts(postid)
 
     )`)
@@ -381,32 +382,34 @@ func SetGitHubUUID(userName string) string {
 }
 
 /*************************** ADD LIKES **********************************/
-func AddLikes(userName string, postID string, dateTime string) {
+// func AddLikes(userName string, postID string, dateTime string) {
 
-	_, err := Db.Exec("INSERT INTO likes (username,numberlikes,postid,datetime) VALUES (?,?,?,?)", userName, postID, dateTime)
-	if err != nil {
-		fmt.Println("Error function AddLikes dataBase:")
-		log.Fatal(err)
-	}
-}
+// 	_, err := Db.Exec("INSERT INTO likes (username,numberlikes,postid,datetime) VALUES (?,?,?,?)", userName, postID, dateTime)
+// 	if err != nil {
+// 		fmt.Println("Error function AddLikes dataBase:")
+// 		log.Fatal(err)
+// 	}
+// }
 
 /*************************** NUMBER OF LIKES POST **********************************/
-func NumberOFLikesPost(postID string) int {
+// cette fonction permet d'obtenir des likes total d'un post.
 
-	var numberLikes int
-	err := Db.QueryRow("COUNT (*) FROM likes").Scan(&numberLikes)
-	if err != nil {
-		fmt.Println("Error SELECT From NumberODLikes dataBase:")
-		log.Fatal(err)
-	}
+// func NumberOFLikesPost(postID string) int {
 
-	return numberLikes
-}
+// 	var numberLikes int
+// 	err := Db.QueryRow("COUNT (*) FROM likes").Scan(&numberLikes)
+// 	if err != nil {
+// 		fmt.Println("Error SELECT From NumberODLikes dataBase:")
+// 		log.Fatal(err)
+// 	}
+
+// 	return numberLikes
+// }
 
 /*************************** ADD DISLIKES **********************************/
-func AddDisLikes() {
+// func AddDisLikes() {
 
-}
+// }
 
 /*************************** GET USER PROFIL **********************************/
 func GetUserProfil() map[string]string {
@@ -499,7 +502,7 @@ func HomeFeed() []structure.Post {
 			UserImage: image,
 			Message:   message,
 			DateTime:  dateTime,
-			// Picture:   picture,
+			Picture:   picture,
 		})
 
 	}

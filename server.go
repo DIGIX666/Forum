@@ -2,12 +2,13 @@ package main
 
 import (
 	structure "Forum/Struct"
-	"Forum/data"
+	data "Forum/data"
 	dataBase "Forum/data"
 	function "Forum/functions"
 	script "Forum/scripts"
 	"crypto/tls"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 
@@ -21,8 +22,6 @@ import (
 
 /****************************** FUNCTION ERREUR *******************************/
 var user structure.UserAccount
-var like structure.Likes
-var dislike structure.Dislikes
 var userComment structure.Comment
 var Posts structure.Post
 var uAccount []structure.UserAccount
@@ -113,9 +112,8 @@ func login(w http.ResponseWriter, r *http.Request) {
 		code := r.FormValue("code")
 
 		checkGoogleUserLogged, uName, uEmail, _ := function.GoogleAuthLog(code)
-		fmt.Printf("checkGoogleUserLogged: %v\n", checkGoogleUserLogged)
+
 		checkGitHubUserLoogged, GitHub_UserName, _, _ := function.GitHubLog(code)
-		fmt.Printf("checkGitHubUserLoogged: %v\n", checkGitHubUserLoogged)
 
 		if checkGoogleUserLogged {
 			uuidGenerated, _ := uuid.NewV4()
@@ -131,12 +129,12 @@ func login(w http.ResponseWriter, r *http.Request) {
 			user.Connected = true
 			Posts.Connected = true
 			userComment.Connected = true
-
 			data.SetGoogleUserUUID(uEmail)
 			dataBase.AddSession(uName, uuidUser, cookie.Value)
 			http.Redirect(w, r, "/profil", http.StatusFound)
 			return
 		}
+
 		if checkGitHubUserLoogged {
 
 			uuidGenerated, _ := uuid.NewV4()
@@ -235,35 +233,6 @@ func login(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-/***************************** FUNCTION LOGOUT *****************************/
-// func logout(w http.ResponseWriter, r *http.Request) {
-// 	// Supprime les informations de session de l'utilisateur
-// 	session, _ := store.Get(r, "session-name")
-// 	session.Options.MaxAge = -1
-// 	session.Save(r, w)
-
-// 	// Redirige l'utilisateur vers la page de connexion
-// 	http.Redirect(w, r, "/home", http.StatusFound)
-// }
-
-// func logout(w http.ResponseWriter, r *http.Request) {
-// 	cookie, err := r.Cookie("session")
-// 	if err != nil {
-// 		http.Redirect(w, r, "/profil", http.StatusFound)
-// 		return
-// 	}
-
-// 	dataBase.DeleteSession(cookie.Value)
-
-// 	cookie = &http.Cookie{
-// 		Name:   "session",
-// 		Value:  "",
-// 		MaxAge: -1,
-// 	}
-// 	http.SetCookie(w, cookie)
-// 	http.Redirect(w, r, "/profil", http.StatusFound)
-// }
-
 /*************************** FUNCTION REGISTER **********************************/
 
 func register(w http.ResponseWriter, r *http.Request) {
@@ -276,12 +245,11 @@ func register(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r.FormValue("code") != "" {
-		fmt.Printf("Code receive: %v\n", r.FormValue("code"))
+
 		checkGitHub_User_Registered, _, userGitHubName := function.GitHubRegister(r.FormValue("code"))
 		hashPassword := script.GenerateHash(script.GenerateRandomString())
 
 		checkGoogleUserRegistered, googleUserEmail, userGoogleName := function.GoogleAuthRegister(r.FormValue("code"), hashPassword)
-		fmt.Printf("checkGoogleUserRegistered: %v\n", checkGoogleUserRegistered)
 
 		if checkGitHub_User_Registered || userGitHubName != "" {
 
@@ -289,7 +257,7 @@ func register(w http.ResponseWriter, r *http.Request) {
 			cookie := http.Cookie{
 				Value:  uuidGitHubUser,
 				Name:   "session",
-				MaxAge: 100000,
+				MaxAge: 60,
 			}
 
 			http.SetCookie(w, &cookie)
@@ -380,7 +348,6 @@ func register(w http.ResponseWriter, r *http.Request) {
 }
 
 /*************************** FUNCTION HOME **********************************/
-
 var posts []structure.Post
 
 func preappendPost(c structure.Post) []structure.Post {
@@ -391,9 +358,53 @@ func preappendPost(c structure.Post) []structure.Post {
 }
 
 func home(w http.ResponseWriter, r *http.Request) {
-	if err := r.ParseForm(); err != nil {
-		fmt.Fprintf(w, "ParseForm() err: %v", err)
-		return
+
+	if r.Method == "POST" {
+
+		message := r.FormValue("message")
+		if message != "" && user.Connected {
+			postid := script.GeneratePostID()
+			currentTime := time.Now().Format("15:04  2-Janv-2006")
+			user.Post = preappendPost(structure.Post{
+				PostID:    postid,
+				Name:      user.Name,
+				Message:   message,
+				DateTime:  currentTime,
+				UserImage: user.Image,
+				Connected: true,
+			})
+
+			file, header, err := r.FormFile("myFile")
+			imageName := ""
+			if err != nil {
+				if err != http.ErrMissingFile {
+					http.Error(w, err.Error(), http.StatusBadRequest)
+					return
+				}
+
+				//Put the message in the dataBase
+				dataBase.UserPost(user.Name, message, postid, user.Image, currentTime, imageName)
+
+			} else {
+				imageName = header.Filename
+				fmt.Printf("Uploaded File: %+v\n", header.Filename)
+
+				// read all of the contents of our uploaded file into a
+				// byte array
+				fileBytes, err := ioutil.ReadAll(file)
+
+				if err != nil {
+					fmt.Println(err)
+				}
+
+				err = ioutil.WriteFile("./assets/upload-image/"+imageName, fileBytes, 0o666)
+
+				_, user.Post = dataBase.UserPost(user.Name, message, postid, user.Image, currentTime, imageName)
+				file.Close()
+
+			}
+		}
+
 	}
 
 	//var count int
@@ -421,41 +432,16 @@ func home(w http.ResponseWriter, r *http.Request) {
 		for _, v := range user.Post {
 			v.Connected = true
 		}
-
-		user.Name = profil["name"]
-		user.Email = profil["email"]
-		user.Image = profil["userImage"]
-		user.UUID = profil["uuid"]
-		if profil["admin"] == "true" {
-			user.Admin = true
-		} else {
-			user.Admin = false
-		}
-
-		picture := r.FormValue("picture")
-		message := r.FormValue("message")
-		postid := script.GeneratePostID()
-
-		if message != "" {
-			currentTime := time.Now().Format("15:04  2-Janv-2006")
-			user.Post = preappendPost(structure.Post{
-				PostID:          postid,
-				Name:            user.Name,
-				Message:         message,
-				DateTime:        currentTime,
-				Picture:         picture,
-				NumberOfComment: data.NumberOfComment(postid),
-				Connected:       user.Connected,
-				UserImage:       user.Image,
-			})
-
-			fmt.Printf("data.NumberOfComment(postid): %v\n", data.NumberOfComment(postid))
-
-			//Put the message in the dataBase
-			dataBase.UserPost(user.Name, message, postid, user.Image, currentTime, picture)
-		}
 	}
-
+	user.Name = profil["name"]
+	user.Email = profil["email"]
+	user.Image = profil["userImage"]
+	user.UUID = profil["uuid"]
+	if profil["admin"] == "true" {
+		user.Admin = true
+	} else {
+		user.Admin = false
+	}
 	err = temp.ExecuteTemplate(w, "home", user)
 	if err != nil {
 		log.Fatal(err)
@@ -564,7 +550,7 @@ func comment(w http.ResponseWriter, r *http.Request) {
 
 		message := r.FormValue("message")
 		postID := r.FormValue("Post_values")
-		fmt.Printf("postID: %v\n", postID)
+
 		//postid, _ := strconv.Atoi(postID)
 		//fmt.Printf("postid: %v\n", postid)
 

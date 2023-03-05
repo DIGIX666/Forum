@@ -1,8 +1,10 @@
-*node_modules/*
+# Dossiers à ignorer
+
+
+# Fichiers à ignorer
 *.DS_Store
 *.dll
 *.exe
 *.war
 *.jar
-
-usersForum.db
+*.db

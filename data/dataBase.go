@@ -12,8 +12,8 @@ import (
 )
 
 var uAccount []structure.UserAccount
-var posts []structure.Post
 var user structure.UserAccount
+var posts []structure.Post
 
 func preappendPost(c structure.Post) []structure.Post {
 	posts = append(posts, structure.Post{})
@@ -24,6 +24,7 @@ func preappendPost(c structure.Post) []structure.Post {
 
 var Db *sql.DB
 
+/*************************** CREATE DATA BASE **********************************/
 func CreateDataBase() {
 
 	var err error
@@ -93,6 +94,7 @@ func CreateDataBase() {
 		username TEXT,
         datetime TEXT,
 		post_id INTEGER,
+		count INTEGER DEFAULT 0,
 		FOREIGN KEY (post_id) REFERENCES posts(postid)
 
     )`)
@@ -114,6 +116,7 @@ func CreateDataBase() {
 	}
 }
 
+/*************************** ADD SESSION **********************************/
 func AddSession(name string, uuid string, cookie string) {
 
 	_, err := Db.Exec(`CREATE TABLE IF NOT EXISTS session (
@@ -143,6 +146,7 @@ func AddSession(name string, uuid string, cookie string) {
 
 }
 
+/*************************** DELETE SESSION **********************************/
 func DeleteSession(name string) {
 
 	_, err := Db.Exec("DELETE FROM session WHERE name = ?", name)
@@ -152,6 +156,7 @@ func DeleteSession(name string) {
 	}
 }
 
+/*************************** DATA BASE REGISTER **********************************/
 func DataBaseRegister(email string, password string) bool {
 
 	uuid := ""
@@ -203,6 +208,7 @@ func DataBaseRegister(email string, password string) bool {
 
 }
 
+/*************************** DATA BASE LOGIN **********************************/
 func DataBaseLogin(email string, password string, uuid string) bool {
 	var hashpassword string
 	err := Db.QueryRow("SELECT password FROM users WHERE email = ?", email).Scan(&hashpassword)
@@ -228,6 +234,7 @@ func DataBaseLogin(email string, password string, uuid string) bool {
 	}
 }
 
+/*************************** CHECK GOOGLE USER LOGIN **********************************/
 func CheckGoogleUserLogin(email string, email_verified string, uuid string) bool {
 	if email_verified == "false" {
 
@@ -245,6 +252,7 @@ func CheckGoogleUserLogin(email string, email_verified string, uuid string) bool
 	}
 }
 
+/*************************** CHECK USER LOGIN **********************************/
 func CheckUserLogin(email string, password string, uuid string) bool {
 
 	var hashpassword string
@@ -272,9 +280,33 @@ func CheckUserLogin(email string, password string, uuid string) bool {
 
 }
 
+// func UserPost(userName string, message string, postID string, image string, dateTime string, pictureURL string) (bool, []structure.Post) {
+// 	NumberOfComment := 0
+// }
+
+/*************************** PREAPPEND POST **********************************/
+// func preappendPost(c structure.Post) []structure.Post {
+// 	posts = append(posts, structure.Post{})
+// 	copy(posts[1:], posts)
+// 	posts[0] = c
+// 	return posts
+// }
+
+/************************* USER POST **********************************/
 func UserPost(userName string, message string, postID string, image string, dateTime string, pictureURL string) (bool, []structure.Post) {
+
+	// _, err := Db.Exec("INSERT INTO posts (name, message, postid,image, datetime,picture) VALUES (?, ?, ?,?,?,?)", userName, message, postID, image, dateTime, pictureURL)
+	// if err != nil {
+	// 	fmt.Println(" Insert user Post to the dataBase:")
+	// 	log.Fatal(err)
+	// } else {
+	// 	return true
+	// }
+	// return false
 	NumberOfComment := 0
 
+	fmt.Printf("image: %v", pictureURL)
+	fmt.Println("")
 	if pictureURL != "" {
 
 		_, err := Db.Exec("INSERT INTO posts (name, message, postid,image, datetime,picture) VALUES (?, ?, ?,?,?,?)", userName, message, postID, image, dateTime, pictureURL)
@@ -282,12 +314,6 @@ func UserPost(userName string, message string, postID string, image string, date
 			fmt.Println("Error Insert user Post to the dataBase:")
 			log.Fatal(err)
 		} else {
-
-			/*err := Db.QueryRow("SELECT COUNT(*) FROM comments WHERE post_id = ?", postID).Scan(&NumberOfComment)
-			if err != nil {
-				fmt.Println("Error UserPost error rows function in DataBase:")
-				log.Fatal(err)
-			}*/
 
 			user.Post = preappendPost(structure.Post{
 				PostID:          postID,
@@ -303,18 +329,12 @@ func UserPost(userName string, message string, postID string, image string, date
 		}
 
 		return false, user.Post
-
 	} else {
 		_, err := Db.Exec("INSERT INTO posts (name, message, postid,image, datetime,picture) VALUES (?, ?, ?,?,?,?)", userName, message, postID, image, dateTime, "")
 		if err != nil {
 			fmt.Println("Error Insert user Post to the dataBase:")
 			log.Fatal(err)
 		} else {
-			/*err := Db.QueryRow("SELECT COUNT(*) FROM comments WHERE post_id = ?", postID).Scan(&NumberOfComment)
-			if err != nil {
-				fmt.Println("Error UserPost error rows function in DataBase:")
-				log.Fatal(err)
-			}*/
 
 			user.Post = preappendPost(structure.Post{
 				PostID:          postID,
@@ -332,8 +352,7 @@ func UserPost(userName string, message string, postID string, image string, date
 	}
 }
 
-func GetUserPost()
-
+/*************************** USER COMMENT **********************************/
 func UserComment(userName string, message string, CommentID string, dateTime string, postID string) bool {
 	_, err := Db.Exec("INSERT INTO comments (name, content, commentid, date,post_id) VALUES (?, ?, ?, ?,?)", userName, message, CommentID, dateTime, postID)
 	if err != nil {
@@ -345,6 +364,7 @@ func UserComment(userName string, message string, CommentID string, dateTime str
 	return false
 }
 
+/*************************** SET GOOGLE USER UUID **********************************/
 func SetGoogleUserUUID(userEmail string) string {
 
 	uuidGenerated, _ := uuid.NewV4()
@@ -357,6 +377,7 @@ func SetGoogleUserUUID(userEmail string) string {
 	return uuid
 }
 
+/*************************** SET GIT HUB UUID **********************************/
 func SetGitHubUUID(userName string) string {
 
 	uuidGenerated, _ := uuid.NewV4()
@@ -371,27 +392,43 @@ func SetGitHubUUID(userName string) string {
 
 }
 
-func AddLikes(userName string, postID string, dateTime string) {
+/*************************** ADD LIKES **********************************/
+// func AddLikes(userName string, postID string, dateTime string) {
 
-	_, err := Db.Exec("INSERT INTO likes (username,numberlikes,postid,datetime) VALUES (?,?,?,?)", userName, postID, dateTime)
-	if err != nil {
-		fmt.Println("Error function AddLikes dataBase:")
-		log.Fatal(err)
-	}
-}
+// 	_, err := Db.Exec("INSERT INTO likes (username,numberlikes,postid,datetime) VALUES (?,?,?,?)", userName, postID, dateTime)
+// 	if err != nil {
+// 		fmt.Println("Error function AddLikes dataBase:")
+// 		log.Fatal(err)
+// 	}
+// }
 
-func NumberOFLikesPost(postID string) int {
+/*************************** NUMBER OF LIKES POST **********************************/
+// cette fonction permet d'obtenir des likes total d'un post.
 
-	var numberLikes int
-	err := Db.QueryRow("SELECT COUNT (*) FROM likes").Scan(&numberLikes)
-	if err != nil {
-		fmt.Println("Error SELECT From NumberODLikes dataBase:")
-		log.Fatal(err)
-	}
+// var numberLikes int
+// err := Db.QueryRow("SELECT COUNT (*) FROM likes").Scan(&numberLikes)
+// if err != nil {
+// 	fmt.Println("Error SELECT From NumberODLikes dataBase:")
+// 	log.Fatal(err)
+// }
+// func NumberOFLikesPost(postID string) int {
 
-	return numberLikes
-}
+// 	var numberLikes int
+// 	err := Db.QueryRow("COUNT (*) FROM likes").Scan(&numberLikes)
+// 	if err != nil {
+// 		fmt.Println("Error SELECT From NumberODLikes dataBase:")
+// 		log.Fatal(err)
+// 	}
 
+// 	return numberLikes
+// }
+
+/*************************** ADD DISLIKES **********************************/
+// func AddDisLikes() {
+
+// }
+
+/*************************** GET USER PROFIL **********************************/
 func GetUserProfil() map[string]string {
 
 	ans := make(map[string]string, 5)
@@ -424,6 +461,40 @@ func GetUserProfil() map[string]string {
 	return ans
 }
 
+/*************************** GET POST **********************************/
+// func GetPost() []structure.Post {
+// 	ans := make(map[string]string)
+// 	var id int
+// 	var postID, message, dataTime, name, pictureURL, image string
+
+// 	//var Post []structure.Post
+
+// 	err := Db.QueryRow("SELECT * FROM posts ORDER BY id DESC LIMIT 1").Scan(&id, &postID, &name, &message, &image, &dataTime, &pictureURL)
+// 	if err != nil {
+// 		fmt.Println("Erreur SELECT fonction GetLastPost dataBase:")
+// 		log.Fatal(err)
+// 	}
+// 	//ans["id"] = id
+// 	ans["postID"] = postID
+// 	ans["image"] = image
+// 	ans["userName"] = name
+// 	ans["message"] = message
+// 	ans["dataTime"] = dataTime
+// 	ans["pictureURL"] = pictureURL
+
+// 	/*Post = preappendPost(structure.Post{
+// 		PostID:    postID,
+// 		Name:      name,
+// 		UserImage: image,
+// 		Message:   message,
+// 		DateTime:  dataTime,
+// 		Picture:   pictureURL,
+// 	})*/
+
+// 	return ans
+// }
+
+/*************************** HOME FEED **********************************/
 func HomeFeed() []structure.Post {
 
 	rows, err := Db.Query("SELECT * FROM posts ORDER BY id")
@@ -457,6 +528,7 @@ func HomeFeed() []structure.Post {
 
 }
 
+/*************************** PREPEND COMMENT **********************************/
 func prependComment(x []structure.Comment, y structure.Comment) []structure.Comment {
 	x = append(x, structure.Comment{})
 	copy(x[1:], x)
@@ -464,6 +536,7 @@ func prependComment(x []structure.Comment, y structure.Comment) []structure.Comm
 	return x
 }
 
+/*************************** GET POST COMMENT **********************************/
 func GetPostComment(postID string) []structure.Comment {
 
 	rows, err := Db.Query("SELECT * FROM comments WHERE post_id = ?", postID)
@@ -512,6 +585,7 @@ func NumberOfComment(postID string) int {
 	return NumberComment
 }
 
+/*************************** PROFIL FEED **********************************/
 func ProfilFeed(userName string) []structure.Post {
 
 	rows, err := Db.Query("SELECT id,postid,image,message,datetime,picture FROM posts WHERE name = ?", userName)
@@ -546,6 +620,7 @@ func ProfilFeed(userName string) []structure.Post {
 	return Posts
 }
 
+/*************************** PROFIL FEED DELETE **********************************/
 func ProfilFeedDelete(userName string) {
 
 	_, err := Db.Query("DELETE postid,message,datetime,picture FROM posts WHERE name != ?", userName)

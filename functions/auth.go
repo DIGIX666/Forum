@@ -16,8 +16,6 @@ import (
 /* ----------------------------------- GOOGLE AUTH LOG ---------------------------------- */
 func GoogleAuthLog(code string) (bool, string, string, string) {
 
-	fmt.Printf("code: %v\n", code)
-
 	data := url.Values{}
 	data.Set("client_id", "760601264616-u9vo4s8hdistvmn6ia2goko3m6qhmff8.apps.googleusercontent.com")
 	data.Set("client_secret", "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")
@@ -40,8 +38,6 @@ func GoogleAuthLog(code string) (bool, string, string, string) {
 	}
 	a, _ := ioutil.ReadAll(responseGoogle.Body)
 	fmt.Printf("ResponseGoogle: %v\n", string(a))
-
-	fmt.Printf("googleTokenJSON: %v\n", googleTokenJSON)
 
 	//Rfresh_Token := googleTokenJSON.Refresh_Token
 	//refresh_token := "1//03141UoOFJOiJCgYIARAAGAMSNwF-L9Irjnoum5-ga4HAMEgCNKgxA4GUcxt90qDVCa23nw0ZLZfHUDB7FJ7_JV08LIUCQSBc4r4"
@@ -87,8 +83,6 @@ func GoogleAuthLog(code string) (bool, string, string, string) {
 
 /* ------------------------------ GOOGLE AUTH REGISTER -------------------------------- */
 func GoogleAuthRegister(code string, hashPassword string) (bool, string, string) {
-
-	fmt.Printf("code: %v\n", code)
 
 	data := url.Values{}
 	data.Set("client_id", "760601264616-u9vo4s8hdistvmn6ia2goko3m6qhmff8.apps.googleusercontent.com")
@@ -187,11 +181,8 @@ func GitHubRegister(code string) (bool, string, string) {
 		log.Fatal(err)
 	}
 
-	fmt.Printf("string(body): %v\n", string(body))
-
 	// get the token
 	token := values.Get("access_token")
-	fmt.Println("Token:", token)
 
 	client := &http.Client{}
 
@@ -204,14 +195,14 @@ func GitHubRegister(code string) (bool, string, string) {
 	reqGitHubUser.Header.Set("Accept", "application/vnd.github+json")
 	reqGitHubUser.Header.Set("X-GitHub-Api-Version", "2022-11-28")
 
-	fmt.Println(reqGitHubUser.Header)
+	// fmt.Println(reqGitHubUser.Header)
 
 	responseGitHubUser, err := client.Do(reqGitHubUser)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	fmt.Println(responseGitHubUser.Status)
+	// fmt.Println(responseGitHubUser.Status)
 
 	var githubUserJSONToken structure.GithubUser
 
@@ -219,7 +210,7 @@ func GitHubRegister(code string) (bool, string, string) {
 
 	defer responseGitHubUser.Body.Close()
 
-	fmt.Println(githubUserJSONToken)
+	// fmt.Println(githubUserJSONToken)
 
 	count := 0
 
@@ -319,7 +310,7 @@ func GitHubLog(code string) (bool, string, string, string) {
 
 	var userEmail, userName, userAvatar string
 
-	fmt.Printf("githubUserJSONToken.Email: %v\n", githubUserJSONToken.Email)
+	// fmt.Printf("githubUserJSONToken.Email: %v\n", githubUserJSONToken.Email)
 
 	count := 0
 

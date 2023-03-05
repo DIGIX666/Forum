@@ -78,7 +78,7 @@
           <div class="timeline-right">
             <!--------------.Écriture Post.----------->
             {{if .Connected}}
-            <form method="POST">
+            <form method="POST" enctype="multipart/form-data">
               <div class="status box">
                 <div class="status-menu"></div>
                 <div class="status-main">
@@ -95,8 +95,8 @@
                         d="M427.2 424c0 26.7-8.5 48.3-25.3 64.3-16.5 15.7-38.4 23.7-65 23.7H210.2V286.5h3.3c11 0 22-1.8 33-5.3 11.2-3.6 20.3-7.6 27-12l21-13.4c9.7-6.3 14.7-8.5 20-8.5 13.3 0 25.7 2.3 37 6.7a89 89 0 0128.9 18.2c7.6 7.3 14.4 16.1 20.2 26.3 5.5 9.8 10 20 13.3 30.3a305.5 305.5 0 0112.1 64.9c.7 9.8 1 20 1 30.2zm0 0"
                         fill="#2682ff" />
                     </svg>
-                    Upload Picture
                   </a>
+                  <input type="file" name="myFile">
                   <button type="submit" class="status-share">Send</button>
                 </div>
               </div>
@@ -119,10 +119,13 @@
 
                   <div class="album-date">{{.DateTime}}</div>
 
+                  <div class="postid">{{.PostID}}</div>
+
                 </div>
               </div>
 
               <div class="album-content">{{.Message}}</div>
+<<<<<<< HEAD
               
 
               <div class="album-actions">
@@ -151,16 +154,55 @@
                     <span class="dislike-count"></span>
                   </a>
                 </form>
+=======
+              <img src="/assets/upload-image/{{.Picture}}" class="upload-image">
+              <div class="album-actions">
+
+                <div class="album-action">
+                  <button name="like" value="like" class="like">
+                    <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"
+                      stroke-linejoin="round" viewBox="0 0 24 24">
+                      <path
+                        d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
+                    </svg>
+                  </button>
+                  <span class="like-count"></span>
+                </div>
+
+
+
+
+                <div class="album-action">
+                  <button name="dislike" value="dislike" class="dislike">
+                    <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"
+                      stroke-linejoin="round" class="css-i6dzq1" viewBox="0 0 24 24">
+                      <path d="M18 6L6 18M6 6l12 12" />
+                    </svg>
+                  </button>
+                  <span class="dislike-count"></span>
+                </div>
+>>>>>>> frontend
 
                 <a href="/comment?postid={{.PostID}}" class="album-action">
                   <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
                     class="css-i6dzq1" viewBox="0 0 24 24">
                     <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
                   </svg>
+<<<<<<< HEAD
                 </a>
                 {{.NumberOfComment}}
               </div>
             </div>
+=======
+                  <!-- <span class="comment-count"></span> -->
+                  <div id="compteur-comment"></div>
+                </a>
+
+
+              </div>
+            </div>
+
+>>>>>>> frontend
             {{end}}
 
             <!--------------. FIN Armature Post.----------->
@@ -169,11 +211,16 @@
 
             <div class="album box">
               <div class="status-main">
+<<<<<<< HEAD
                 {{if .Connected}}<img src="{{.Image}}" class="status-img">{{end}}{{if not .Connected}}
                 <img
+=======
+                {{if .Connected}}<img src="{{.Image}}" class="status-img">{{end}}{{if not .Connected}}<img
+>>>>>>> frontend
                   src="../images/beehive-37436.svg" class="status-img">{{end}}
                 <div class="album-detail">
-                  <div class="album-title">{{if .Connected}}<strong>{{.Name}}</strong>{{end}} {{if not .Connected}}<strong>{{.Name}}</strong>{{end}} create new <span>post</span></div>
+                  <div class="album-title">{{if .Connected}}<strong>{{.Name}}</strong>{{end}} {{if not
+                    .Connected}}<strong>{{.Name}}</strong>{{end}} create new <span>post</span></div>
 
                   <div class="album-date">11 Janv 2023</div>
                 </div>
@@ -281,8 +328,12 @@
         <div class="side-wrapper contacts">
           <div class="side-title">ACIVITÉS</div>
 
+<<<<<<< HEAD
           {{if not .Connected}}<a href="/login"><button type="submit" class="status-share">Login
               in</button></a>{{end}}
+=======
+          {{if not .Connected}}<a href="/login"><button type="submit" class="status-share">Login in</button></a>{{end}}
+>>>>>>> frontend
         </div>
       </div>
     </div>
@@ -291,6 +342,7 @@
     <!-----------------------------.FIN BLOCK DE DROITE.---------------------------->
 
     <!-----------------------------------.SCRIPT.----------------------------------->
+<<<<<<< HEAD
     <script>
       function likes() {
         let buttonLike = document.querySelector(".like")
@@ -334,6 +386,12 @@
       }
       dislike()
       likes()
+=======
+    <script type="module">
+      import likes from './home.js'
+      let postId = document.querySelector(".postid");
+      likes(postId);
+>>>>>>> frontend
     </script>
     <!------------------------------------------------------------------------------>
 

@@ -360,15 +360,29 @@ func preappendPost(c structure.Post) []structure.Post {
 }
 
 func home(w http.ResponseWriter, r *http.Request) {
-	var profil map[string]string
+
+	if user.Id != 0 {
+		profil := data.GetUserProfil()
+		user.Name = profil["name"]
+		user.Email = profil["email"]
+		user.Image = profil["userImage"]
+		user.UUID = profil["uuid"]
+		if profil["admin"] == "true" {
+			user.Admin = true
+		} else {
+			user.Admin = false
+		}
+	}
+
 	if r.Method == "POST" {
 
 		message := r.FormValue("message")
 		if message != "" && user.Connected {
 			postid := script.GeneratePostID()
 			currentTime := time.Now().Format("15:04  2-Janv-2006")
-			profil := data.GetUserProfil()
-			user.Name = profil["name"]
+
+			// user.Name = profil["name"]
+			// user.Image = profil["image"]
 
 			user.Post = preappendPost(structure.Post{
 				PostID:    postid,
@@ -378,8 +392,6 @@ func home(w http.ResponseWriter, r *http.Request) {
 				UserImage: user.Image,
 				Connected: true,
 			})
-
-			fmt.Printf("user.Name: %v\n", user.Name)
 
 			file, header, err := r.FormFile("myFile")
 			imageName := ""
@@ -404,17 +416,21 @@ func home(w http.ResponseWriter, r *http.Request) {
 					fmt.Println(err)
 				}
 
-				err = ioutil.WriteFile("./assets/upload-image/"+imageName, fileBytes, 0o666)
+				imageSRC := "./assets/upload-image/" + imageName
+
+				err = ioutil.WriteFile(imageSRC, fileBytes, 0o666)
 				if err != nil {
 					log.Fatal(err)
 				}
 
-				_, user.Post = dataBase.UserPost(user.Name, message, postid, user.Image, currentTime, imageName)
+				_, user.Post = dataBase.UserPost(user.Name, message, postid, user.Image, currentTime, imageSRC)
 				homefeed = dataBase.HomeFeedPost()
 				file.Close()
 
 			}
+
 		}
+
 	}
 
 	//var count int
@@ -448,10 +464,10 @@ func home(w http.ResponseWriter, r *http.Request) {
 			fmt.Printf("click Like ! : %v\n", like)
 		}
 
-		user.Name = profil["name"]
-		user.UUID = profil["uuid"]
-		user.Email = profil["email"]
-		user.Image = profil["userImage"]
+		// user.Name = profil["name"]
+		// user.UUID = profil["uuid"]
+		// user.Email = profil["email"]
+		// user.Image = profil["userImage"]
 
 		err = temp.ExecuteTemplate(w, "home", map[string]any{
 			"User":     user,
@@ -462,15 +478,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 		}
 
 	} else {
-		user.Name = profil["name"]
-		user.Email = profil["email"]
-		user.Image = profil["userImage"]
-		user.UUID = profil["uuid"]
-		if profil["admin"] == "true" {
-			user.Admin = true
-		} else {
-			user.Admin = false
-		}
+
 		err = temp.ExecuteTemplate(w, "home", map[string]any{
 			"User":     user,
 			"HomeFeed": homefeed,
@@ -487,6 +495,16 @@ func home(w http.ResponseWriter, r *http.Request) {
 func profil(w http.ResponseWriter, r *http.Request) {
 
 	var profil map[string]string
+	profil = data.GetUserProfil()
+	user.Name = profil["name"]
+	user.Email = profil["email"]
+	user.Image = profil["userImage"]
+	user.UUID = profil["uuid"]
+	if profil["admin"] == "true" {
+		user.Admin = true
+	} else {
+		user.Admin = false
+	}
 
 	var userHomeFeed []structure.UserFeedPost
 
@@ -533,16 +551,6 @@ func profil(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	profil = data.GetUserProfil()
-	user.Name = profil["name"]
-	user.Email = profil["email"]
-	user.Image = profil["userImage"]
-	user.UUID = profil["uuid"]
-	if profil["admin"] == "true" {
-		user.Admin = true
-	} else {
-		user.Admin = false
-	}
 	fmt.Printf("len(user.Post): %v\n", len(user.Post))
 	fmt.Printf("data.LenUserPost(user.Name): %v\n", data.LenUserPost(user.Name))
 	if len(userHomeFeed) < data.LenUserPost(user.Name) {

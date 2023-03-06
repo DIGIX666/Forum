@@ -52,8 +52,7 @@ type Post struct {
 	NumberOfComment int
 	Comment         Comment
 	Connected       bool
-	// AllLikes        []Likes
-	// AllDislikes     []Dislikes
+	Count           int
 }
 
 // type UserLikes struct {

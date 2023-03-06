@@ -121,13 +121,15 @@
               </div>
 
               <div class="album-content">{{.Message}}</div>
-              <img src="/assets/upload-image/{{.Picture}}" class="upload-image">
+              <div class="parentImageUpload">
+                <div class="uploadImage"> <img src="{{.Picture}}" class="upload-image"></div>
+              </div>
 
               <form action="/" method="POST">
                 <div class="album-actions">
 
                   <div class="album-action">
-                    <button type="submit" name="like" value="like" class="like">
+                    <button type="submit" name="like" value="{{.PostID}}" class="like">
                       <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"
                         stroke-linejoin="round" viewBox="0 0 24 24">
                         <path
@@ -169,7 +171,7 @@
           <div class="album box">
             <div class="status-main">
               {{if .User.Connected}}<img src="{{.User.Image}}" class="status-img">{{end}}{{if not .User.Connected}}<img
-                src="../images/beehive-37436.svg" class="status-img">{{end}}
+                src="/assets/images/beehive-37436.svg" class="status-img">{{end}}
               <div class="album-detail">
                 <div class="album-title">{{if .User.Connected}}<strong>{{.Name}}</strong>{{end}} {{if not
                   .User.Connected}}<strong>{{.User.Name}}</strong>{{end}} create new <span>post</span></div>
@@ -267,7 +269,7 @@
       </a>
       <a href="/login">
         <span class="account-user"> Login
-          <img src="../images/beehive-37436.svg" class="account-profile">
+          <img src="/assets/images/beehive-37436.svg" class="account-profile">
         </span>
       </a>
       {{end}}
@@ -275,12 +277,14 @@
     <div class="side-wrapper stories">
       <div class="side-title">NOTIFICATIONS</div>
 
-      {{if not .User.Connected }}<a href="/login"><button type="submit" class="status-share">Login in</button></a>{{end}}
+      {{if not .User.Connected }}<a href="/login"><button type="submit" class="status-share">Login
+          in</button></a>{{end}}
 
       <div class="side-wrapper contacts">
         <div class="side-title">ACIVITÉS</div>
 
-        {{if not .User.Connected}}<a href="/login"><button type="submit" class="status-share">Login in</button></a>{{end}}
+        {{if not .User.Connected}}<a href="/login"><button type="submit" class="status-share">Login
+            in</button></a>{{end}}
       </div>
     </div>
   </div>
@@ -289,7 +293,26 @@
   <!-----------------------------.FIN BLOCK DE DROITE.---------------------------->
 
   <!-----------------------------------.SCRIPT.----------------------------------->
-  <!-- <script type="module" src="/assets/Home/home.js"></script> -->
+  <script>
+
+    function displayUploadIMG() {
+      uploadIMG = document.querySelectorAll("upload-image");
+      img = document.querySelectorAll("img")
+      console.log(img)
+      if (img.src == "/assets/images/") {
+        uploadIMG.style.display = "none"
+      } else {
+        uploadIMG.style.width = "500px";
+        uploadIMG.style.height = "500px";
+        uploadIMG.style.marginLeft = "20px";
+        uploadIMG.style.display = "block";
+      }
+    }
+    displayUploadIMG()
+
+
+
+  </script>
   <!------------------------------------------------------------------------------>
 
 </body>

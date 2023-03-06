@@ -7,7 +7,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="/assets/Profil/profil.css">
-  <title>{{.Name}}</title>
+  <title>{{.user.Name}}</title>
   <link rel="website icon" type="png" href="/assets/icon.png">
 </head>
 
@@ -74,7 +74,7 @@
       <div class="main-container">
         <div class="profile">
           <div class="profile-avatar">
-            <img src="{{.Image}}" alt="user picture" class="profile-img">
+            <img src="{{.user.Image}}" alt="user picture" class="profile-img">
            
             <div class="profile-name">{{.Name}}</div>
            
@@ -170,11 +170,11 @@
             <!--------------. Armature Post1 Précréer.----------->
             <div class="album box">
               <div class="status-main">
-                <img src="{{.Image}}"
+                <img src="{{.user.Image}}"
                   class="status-img" />
                 <div class="album-detail">
 
-                  <div class="album-title"><strong>{{.Name}}
+                  <div class="album-title"><strong>{{.user.Name}}
                     </strong> create new <span>post</span></div>
 
                   <div class="album-date">11:10 11.janv.2023</div>
@@ -251,8 +251,8 @@
           <button type="submit" value="logout" name="logout" class="account-user">Logout</button>
         </form>
 
-        <span class="account-user">{{.Name}}
-           <img src="{{.Image}}" class="account-profile">
+        <span class="account-user">{{.user.Name}}
+           <img src="{{.user.Image}}" class="account-profile">
         </span>
 
       </div>

@@ -20,7 +20,6 @@ func GenerateHash(password string) string {
 	}
 
 	return string(mpCrypt)
-
 }
 
 func ComparePassword(hashedPassword string, password string) bool {
@@ -33,7 +32,6 @@ func ComparePassword(hashedPassword string, password string) bool {
 	} else {
 		return true
 	}
-
 }
 
 func GenerateRandomString() string {
@@ -41,19 +39,22 @@ func GenerateRandomString() string {
 	lengthString := 10
 	rand.Seed(time.Now().UnixNano())
 	randomString := RandStringBytes(lengthString)
-
 	return randomString
 
 }
 
 func GeneratePostID() string {
-
 	lengthString := 7
 	rand.Seed(time.Now().UnixNano())
 	randomString := RandStringBytes(lengthString)
-
 	return randomString
+}
 
+func GenerateCommentID() string {
+	lengthString := 7
+	rand.Seed(time.Now().UnixNano())
+	randomString := RandStringBytes(lengthString)
+	return randomString
 }
 
 func RandStringBytes(n int) string {

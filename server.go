@@ -8,6 +8,7 @@ import (
 	script "Forum/scripts"
 	"crypto/tls"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 
@@ -21,10 +22,11 @@ import (
 
 /****************************** FUNCTION ERREUR *******************************/
 var user structure.UserAccount
-var like structure.Likes
-var dislike structure.Dislikes
 var userComment structure.Comment
 var Posts structure.Post
+var uAccount []structure.UserAccount
+var homefeed []structure.HomeFeedPost
+var countEnter int
 
 func erreur(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" && r.URL.Path != "/register" && r.URL.Path != "/home" && r.URL.Path != "/error" && r.URL.Path != "/userAccount" {
@@ -50,6 +52,7 @@ func erreur(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	dataBase.CreateDataBase()
+	homefeed = data.HomeFeedPost()
 	defer data.Db.Close()
 
 	fileServer := http.FileServer(http.Dir("./assets"))
@@ -97,8 +100,6 @@ func main() {
 	}
 }
 
-var uAccount []structure.UserAccount
-
 /***************************** FUNCTION LOGIN *****************************/
 
 func login(w http.ResponseWriter, r *http.Request) {
@@ -113,9 +114,8 @@ func login(w http.ResponseWriter, r *http.Request) {
 		code := r.FormValue("code")
 
 		checkGoogleUserLogged, uName, uEmail, _ := function.GoogleAuthLog(code)
-		fmt.Printf("checkGoogleUserLogged: %v\n", checkGoogleUserLogged)
+
 		checkGitHubUserLoogged, GitHub_UserName, _, _ := function.GitHubLog(code)
-		fmt.Printf("checkGitHubUserLoogged: %v\n", checkGitHubUserLoogged)
 
 		if checkGoogleUserLogged {
 			uuidGenerated, _ := uuid.NewV4()
@@ -130,12 +130,13 @@ func login(w http.ResponseWriter, r *http.Request) {
 
 			user.Connected = true
 			Posts.Connected = true
-
+			userComment.Connected = true
 			data.SetGoogleUserUUID(uEmail)
 			dataBase.AddSession(uName, uuidUser, cookie.Value)
 			http.Redirect(w, r, "/profil", http.StatusFound)
 			return
 		}
+
 		if checkGitHubUserLoogged {
 
 			uuidGenerated, _ := uuid.NewV4()
@@ -149,6 +150,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 			http.SetCookie(w, &cookie)
 			user.Connected = true
 			Posts.Connected = true
+			userComment.Connected = true
 			dataBase.AddSession(GitHub_UserName, uuidGithubUser, cookie.Value)
 
 			http.Redirect(w, r, "/profil", http.StatusFound)
@@ -206,6 +208,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 				data.AddSession(uName, userSession, cookie.Value)
 
 				Posts.Connected = true
+				userComment.Connected = true
 
 				http.Redirect(w, r, "/", http.StatusFound)
 				return
@@ -232,35 +235,6 @@ func login(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-/***************************** FUNCTION LOGOUT *****************************/
-// func logout(w http.ResponseWriter, r *http.Request) {
-// 	// Supprime les informations de session de l'utilisateur
-// 	session, _ := store.Get(r, "session-name")
-// 	session.Options.MaxAge = -1
-// 	session.Save(r, w)
-
-// 	// Redirige l'utilisateur vers la page de connexion
-// 	http.Redirect(w, r, "/home", http.StatusFound)
-// }
-
-// func logout(w http.ResponseWriter, r *http.Request) {
-// 	cookie, err := r.Cookie("session")
-// 	if err != nil {
-// 		http.Redirect(w, r, "/profil", http.StatusFound)
-// 		return
-// 	}
-
-// 	dataBase.DeleteSession(cookie.Value)
-
-// 	cookie = &http.Cookie{
-// 		Name:   "session",
-// 		Value:  "",
-// 		MaxAge: -1,
-// 	}
-// 	http.SetCookie(w, cookie)
-// 	http.Redirect(w, r, "/profil", http.StatusFound)
-// }
-
 /*************************** FUNCTION REGISTER **********************************/
 
 func register(w http.ResponseWriter, r *http.Request) {
@@ -273,12 +247,11 @@ func register(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r.FormValue("code") != "" {
-		fmt.Printf("Code receive: %v\n", r.FormValue("code"))
+
 		checkGitHub_User_Registered, _, userGitHubName := function.GitHubRegister(r.FormValue("code"))
 		hashPassword := script.GenerateHash(script.GenerateRandomString())
 
 		checkGoogleUserRegistered, googleUserEmail, userGoogleName := function.GoogleAuthRegister(r.FormValue("code"), hashPassword)
-		fmt.Printf("checkGoogleUserRegistered: %v\n", checkGoogleUserRegistered)
 
 		if checkGitHub_User_Registered || userGitHubName != "" {
 
@@ -286,14 +259,14 @@ func register(w http.ResponseWriter, r *http.Request) {
 			cookie := http.Cookie{
 				Value:  uuidGitHubUser,
 				Name:   "session",
-				MaxAge: 600,
+				MaxAge: 120,
 			}
 
 			http.SetCookie(w, &cookie)
 			data.AddSession(userGitHubName, uuidGitHubUser, cookie.Value)
 			user.Connected = true
 			Posts.Connected = true
-			Posts.Connected = true
+			userComment.Connected = true
 			http.Redirect(w, r, "/", http.StatusFound)
 			return
 		}
@@ -303,7 +276,7 @@ func register(w http.ResponseWriter, r *http.Request) {
 			cookie := http.Cookie{
 				Value:  uuidGoogleUser,
 				Name:   "session",
-				MaxAge: 600,
+				MaxAge: 120,
 			}
 			http.SetCookie(w, &cookie)
 
@@ -311,6 +284,7 @@ func register(w http.ResponseWriter, r *http.Request) {
 
 			user.Connected = true
 			Posts.Connected = true
+			userComment.Connected = true
 
 			http.Redirect(w, r, "/", http.StatusFound)
 			return
@@ -324,6 +298,7 @@ func register(w http.ResponseWriter, r *http.Request) {
 		}
 	} else {
 		fmt.Println("Receive no code !")
+
 		if r.Method == "GET" {
 			t := template.New("register")
 			t = template.Must(t.ParseFiles("./assets/register.html"))
@@ -335,30 +310,26 @@ func register(w http.ResponseWriter, r *http.Request) {
 
 		var email string
 		var password string
+
 		email = r.FormValue("email_confirm")
 		password = r.FormValue("password_confirm")
 
 		hashPassword := script.GenerateHash(password)
-
-		//fmt.Printf("email: %v\n", email)
-		//fmt.Printf("hashPassword: %v\n", hashPassword)
-		//compare := script.ComparePassword(hashPassword, password)
-
 		if email != "" && password != "" {
+
 			checkRegister := dataBase.DataBaseRegister(email, hashPassword)
-
 			if checkRegister {
-
 				if r.Method == "POST" {
 					uuidGenerated, _ := uuid.NewV4()
 					uuidUser := uuidGenerated.String()
 					cookie := http.Cookie{
 						Value:  uuidUser,
 						Name:   "session",
-						MaxAge: 800,
+						MaxAge: 190,
 					}
 					user.Connected = true
 					Posts.Connected = true
+					userComment.Connected = true
 					http.SetCookie(w, &cookie)
 					data.AddSession("none", uuidUser, cookie.Value)
 					_, err := data.Db.Exec("UPDATE users SET UUID = ? WHERE email = ?", uuidUser, email)
@@ -371,7 +342,7 @@ func register(w http.ResponseWriter, r *http.Request) {
 					return
 				}
 			} else {
-				fmt.Println("problem to Register ! maybe email already exist !")
+				http.Redirect(w, r, "/login", http.StatusFound)
 				return
 			}
 		}
@@ -379,7 +350,6 @@ func register(w http.ResponseWriter, r *http.Request) {
 }
 
 /*************************** FUNCTION HOME **********************************/
-
 var posts []structure.Post
 
 func preappendPost(c structure.Post) []structure.Post {
@@ -390,72 +360,135 @@ func preappendPost(c structure.Post) []structure.Post {
 }
 
 func home(w http.ResponseWriter, r *http.Request) {
-	if err := r.ParseForm(); err != nil {
-		fmt.Fprintf(w, "ParseForm() err: %v", err)
-		return
+	var profil map[string]string
+	if r.Method == "POST" {
+
+		message := r.FormValue("message")
+		if message != "" && user.Connected {
+			postid := script.GeneratePostID()
+			currentTime := time.Now().Format("15:04  2-Janv-2006")
+			profil := data.GetUserProfil()
+			user.Name = profil["name"]
+
+			user.Post = preappendPost(structure.Post{
+				PostID:    postid,
+				Name:      user.Name,
+				Message:   message,
+				DateTime:  currentTime,
+				UserImage: user.Image,
+				Connected: true,
+			})
+
+			fmt.Printf("user.Name: %v\n", user.Name)
+
+			file, header, err := r.FormFile("myFile")
+			imageName := ""
+			if err != nil {
+				if err != http.ErrMissingFile {
+					http.Error(w, err.Error(), http.StatusBadRequest)
+					return
+				}
+				//Put the message in the dataBase
+				dataBase.UserPost(user.Name, message, postid, user.Image, currentTime, imageName)
+				homefeed = dataBase.HomeFeedPost()
+
+			} else {
+				imageName = header.Filename
+				fmt.Printf("Uploaded File: %+v\n", header.Filename)
+
+				// read all of the contents of our uploaded file into a
+				// byte array
+				fileBytes, err := ioutil.ReadAll(file)
+
+				if err != nil {
+					fmt.Println(err)
+				}
+
+				err = ioutil.WriteFile("./assets/upload-image/"+imageName, fileBytes, 0o666)
+				if err != nil {
+					log.Fatal(err)
+				}
+
+				_, user.Post = dataBase.UserPost(user.Name, message, postid, user.Image, currentTime, imageName)
+				homefeed = dataBase.HomeFeedPost()
+				file.Close()
+
+			}
+		}
 	}
 
 	//var count int
-	var profil map[string]string
 
 	temp, err := template.ParseFiles("./assets/Home/home.html")
 	if err != nil {
 		log.Println("Error parsing template:", err)
 		return
 	}
-	user.Connected = true
+
 	if user.Connected {
 		_, err = r.Cookie("session")
 		if err != nil {
 			user.Connected = false
-			Posts.Connected = false
+			for _, v := range user.Post {
+				v.Connected = false
+			}
 			data.DeleteSession(user.Name)
 			http.Redirect(w, r, "/", http.StatusFound)
 			return
 		}
-		profil = data.GetUserProfil()
-	}
 
-	user.Name = profil["name"]
-	user.Email = profil["email"]
-	user.Image = profil["userImage"]
-	fmt.Printf("User.Image : %v\n", user.Image)
-	user.UUID = profil["uuid"]
-	if profil["admin"] == "true" {
-		user.Admin = true
+		user.Connected = true
+		for _, v := range user.Post {
+			v.Connected = true
+		}
+
+		like := r.FormValue("like")
+
+		if like != "" {
+			fmt.Printf("click Like ! : %v\n", like)
+		}
+
+		user.Name = profil["name"]
+		user.UUID = profil["uuid"]
+		user.Email = profil["email"]
+		user.Image = profil["userImage"]
+
+		err = temp.ExecuteTemplate(w, "home", map[string]any{
+			"User":     user,
+			"HomeFeed": homefeed,
+		})
+		if err != nil {
+			log.Fatal(err)
+		}
 
 	} else {
-		user.Admin = false
-	}
-
-	picture := r.FormValue("picture")
-	message := r.FormValue("message")
-
-	if message != "" && Posts.Connected {
-		currentTime := time.Now().Format("15:04  2-Janv-2006")
-		user.Post = preappendPost(structure.Post{
-			PostID:   script.GeneratePostID(),
-			Name:     user.Name,
-			Message:  message,
-			DateTime: currentTime,
-			Picture:  picture,
+		user.Name = profil["name"]
+		user.Email = profil["email"]
+		user.Image = profil["userImage"]
+		user.UUID = profil["uuid"]
+		if profil["admin"] == "true" {
+			user.Admin = true
+		} else {
+			user.Admin = false
+		}
+		err = temp.ExecuteTemplate(w, "home", map[string]any{
+			"User":     user,
+			"HomeFeed": homefeed,
 		})
-		//Put the message in the dataBase
-		dataBase.UserPost(user.Name, message, script.GeneratePostID(), user.Image, currentTime, picture)
+		if err != nil {
+			log.Fatal(err)
+		}
 
-	}
-
-	user.Comment = []structure.Comment{}
-
-	err = temp.ExecuteTemplate(w, "home", user)
-	if err != nil {
-		log.Fatal(err)
 	}
 
 }
 
 /*************************** FUNCTION PROFIL **********************************/
 func profil(w http.ResponseWriter, r *http.Request) {
+
+	var profil map[string]string
+
+	var userHomeFeed []structure.UserFeedPost
 
 	if err := r.ParseForm(); err != nil {
 		fmt.Fprintf(w, "ParseForm() err: %v", err)
@@ -473,9 +506,12 @@ func profil(w http.ResponseWriter, r *http.Request) {
 		data.DeleteSession(user.Name)
 		user.Connected = false
 		Posts.Connected = false
-
+		userComment.Connected = false
 		http.Redirect(w, r, "/", http.StatusFound)
 		return
+	}
+	for _, v := range user.Post {
+		v.Connected = true
 	}
 
 	temp, err := template.ParseFiles("./assets/Profil/profil.html")
@@ -484,19 +520,20 @@ func profil(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if user.Connected {
-		_, err = r.Cookie("session")
-		if err != nil {
-			user.Connected = false
-			data.DeleteSession(user.Name)
-			Posts.Connected = false
-			http.Redirect(w, r, "/", http.StatusFound)
-			return
+	_, err = r.Cookie("session")
+	if err != nil {
+		user.Connected = false
+		for _, v := range user.Post {
+			v.Connected = false
 		}
+		data.DeleteSession(user.Name)
+		Posts.Connected = false
+		userComment.Connected = false
+		http.Redirect(w, r, "/", http.StatusFound)
+		return
 	}
 
-	profil := data.GetUserProfil()
-
+	profil = data.GetUserProfil()
 	user.Name = profil["name"]
 	user.Email = profil["email"]
 	user.Image = profil["userImage"]
@@ -506,92 +543,62 @@ func profil(w http.ResponseWriter, r *http.Request) {
 	} else {
 		user.Admin = false
 	}
-
-	user.Connected = true
-
-	message := r.FormValue("message")
-	picture := r.FormValue("picture")
-
-	if message != "" {
-		currentTime := time.Now().Format("15:04  2-Janv-2006")
-		user.Post = preappendPost(structure.Post{
-			PostID:   script.GeneratePostID(),
-			Name:     profil["name"],
-			Message:  message,
-			DateTime: currentTime,
-			Picture:  picture,
-		})
-		//Put the message in the dataBase
-		dataBase.UserPost(user.Name, message, script.GeneratePostID(), user.Image, currentTime, picture)
-
+	fmt.Printf("len(user.Post): %v\n", len(user.Post))
+	fmt.Printf("data.LenUserPost(user.Name): %v\n", data.LenUserPost(user.Name))
+	if len(userHomeFeed) < data.LenUserPost(user.Name) {
+		userHomeFeed = data.ProfilFeed(user.Name)
 	}
 
-	user.Comment = []structure.Comment{}
-
-	if err = temp.ExecuteTemplate(w, "profil", user); err != nil {
+	if err = temp.ExecuteTemplate(w, "profil", map[string]any{
+		"user":     user,
+		"UserPost": userHomeFeed,
+	}); err != nil {
 		log.Println("Error executing template:", err)
 		return
 	}
-
 }
-
-/*************************** FUNCTION USER ACCOUNT **********************************/
-
-// func userAccount(w http.ResponseWriter, r *http.Request) {
-// 	if err := r.ParseForm(); err != nil {
-// 		fmt.Fprintf(w, "ParseForm() err: %v", err)
-// 		return
-// 	}
-
-// 	var userAccount []structure.UserAccount
-
-// 	t := template.New("userAccount")
-// 	t = template.Must(t.ParseFiles("./assets/userAccount.html"))
-
-// 	for _, v := range userAccount {
-// 		err := t.ExecuteTemplate(w, "userAccount", v)
-// 		if err != nil {
-// 			log.Fatal(err)
-// 		}
-// 	}
-
-// }
 
 /*************************** FUNCTION COMMENT **********************************/
 
-var comments []structure.Comment
-
-func preappendComment(d structure.Comment) {
-	comments = append(comments, structure.Comment{})
-	copy(comments[1:], comments)
-	comments[0] = d
-}
-
 func comment(w http.ResponseWriter, r *http.Request) {
-	if err := r.ParseForm(); err != nil {
-		fmt.Fprintf(w, "ParseForm() err: %v", err)
-		return
-	}
 	temp, err := template.ParseFiles("./assets/Commentaire/comment.html")
 	if err != nil {
 		log.Println("Error parsing template:", err)
 		return
 	}
 
-	name := r.FormValue("name")
-	message := r.FormValue("message")
-	if message != "" {
-		currentTime := time.Now().Format("15:04  2.Janv.2006")
-		preappendComment(structure.Comment{Name: name, Message: message, DateTime: currentTime})
-	}
+	if r.Method == "POST" {
 
-	for _, v := range comments {
-		fmt.Printf("v.DateTime: %v\n", v.DateTime)
-		fmt.Printf("v.Message: %v\n", v.Message)
-	}
+		if err := r.ParseForm(); err != nil {
+			fmt.Fprintf(w, "ParseForm() err: %v", err)
+			return
+		}
 
-	if err := temp.ExecuteTemplate(w, "comment", comments); err != nil {
-		log.Println("Error executing template:", err)
-		return
+		message := r.FormValue("message")
+		postID := r.FormValue("Post_values")
+
+		//postid, _ := strconv.Atoi(postID)
+		//fmt.Printf("postid: %v\n", postid)
+
+		currentTime := time.Now().Format("15:04  2-Jan-2006")
+
+		//Put the message in the dataBase
+		v := dataBase.UserComment(user.Name, message, script.GenerateCommentID(), currentTime, postID)
+		fmt.Printf("User Comment: %v\n", v)
+
+		http.Redirect(w, r, "/comment?postid="+postID, http.StatusSeeOther)
+
+	} else if r.Method == "GET" {
+
+		postid := r.URL.Query().Get("postid")
+
+		if err := temp.ExecuteTemplate(w, "comment", map[string]any{
+			"PostID":   postid,
+			"Comments": data.GetPostComment(postid),
+		}); err != nil {
+			log.Println("Error executing template:", err)
+			return
+		}
+
 	}
 }

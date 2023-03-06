@@ -595,6 +595,7 @@ body {
  margin-left: auto;
  box-shadow: 0 0 20px #1b86f9;
  cursor: pointer;
+ text-decoration: none;
 }
 
 
@@ -683,6 +684,7 @@ body {
 
 .album-actions {
  padding: 0 20px 20px;
+ display: flex;
 }
 
 .album-action {
@@ -953,4 +955,11 @@ body {
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.1);
+}
+
+
+.upload-image {
+  width: 500px;
+  height: 500px;
+  margin-left: 20px;
 }

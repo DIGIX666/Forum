@@ -1,18 +1,16 @@
 package structure
 
 type UserAccount struct {
-	Id           int
-	Name         string //Name of the user
-	Image        string //Path src
-	Email        string
-	UUID         string
-	Password     string
-	Post         []Post
-	Comment      []Comment
-	UserLikes    UserLikes
-	UserDislikes UserDisLikes
-	Admin        bool //true: the user is the Admin
-	Connected    bool
+	Id        int
+	Name      string //Name of the user
+	Image     string //Path src
+	Email     string
+	UUID      string
+	Password  string
+	Post      []Post
+	Comment   []Comment
+	Admin     bool //true: the user is the Admin
+	Connected bool
 }
 
 type Comment struct {
@@ -20,44 +18,68 @@ type Comment struct {
 	CommentID string
 	Message   string
 	DateTime  string
-	Picture   string
+	PostID    string
+	Connected bool
+}
+
+type HomeFeedPost struct {
+	PostID          string
+	Name            string
+	Message         string
+	UserImage       string
+	DateTime        string
+	Picture         string
+	NumberOfComment int
+}
+
+type UserFeedPost struct {
+	PostID          string
+	Name            string
+	Message         string
+	UserImage       string
+	DateTime        string
+	Picture         string
+	NumberOfComment int
 }
 
 type Post struct {
-	PostID      string
-	Name        string
-	Message     string
-	UserImage   string
-	DateTime    string
-	Picture     string
-	Comment     Comment
-	Connected   bool
-	AllLikes    []Likes
-	AllDislikes []Dislikes
+	PostID          string
+	Name            string
+	Message         string
+	UserImage       string
+	DateTime        string
+	Picture         string
+	NumberOfComment int
+	Comment         Comment
+	Connected       bool
+	// AllLikes        []Likes
+	// AllDislikes     []Dislikes
 }
 
-type UserLikes struct {
-	PostID   string
-	DateTime string
-}
+// type UserLikes struct {
+// 	PostID   string
+// 	DateTime string
+// }
 
-type UserDisLikes struct {
-	PostID   string
-	DateTime string
-}
+// type UserDisLikes struct {
+// 	PostID   string
+// 	DateTime string
+// }
 
-type Likes struct {
-	NumberOfLikes int
-	UserNameLike  string
-	PostId        string
-	DateTime      string
-}
-type Dislikes struct {
-	NumberOfDislikes int
-	UserNameDislike  string
-	PostID           string
-	DateTime         string
-}
+// type Likes struct {
+// 	NumberOfLikes int
+// 	UserNameLike  string
+// 	PostId        string
+// 	DateTime      string
+// 	Connected     bool
+// }
+// type Dislikes struct {
+// 	NumberOfDislikes int
+// 	UserNameDislike  string
+// 	PostID           string
+// 	DateTime         string
+// 	Connected        bool
+// }
 
 type AuthGoogle struct {
 	Access_Token  string `json:"access_token"`

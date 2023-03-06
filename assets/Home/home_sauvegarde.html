@@ -41,7 +41,7 @@
             </svg>
             Home
           </a>
-          {{if .User.Connected}}
+          {{if .Connected}}
           <a href="/profil">
             <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
               viewBox="0 0 24 24">
@@ -76,12 +76,12 @@
         <div class="timeline">
           <div class="timeline-right">
             <!--------------.Écriture Post.----------->
-            {{if .User.Connected}}
+            {{if .Connected}}
             <form method="POST" enctype="multipart/form-data">
               <div class="status box">
                 <div class="status-menu"></div>
                 <div class="status-main">
-                  <img src="{{.User.Image}}" class="status-img">
+                  <img src="{{.Image}}" class="status-img">
                   <textarea class="status-textarea" name="message" placeholder="Write something ..."></textarea>
                 </div>
                 <div class="status-actions">
@@ -109,7 +109,7 @@
 
             <!--------------.Armature Post.----------->
 
-            {{range .HomeFeed}}
+            {{range .Post}}
             <div class="album box">
               <div class="status-main">
                 <img src="{{.UserImage}}" class="status-img">
@@ -168,11 +168,11 @@
 
           <div class="album box">
             <div class="status-main">
-              {{if .User.Connected}}<img src="{{.User.Image}}" class="status-img">{{end}}{{if not .User.Connected}}<img
+              {{if .Connected}}<img src="{{.Image}}" class="status-img">{{end}}{{if not .Connected}}<img
                 src="../images/beehive-37436.svg" class="status-img">{{end}}
               <div class="album-detail">
-                <div class="album-title">{{if .User.Connected}}<strong>{{.Name}}</strong>{{end}} {{if not
-                  .User.Connected}}<strong>{{.User.Name}}</strong>{{end}} create new <span>post</span></div>
+                <div class="album-title">{{if .Connected}}<strong>{{.Name}}</strong>{{end}} {{if not
+                  .Connected}}<strong>{{.Name}}</strong>{{end}} create new <span>post</span></div>
 
                 <div class="album-date">11 Janv 2023</div>
               </div>
@@ -253,14 +253,14 @@
           <path d="M22 6l-10 7L2 6" />
         </svg>
       </button>
-      {{if .User.Connected}}
+      {{if .Connected}}
       <a href="/profil">
-        <span class="account-user"> {{.User.Name}}
+        <span class="account-user"> {{.Name}}
           <img src="{{.Image}}" class="account-profile">
         </span>
       </a>
       {{end}}
-      {{if not .User.Connected}}
+      {{if not .Connected}}
       <a href="/register">
         <span class="account-user"> Register
         </span>
@@ -275,12 +275,12 @@
     <div class="side-wrapper stories">
       <div class="side-title">NOTIFICATIONS</div>
 
-      {{if not .User.Connected }}<a href="/login"><button type="submit" class="status-share">Login in</button></a>{{end}}
+      {{if not .Connected }}<a href="/login"><button type="submit" class="status-share">Login in</button></a>{{end}}
 
       <div class="side-wrapper contacts">
         <div class="side-title">ACIVITÉS</div>
 
-        {{if not .User.Connected}}<a href="/login"><button type="submit" class="status-share">Login in</button></a>{{end}}
+        {{if not .Connected}}<a href="/login"><button type="submit" class="status-share">Login in</button></a>{{end}}
       </div>
     </div>
   </div>

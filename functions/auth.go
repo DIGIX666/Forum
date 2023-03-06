@@ -36,8 +36,8 @@ func GoogleAuthLog(code string) (bool, string, string, string) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	a, _ := ioutil.ReadAll(responseGoogle.Body)
-	fmt.Printf("ResponseGoogle: %v\n", string(a))
+	// a, _ := ioutil.ReadAll(responseGoogle.Body)
+	// fmt.Printf("ResponseGoogle: %v\n", string(a))
 
 	//Rfresh_Token := googleTokenJSON.Refresh_Token
 	//refresh_token := "1//03141UoOFJOiJCgYIARAAGAMSNwF-L9Irjnoum5-ga4HAMEgCNKgxA4GUcxt90qDVCa23nw0ZLZfHUDB7FJ7_JV08LIUCQSBc4r4"
@@ -126,7 +126,7 @@ func GoogleAuthRegister(code string, hashPassword string) (bool, string, string)
 	}
 	if count > 0 {
 
-		fmt.Println("google user already registered")
+		// fmt.Println("google user already registered")
 
 		return false, googleUser.Email, ""
 
@@ -220,7 +220,7 @@ func GitHubRegister(code string) (bool, string, string) {
 	}
 	if count > 0 {
 
-		fmt.Println("Github user already register !")
+		// fmt.Println("Github user already register !")
 
 		return false, "", githubUserJSONToken.Name
 

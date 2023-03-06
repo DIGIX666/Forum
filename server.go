@@ -364,6 +364,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 
 		message := r.FormValue("message")
+
 		if message != "" && user.Connected {
 			postid := script.GeneratePostID()
 			currentTime := time.Now().Format("15:04  2-Janv-2006")
@@ -385,7 +386,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 				}
 
 				//Put the message in the dataBase
-				dataBase.UserPost(user.Name, message, postid, user.Image, currentTime, imageName)
+				dataBase.UserPost(user.Name, message, postid, user.Image, currentTime, imageName, Posts.Count)
 
 			} else {
 				imageName = header.Filename
@@ -401,10 +402,22 @@ func home(w http.ResponseWriter, r *http.Request) {
 
 				err = ioutil.WriteFile("./assets/upload-image/"+imageName, fileBytes, 0o666)
 
-				_, user.Post = dataBase.UserPost(user.Name, message, postid, user.Image, currentTime, imageName)
+				_, user.Post = dataBase.UserPost(user.Name, message, postid, user.Image, currentTime, imageName, Posts.Count)
 				file.Close()
 
 			}
+		}
+		if r.FormValue("like") != "" && user.Connected {
+			postid := r.FormValue("like")
+			for i := range user.Post {
+				fmt.Printf("i: %v\n", i)
+				fmt.Printf("user.Post[i].PostID: %v\n", user.Post[i].PostID)
+				if user.Post[i].PostID == postid {
+					user.Post[i].Count++
+				}
+				fmt.Printf("conteur %v\n", user.Post[i].Count)
+			}
+			fmt.Printf("postid: %v\n", postid)
 		}
 
 	}
@@ -417,6 +430,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 		log.Println("Error parsing template:", err)
 		return
 	}
+
 	if user.Connected {
 		_, err = r.Cookie("session")
 		if err != nil {
@@ -448,7 +462,6 @@ func home(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Fatal(err)
 	}
-
 }
 
 /*************************** FUNCTION PROFIL **********************************/
@@ -509,23 +522,6 @@ func profil(w http.ResponseWriter, r *http.Request) {
 		user.Admin = true
 	} else {
 		user.Admin = false
-	}
-
-	message := r.FormValue("message")
-	picture := r.FormValue("picture")
-
-	if message != "" {
-		currentTime := time.Now().Format("15:04  2-Janv-2006")
-		user.Post = preappendPost(structure.Post{
-			PostID:   script.GeneratePostID(),
-			Name:     profil["name"],
-			Message:  message,
-			DateTime: currentTime,
-			Picture:  picture,
-		})
-		//Put the message in the dataBase
-		dataBase.UserPost(user.Name, message, script.GeneratePostID(), user.Image, currentTime, picture)
-
 	}
 
 	if err = temp.ExecuteTemplate(w, "profil", user); err != nil {

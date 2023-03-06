@@ -94,7 +94,6 @@ func CreateDataBase() {
 		username NOT NULL,
         datetime NOT NULL,
 		post_id INTEGER,
-		count INTEGER DEFAULT 0,
 		FOREIGN KEY (post_id) REFERENCES posts(postid)
 
     )`)
@@ -293,15 +292,14 @@ func CheckUserLogin(email string, password string, uuid string) bool {
 // }
 
 /************************* USER POST **********************************/
-func UserPost(userName string, message string, postID string, image string, dateTime string, pictureURL string) (bool, []structure.Post) {
+func UserPost(userName string, message string, postID string, image string, dateTime string, pictureURL string, count int) (bool, []structure.Post) {
 
 	NumberOfComment := 0
 
 	fmt.Printf("image: %v", pictureURL)
 	fmt.Println("")
-	// if pictureURL != "" {
 
-	_, err := Db.Exec("INSERT INTO posts (name, message, postid,image, datetime,picture) VALUES (?,?,?,?,?,?)", userName, message, postID, image, dateTime, pictureURL)
+	_, err := Db.Exec("INSERT INTO posts (name, message, postid,image, datetime,picture, count) VALUES (?, ?, ?,?,?,?)", userName, message, postID, image, dateTime, pictureURL, 0)
 	if err != nil {
 		fmt.Println("Error Insert user Post to the dataBase:")
 		log.Fatal(err)
@@ -320,28 +318,6 @@ func UserPost(userName string, message string, postID string, image string, date
 
 		return true, user.Post
 	}
-
-	// } else {
-	// 	_, err := Db.Exec("INSERT INTO posts (name, message, postid,image, datetime,picture) VALUES (?, ?, ?,?,?,?)", userName, message, postID, image, dateTime, "")
-	// 	if err != nil {
-	// 		fmt.Println("Error Insert user Post to the dataBase:")
-	// 		log.Fatal(err)
-	// 	} else {
-
-	// 		user.Post = preappendPost(structure.Post{
-	// 			PostID:          postID,
-	// 			Name:            userName,
-	// 			Message:         message,
-	// 			DateTime:        dateTime,
-	// 			Picture:         "",
-	// 			NumberOfComment: NumberOfComment,
-	// 			Connected:       true,
-	// 		})
-
-	// 		return true, user.Post
-	// 	}
-	// 	return false, user.Post
-	// }
 }
 
 /*************************** USER COMMENT **********************************/
@@ -385,14 +361,14 @@ func SetGitHubUUID(userName string) string {
 }
 
 /*************************** ADD LIKES **********************************/
-// func AddLikes(userName string, postID string, dateTime string) {
+func AddLikes(userName string, postID string, dateTime string) {
 
-// 	_, err := Db.Exec("INSERT INTO likes (username,numberlikes,postid,datetime) VALUES (?,?,?,?)", userName, postID, dateTime)
-// 	if err != nil {
-// 		fmt.Println("Error function AddLikes dataBase:")
-// 		log.Fatal(err)
-// 	}
-// }
+	_, err := Db.Exec("INSERT INTO likes (username,numberlikes,postid,datetime) VALUES (?,?,?,?)", userName, postID, dateTime)
+	if err != nil {
+		fmt.Println("Error function AddLikes dataBase:")
+		log.Fatal(err)
+	}
+}
 
 /*************************** NUMBER OF LIKES POST **********************************/
 // cette fonction permet d'obtenir des likes total d'un post.

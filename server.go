@@ -377,6 +377,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 
 		message := r.FormValue("message")
+
 		if message != "" && user.Connected {
 			postid := script.GeneratePostID()
 			currentTime := time.Now().Format("15:04  2-Janv-2006")
@@ -401,7 +402,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 					return
 				}
 				//Put the message in the dataBase
-				dataBase.UserPost(user.Name, message, postid, user.Image, currentTime, imageName)
+				dataBase.UserPost(user.Name, message, postid, user.Image, currentTime, imageName, Posts.Count)
 				homefeed = dataBase.HomeFeedPost()
 
 			} else {
@@ -423,12 +424,36 @@ func home(w http.ResponseWriter, r *http.Request) {
 					log.Fatal(err)
 				}
 
-				_, user.Post = dataBase.UserPost(user.Name, message, postid, user.Image, currentTime, imageSRC)
+				_, user.Post = dataBase.UserPost(user.Name, message, postid, user.Image, currentTime, imageSRC, Posts.Count)
 				homefeed = dataBase.HomeFeedPost()
 				file.Close()
 
 			}
 
+		}
+		if r.FormValue("like") != "" && user.Connected {
+			postid := r.FormValue("like")
+			for i := range user.Post {
+				fmt.Printf("i: %v\n", i)
+				fmt.Printf("user.Post[i].PostID: %v\n", user.Post[i].PostID)
+				if user.Post[i].PostID == postid {
+					user.Post[i].Count++
+				}
+				fmt.Printf("conteur %v\n", user.Post[i].Count)
+			}
+			fmt.Printf("postid: %v\n", postid)
+		}
+		if r.FormValue("like") != "" && user.Connected {
+			postid := r.FormValue("like")
+			for i := range user.Post {
+				fmt.Printf("i: %v\n", i)
+				fmt.Printf("user.Post[i].PostID: %v\n", user.Post[i].PostID)
+				if user.Post[i].PostID == postid {
+					user.Post[i].Count++
+				}
+				fmt.Printf("conteur %v\n", user.Post[i].Count)
+			}
+			fmt.Printf("postid: %v\n", postid)
 		}
 
 	}
@@ -505,7 +530,6 @@ func profil(w http.ResponseWriter, r *http.Request) {
 	} else {
 		user.Admin = false
 	}
-
 	var userHomeFeed []structure.UserFeedPost
 
 	if err := r.ParseForm(); err != nil {

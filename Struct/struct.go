@@ -1,16 +1,18 @@
 package structure
 
 type UserAccount struct {
-	Id        int
-	Name      string //Name of the user
-	Image     string //Path src
-	Email     string
-	UUID      string
-	Password  string
-	Post      []Post
-	Comment   []Comment
-	Admin     bool //true: the user is the Admin
-	Connected bool
+	Id          int
+	Name        string //Name of the user
+	Image       string //Path src
+	Email       string
+	UUID        string
+	Password    string
+	Post        []Post
+	Comment     []Comment
+	Admin       bool //true: the user is the Admin
+	Connected   bool
+	AllLikes    []Likes
+	AllDislikes []Dislikes
 }
 
 type Comment struct {
@@ -49,36 +51,26 @@ type Post struct {
 	UserImage       string
 	DateTime        string
 	Picture         string
+	Count           int
 	NumberOfComment int
 	Comment         Comment
 	Connected       bool
-	Count           int
 }
 
-// type UserLikes struct {
-// 	PostID   string
-// 	DateTime string
-// }
-
-// type UserDisLikes struct {
-// 	PostID   string
-// 	DateTime string
-// }
-
-// type Likes struct {
-// 	NumberOfLikes int
-// 	UserNameLike  string
-// 	PostId        string
-// 	DateTime      string
-// 	Connected     bool
-// }
-// type Dislikes struct {
-// 	NumberOfDislikes int
-// 	UserNameDislike  string
-// 	PostID           string
-// 	DateTime         string
-// 	Connected        bool
-// }
+type Likes struct {
+	NumberOfLikes int
+	UserNameLike  string
+	PostId        string
+	DateTime      string
+	Connected     bool
+}
+type Dislikes struct {
+	NumberOfDislikes int
+	UserNameDislike  string
+	PostID           string
+	DateTime         string
+	Connected        bool
+}
 
 type AuthGoogle struct {
 	Access_Token  string `json:"access_token"`

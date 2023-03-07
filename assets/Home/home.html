@@ -121,11 +121,11 @@
               </div>
 
               <div class="album-content">{{.Message}}</div>
-<<<<<<< HEAD
               <div class="parentImageUpload">
                 <div class="uploadImage"> <img src="{{.Picture}}" class="upload-image"></div>
-=======
-              <img src="/assets/upload-image/{{.Picture}}" class="upload-image">
+              </div>
+
+              <img src="{{.Picture}}" class="upload-image">
               <div class="album-actions">
 
                 <form method="post" class="album-action" action="/">
@@ -162,45 +162,8 @@
                 </a>
 
 
->>>>>>> frontend
               </div>
-
-              <form action="/" method="POST">
-                <div class="album-actions">
-
-                  <div class="album-action">
-                    <button type="submit" name="like" value="{{.PostID}}" class="like">
-                      <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"
-                        stroke-linejoin="round" viewBox="0 0 24 24">
-                        <path
-                          d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
-                      </svg>
-                    </button>
-                    <span class="like-count"></span>
-                  </div>
-              </form>
-
-              <div class="album-action">
-                <button name="dislike" value="dislike" class="dislike">
-                  <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
-                    class="css-i6dzq1" viewBox="0 0 24 24">
-                    <path d="M18 6L6 18M6 6l12 12" />
-                  </svg>
-                </button>
-                <span class="dislike-count"></span>
-              </div>
-
-              <a href="/comment?postid={{.PostID}}" class="album-action">
-                <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
-                  class="css-i6dzq1" viewBox="0 0 24 24">
-                  <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
-                </svg>
-                <!-- <span class="comment-count"></span> -->
-                <div id="compteur-comment"></div>
-              </a>
-
             </div>
-          </div>
 
           {{end}}
 
@@ -332,7 +295,6 @@
 
   <!-----------------------------.FIN BLOCK DE DROITE.---------------------------->
 
-<<<<<<< HEAD
   <!-----------------------------------.SCRIPT.----------------------------------->
   <script>
 
@@ -355,41 +317,6 @@
 
   </script>
   <!------------------------------------------------------------------------------>
-=======
-    <!-----------------------------------.SCRIPT.----------------------------------->
-    <!-- <script type="module">
-      import likes from './home.js'
-      let postId = document.querySelector(".postid");
-      likes(postId);
-    </script> -->
-
-    <!-- <script>
-      function incrementLikes() {
-          var xhr = new XMLHttpRequest();
-          xhr.onreadystatechange = function() {
-              if (xhr.readyState === 4 && xhr.status === 200) {
-                  document.getElementById("like-count").innerHTML = xhr.responseText;
-              }
-          }
-          xhr.open("GET", "/home", true);
-          xhr.send();
-      }
-  </script> -->
-  <!-- <script>
-    function incrementLikes() {
-      // Récupère l'élément HTML qui contient le nombre de likes
-      var likeCountElement = document.getElementById("like-count");
-  
-      // Obtient la valeur actuelle du nombre de likes et l'incrémente
-      var currentLikes = parseInt(likeCountElement.innerText);
-      var newLikes = currentLikes + 1;
-  
-      // Affiche le nouveau nombre de likes dans l'élément HTML
-      likeCountElement.innerText = newLikes;
-    }
-  </script> -->
-   <!------------------------------------------------------------------------------>
->>>>>>> frontend
 
 </body>
 <!-----------------------------------.FIN BODY.--------------------------------->

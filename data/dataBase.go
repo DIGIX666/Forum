@@ -14,12 +14,20 @@ import (
 var uAccount []structure.UserAccount
 var user structure.UserAccount
 var posts []structure.Post
+var users []structure.UserAccount
 
 func preappendPost(c structure.Post) []structure.Post {
 	posts = append(posts, structure.Post{})
 	copy(posts[1:], posts)
 	posts[0] = c
 	return posts
+}
+
+func preappendUser(c structure.UserAccount) []structure.UserAccount {
+	users = append(users, structure.UserAccount{})
+	copy(users[1:], users)
+	users[0] = c
+	return users
 }
 
 var Db *sql.DB
@@ -69,7 +77,9 @@ func CreateDataBase() {
         message NOT NULL,
         datetime NOT NULL,
 		picture NOT NULL,
-		count INTEGER DEFAULT 0
+		countComment INTEGER DEFAULT 0,
+		countLikes INTEGER DEFAULT 0,
+		countDislikes INTEGER DEFAULT 0
 
     )`)
 
@@ -205,6 +215,45 @@ func DataBaseRegister(email string, password string) bool {
 	} else {
 		return false
 	}
+
+}
+
+func GetAllUsers() []structure.UserAccount {
+	rows, err := Db.Query("SELECT id,name,image,email,uuid,password,admin FROM users ORDER BY id")
+	if err != nil {
+		fmt.Println("Erreur GetAllUsers rows in dataBase:")
+		log.Fatal(err)
+	}
+
+	userName := ""
+	userImage := ""
+	email := ""
+	uuid := ""
+	password := ""
+	id := 0
+	admin := false
+
+	var allUsers []structure.UserAccount
+
+	for rows.Next() {
+
+		err = rows.Scan(&id, &userName, &userImage, &email, &uuid, &password, &admin)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		allUsers = preappendUser(structure.UserAccount{
+			Id:       id,
+			Name:     userName,
+			Image:    userImage,
+			Email:    email,
+			UUID:     uuid,
+			Password: password,
+			Admin:    admin,
+		})
+	}
+
+	return allUsers
 
 }
 
@@ -501,7 +550,7 @@ func prependHomeFeedPost(x []structure.HomeFeedPost, y structure.HomeFeedPost) [
 	return x
 }
 
-/*************************** HOME FEED **********************************/
+/*************************** HOME FEED POST **********************************/
 func HomeFeedPost() []structure.HomeFeedPost {
 
 	rows, err := Db.Query("SELECT * FROM posts ORDER BY id")
@@ -510,24 +559,26 @@ func HomeFeedPost() []structure.HomeFeedPost {
 		log.Fatal(err)
 	}
 	var Posts []structure.HomeFeedPost
-	var id, NumberOfComment int
+	var id, NumberOfComment, NumberOfLikes, NumberOfDislikes int
 	var postID, userName, message, image, dateTime, picture string
 
 	for rows.Next() {
 
-		err := rows.Scan(&id, &postID, &image, &userName, &message, &dateTime, &picture, &NumberOfComment)
+		err := rows.Scan(&id, &postID, &image, &userName, &message, &dateTime, &picture, &NumberOfComment, &NumberOfLikes, &NumberOfDislikes)
 		if err != nil {
-			fmt.Println("Error HomeFeed Function in rows.Scan:")
+			fmt.Println("Error HomeFeedPost Function in rows.Scan:")
 			log.Fatal(err)
 		}
 		Posts = prependHomeFeedPost(Posts, structure.HomeFeedPost{
-			PostID:          postID,
-			Name:            userName,
-			UserImage:       image,
-			Message:         message,
-			DateTime:        dateTime,
-			Picture:         picture,
-			NumberOfComment: NumberOfComment,
+			PostID:           postID,
+			Name:             userName,
+			UserImage:        image,
+			Message:          message,
+			DateTime:         dateTime,
+			Picture:          picture,
+			NumberOfComment:  NumberOfComment,
+			NumberOfLikes:    NumberOfLikes,
+			NumberOfDislikes: NumberOfDislikes,
 		})
 	}
 	return Posts

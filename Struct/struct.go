@@ -23,13 +23,15 @@ type Comment struct {
 }
 
 type HomeFeedPost struct {
-	PostID          string
-	Name            string
-	Message         string
-	UserImage       string
-	DateTime        string
-	Picture         string
-	NumberOfComment int
+	PostID           string
+	Name             string
+	Message          string
+	UserImage        string
+	DateTime         string
+	Picture          string
+	NumberOfComment  int
+	NumberOfLikes    int
+	NumberOfDislikes int
 }
 
 type UserFeedPost struct {

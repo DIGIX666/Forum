@@ -53,6 +53,7 @@ func erreur(w http.ResponseWriter, r *http.Request) {
 func main() {
 	dataBase.CreateDataBase()
 	homefeed = data.HomeFeedPost()
+	uAccount = data.GetAllUsers()
 	defer data.Db.Close()
 
 	fileServer := http.FileServer(http.Dir("./assets"))
@@ -361,7 +362,9 @@ func preappendPost(c structure.Post) []structure.Post {
 
 func home(w http.ResponseWriter, r *http.Request) {
 
-	if user.Id != 0 {
+	fmt.Printf("len(uAccount): %v\n", len(uAccount))
+
+	if len(uAccount) > 0 {
 		profil := data.GetUserProfil()
 		user.Name = profil["name"]
 		user.Email = profil["email"]

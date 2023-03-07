@@ -373,7 +373,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 			user.Admin = false
 		}
 	}
-
+	var imageSRC string
 	if r.Method == "POST" {
 
 		message := r.FormValue("message")
@@ -417,7 +417,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 					fmt.Println(err)
 				}
 
-				imageSRC := "./assets/upload-image/" + imageName
+				imageSRC = "./assets/upload-image/" + imageName
 
 				err = ioutil.WriteFile(imageSRC, fileBytes, 0o666)
 				if err != nil {
@@ -429,34 +429,40 @@ func home(w http.ResponseWriter, r *http.Request) {
 				file.Close()
 
 			}
-
 		}
+		var uid, pid string
 		if r.FormValue("like") != "" && user.Connected {
 			postid := r.FormValue("like")
+			countLike := 0
+			row := data.Db.QueryRow("SELECT COUNT(*) FROM likes WHERE username = ? AND post_id = ?", uid, pid)
+			err := row.Scan(&countLike)
+			if err != nil {
+				log.Fatal(err)
+			}
 			for i := range user.Post {
 				fmt.Printf("i: %v\n", i)
 				fmt.Printf("user.Post[i].PostID: %v\n", user.Post[i].PostID)
 				if user.Post[i].PostID == postid {
 					user.Post[i].Count++
+					countLike = user.Post[i].Count
 				}
 				fmt.Printf("conteur %v\n", user.Post[i].Count)
 			}
 			fmt.Printf("postid: %v\n", postid)
+			dataBase.AddingCountLike(countLike, postid)
+			homefeed = dataBase.HomeFeedPost()
 		}
-		if r.FormValue("like") != "" && user.Connected {
-			postid := r.FormValue("like")
-			for i := range user.Post {
-				fmt.Printf("i: %v\n", i)
-				fmt.Printf("user.Post[i].PostID: %v\n", user.Post[i].PostID)
-				if user.Post[i].PostID == postid {
-					user.Post[i].Count++
-				}
-				fmt.Printf("conteur %v\n", user.Post[i].Count)
-			}
-			fmt.Printf("postid: %v\n", postid)
-		}
-
 	}
+
+	// func LikeExists(uid int, pid int) bool {
+	// 	count := 0
+	// 	row := data.Db.QueryRow("SELECT COUNT(*) FROM likes WHERE user_id = ? AND posts_id = ?", uid, pid)
+	// 	err := row.Scan(&count)
+	// 	if err != nil {
+	// 		panic(err)
+	// 	}
+	// 	return count != 0
+	// }
 
 	//var count int
 
@@ -513,7 +519,6 @@ func home(w http.ResponseWriter, r *http.Request) {
 		}
 
 	}
-
 }
 
 /*************************** FUNCTION PROFIL **********************************/
@@ -530,6 +535,7 @@ func profil(w http.ResponseWriter, r *http.Request) {
 	} else {
 		user.Admin = false
 	}
+
 	var userHomeFeed []structure.UserFeedPost
 
 	if err := r.ParseForm(); err != nil {

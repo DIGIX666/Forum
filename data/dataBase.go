@@ -279,18 +279,6 @@ func CheckUserLogin(email string, password string, uuid string) bool {
 
 }
 
-// func UserPost(userName string, message string, postID string, image string, dateTime string, pictureURL string) (bool, []structure.Post) {
-// 	NumberOfComment := 0
-// }
-
-/*************************** PREAPPEND POST **********************************/
-// func preappendPost(c structure.Post) []structure.Post {
-// 	posts = append(posts, structure.Post{})
-// 	copy(posts[1:], posts)
-// 	posts[0] = c
-// 	return posts
-// }
-
 /************************* USER POST **********************************/
 func UserPost(userName string, message string, postID string, image string, dateTime string, pictureURL string, count int) (bool, []structure.Post) {
 
@@ -299,7 +287,7 @@ func UserPost(userName string, message string, postID string, image string, date
 	fmt.Printf("image: %v", pictureURL)
 	fmt.Println("")
 
-	_, err := Db.Exec("INSERT INTO posts (name, message, postid,image, datetime,picture, count) VALUES (?, ?, ?,?,?,?)", userName, message, postID, image, dateTime, pictureURL, 0)
+	_, err := Db.Exec("INSERT INTO posts (name, message, postid,image, datetime,picture, count) VALUES (?, ?, ?,?,?,?, ?)", userName, message, postID, image, dateTime, pictureURL, count)
 	if err != nil {
 		fmt.Println("Error Insert user Post to the dataBase:")
 		log.Fatal(err)
@@ -314,6 +302,7 @@ func UserPost(userName string, message string, postID string, image string, date
 			Picture:         pictureURL,
 			NumberOfComment: NumberOfComment,
 			Connected:       true,
+			Count:           count,
 		})
 
 		return true, user.Post
@@ -363,7 +352,7 @@ func SetGitHubUUID(userName string) string {
 /*************************** ADD LIKES **********************************/
 func AddLikes(userName string, postID string, dateTime string) {
 
-	_, err := Db.Exec("INSERT INTO likes (username,numberlikes,postid,datetime) VALUES (?,?,?,?)", userName, postID, dateTime)
+	_, err := Db.Exec("INSERT INTO likes (username,numberlikes,post_id,datetime) VALUES (?,?,?,?)", userName, postID, dateTime)
 	if err != nil {
 		fmt.Println("Error function AddLikes dataBase:")
 		log.Fatal(err)
@@ -477,7 +466,7 @@ func prependHomeFeedPost(x []structure.HomeFeedPost, y structure.HomeFeedPost) [
 	return x
 }
 
-/*************************** HOME FEED **********************************/
+/*************************** HOME FEED POST**********************************/
 func HomeFeedPost() []structure.HomeFeedPost {
 
 	rows, err := Db.Query("SELECT * FROM posts ORDER BY id")
@@ -486,24 +475,24 @@ func HomeFeedPost() []structure.HomeFeedPost {
 		log.Fatal(err)
 	}
 	var Posts []structure.HomeFeedPost
-	var id, NumberOfComment int
+	var id, Count int
 	var postID, userName, message, image, dateTime, picture string
 
 	for rows.Next() {
 
-		err := rows.Scan(&id, &postID, &image, &userName, &message, &dateTime, &picture, &NumberOfComment)
+		err := rows.Scan(&id, &postID, &image, &userName, &message, &dateTime, &picture, &Count)
 		if err != nil {
 			fmt.Println("Error HomeFeed Function in rows.Scan:")
 			log.Fatal(err)
 		}
 		Posts = prependHomeFeedPost(Posts, structure.HomeFeedPost{
-			PostID:          postID,
-			Name:            userName,
-			UserImage:       image,
-			Message:         message,
-			DateTime:        dateTime,
-			Picture:         picture,
-			NumberOfComment: NumberOfComment,
+			PostID:    postID,
+			Name:      userName,
+			UserImage: image,
+			Message:   message,
+			DateTime:  dateTime,
+			Picture:   picture,
+			Count:     Count,
 		})
 	}
 	return Posts
@@ -630,4 +619,24 @@ func LenUserPost(nameUser string) int {
 	}
 
 	return NumberPost
+}
+
+func AddingCount(countComment int, postID string) {
+
+	_, err := Db.Exec("UPDATE posts SET countComment = ? WHERE postid=?", countComment, postID)
+	if err != nil {
+		fmt.Println("Error function AddingCount Insert count Posts to the dataBase:")
+		log.Fatal(err)
+	}
+
+}
+
+func AddingCountLike(count int, postID string) {
+
+	_, err := Db.Exec("UPDATE posts SET count = ? WHERE postid=?", count, postID)
+	if err != nil {
+		fmt.Println("Error function AddingCount Insert count Posts to the dataBase:")
+		log.Fatal(err)
+	}
+
 }

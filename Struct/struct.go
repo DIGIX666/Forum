@@ -1,18 +1,16 @@
 package structure
 
 type UserAccount struct {
-	Id          int
-	Name        string //Name of the user
-	Image       string //Path src
-	Email       string
-	UUID        string
-	Password    string
-	Post        []Post
-	Comment     []Comment
-	Admin       bool //true: the user is the Admin
-	Connected   bool
-	AllLikes    []Likes
-	AllDislikes []Dislikes
+	Id        int
+	Name      string //Name of the user
+	Image     string //Path src
+	Email     string
+	UUID      string
+	Password  string
+	Post      []Post
+	Comment   []Comment
+	Admin     bool //true: the user is the Admin
+	Connected bool
 }
 
 type Comment struct {
@@ -25,13 +23,13 @@ type Comment struct {
 }
 
 type HomeFeedPost struct {
-	PostID          string
-	Name            string
-	Message         string
-	UserImage       string
-	DateTime        string
-	Picture         string
-	NumberOfComment int
+	PostID    string
+	Name      string
+	Message   string
+	UserImage string
+	DateTime  string
+	Count     int
+	Picture   string
 }
 
 type UserFeedPost struct {

@@ -1,5 +1,5 @@
 # Dossiers à ignorer
-
+/upload-image
 
 # Fichiers à ignorer
 *.DS_Store

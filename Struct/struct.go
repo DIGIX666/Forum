@@ -45,16 +45,17 @@ type UserFeedPost struct {
 }
 
 type Post struct {
-	PostID          string
-	Name            string
-	Message         string
-	UserImage       string
-	DateTime        string
-	Picture         string
-	Count           int
-	NumberOfComment int
-	Comment         Comment
-	Connected       bool
+	PostID    string
+	Name      string
+	Message   string
+	UserImage string
+	DateTime  string
+	Picture   string
+	CountCom  int
+	Count     int
+	CountDis  int
+	Comment   Comment
+	Connected bool
 }
 
 type Likes struct {

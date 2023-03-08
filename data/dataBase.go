@@ -330,14 +330,14 @@ func CheckUserLogin(email string, password string, uuid string) bool {
 }
 
 /************************* USER POST **********************************/
-func UserPost(userName string, message string, postID string, image string, dateTime string, pictureURL string, countLikes int) (bool, []structure.Post) {
+func UserPost(userName string, message string, postID string, image string, dateTime string, pictureURL string, countComment int, countLikes int, countDislikes int) (bool, []structure.Post) {
 
-	NumberOfComment := 0
+	// NumberOfComment := 0
 
 	fmt.Printf("image: %v", pictureURL)
 	fmt.Println("")
 
-	_, err := Db.Exec("INSERT INTO posts (name, message, postid,image, datetime,picture, countLikes) VALUES (?, ?, ?,?,?,?, ?)", userName, message, postID, image, dateTime, pictureURL, countLikes)
+	_, err := Db.Exec("INSERT INTO posts (name, message, postid,image, datetime,picture,countComment, countLikes, countDislikes) VALUES (?, ?, ?,?,?,?,?,?, ?)", userName, message, postID, image, dateTime, pictureURL, countComment, countLikes, countDislikes)
 	if err != nil {
 		fmt.Println("Error Insert user Post to the dataBase:")
 		log.Fatal(err)
@@ -345,14 +345,15 @@ func UserPost(userName string, message string, postID string, image string, date
 	} else {
 
 		user.Post = preappendPost(structure.Post{
-			PostID:          postID,
-			Name:            userName,
-			Message:         message,
-			DateTime:        dateTime,
-			Picture:         pictureURL,
-			NumberOfComment: NumberOfComment,
-			Connected:       true,
-			Count:           countLikes,
+			PostID:    postID,
+			Name:      userName,
+			Message:   message,
+			DateTime:  dateTime,
+			Picture:   pictureURL,
+			Connected: true,
+			CountCom:  countComment,
+			Count:     countLikes,
+			CountDis:  countDislikes,
 		})
 
 		return true, user.Post
@@ -469,7 +470,7 @@ func GetUserProfil() map[string]string {
 /*************************** GET USER POST **********************************/
 
 func GetUserPosts(name string) []structure.Post {
-	rows, err := Db.Query("SELECT  postid, name, message, image, datetime,picture, countLikes FROM posts WHERE name = ?", name)
+	rows, err := Db.Query("SELECT  postid, name, message, image, datetime,picture, countComment, countLikes, countDislikes FROM posts WHERE name = ?", name)
 	if err != nil {
 		fmt.Println("Erreur SELECT #3 fonction GetUserProfil dataBase:")
 		log.Fatal(err)
@@ -481,26 +482,26 @@ func GetUserPosts(name string) []structure.Post {
 	userImage := ""
 	dateTime := ""
 	pictureURL := ""
-	NumberOfComment := 0
+	// NumberOfComment := 0
 
 	var userPosts []structure.Post
 
 	for rows.Next() {
 
-		err = rows.Scan(&postID, &userName, &message, &userImage, &dateTime, &pictureURL, &NumberOfComment)
+		err = rows.Scan(&postID, &userName, &message, &userImage, &dateTime, &pictureURL)
 		if err != nil {
 			log.Fatal(err)
 		}
 
 		userPosts = preappendPost(structure.Post{
-			PostID:          postID,
-			Name:            userName,
-			Message:         message,
-			UserImage:       userImage,
-			DateTime:        dateTime,
-			Picture:         pictureURL,
-			NumberOfComment: NumberOfComment,
-			Connected:       true,
+			PostID:    postID,
+			Name:      userName,
+			Message:   message,
+			UserImage: userImage,
+			DateTime:  dateTime,
+			Picture:   pictureURL,
+			// NumberOfComment: NumberOfComment,
+			Connected: true,
 		})
 	}
 
@@ -508,7 +509,7 @@ func GetUserPosts(name string) []structure.Post {
 
 }
 
-/*************************** PREPEND COMMENT **********************************/
+/*************************** PREPEND HOME FEED POST **********************************/
 func prependHomeFeedPost(x []structure.HomeFeedPost, y structure.HomeFeedPost) []structure.HomeFeedPost {
 	x = append(x, structure.HomeFeedPost{})
 	copy(x[1:], x)
@@ -596,17 +597,17 @@ func GetPostComment(postID string) []structure.Comment {
 
 }
 
-func NumberOfComment(postID string) int {
+// func NumberOfComment(postID string) int {
 
-	var NumberComment int
-	err := Db.QueryRow("SELECT COUNT (*) FROM comments WHERE post_id = ?", postID).Scan(&NumberComment)
-	if err != nil {
-		fmt.Println("Error SELECT From NumberOfComment dataBase:")
-		log.Fatal(err)
-	}
+// 	var NumberComment int
+// 	err := Db.QueryRow("SELECT COUNT (*) FROM comments WHERE post_id = ?", postID).Scan(&NumberComment)
+// 	if err != nil {
+// 		fmt.Println("Error SELECT From NumberOfComment dataBase:")
+// 		log.Fatal(err)
+// 	}
 
-	return NumberComment
-}
+// 	return NumberComment
+// }
 
 func preappendUserFeed(x []structure.UserFeedPost, y structure.UserFeedPost) []structure.UserFeedPost {
 	x = append(x, structure.UserFeedPost{})
@@ -701,7 +702,65 @@ func AddingCountLike(postID, username, currentTime string) {
 	}
 	_, err = Db.Exec("UPDATE posts SET countLikes = ? WHERE postid=?", count, postID)
 	if err != nil {
-		fmt.Println("Error function AddingCount Insert countLikes Posts to the dataBase:")
+		fmt.Println("Error function AddingCountLike Insert countLikes Posts to the dataBase:")
+		fmt.Printf("err: %v\n", err)
+		panic(err)
+	}
+}
+
+func AddingCountDislike(postID, username, currentTime string) {
+	var CountDis int
+	fmt.Printf("username: %v\n", username)
+	_, err := Db.Exec("INSERT INTO dislikes (username, datetime, post_id) VALUES (?,?,?)", username, currentTime, postID)
+	if err != nil {
+		fmt.Println("Error function AddingCountDislike Insert countDislikes Posts to the dataBase:")
+		fmt.Printf("err: %v\n", err)
+		panic(err)
+	}
+
+	row := Db.QueryRow("SELECT COUNT (*) FROM dislikes WHERE post_id = ?", postID)
+	err = row.Scan(&CountDis)
+	if err != nil {
+		panic(err)
+	}
+	_, err = Db.Exec("UPDATE posts SET countDislikes = ? WHERE postid=?", CountDis, postID)
+	if err != nil {
+		fmt.Println("Error function AddingCountDislikes Insert countDislikes Posts to the dataBase:")
+		fmt.Printf("err: %v\n", err)
+		panic(err)
+	}
+}
+
+//  name NOT NULL,
+//         commentid NOT NULL,
+//         content NOT NULL,
+// 		date NOT NULL,
+// 		post_id NOT NULL
+
+// func NumberOfComment(postID string) int {
+
+// 	var NumberComment int
+// 	err := Db.QueryRow("SELECT COUNT (*) FROM comments WHERE post_id = ?", postID).Scan(&NumberComment)
+// 	if err != nil {
+// 		fmt.Println("Error SELECT From NumberOfComment dataBase:")
+// 		log.Fatal(err)
+// 	}
+
+// 	return NumberComment
+// }
+
+func AddingCountComment(postID, username, currentTime string) {
+	var CountComment int
+	fmt.Printf("username: %v\n", username)
+
+	row := Db.QueryRow("SELECT COUNT (*) FROM comments WHERE post_id = ?", postID)
+	err := row.Scan(&CountComment)
+	if err != nil {
+		panic(err)
+	}
+	_, err = Db.Exec("UPDATE posts SET countComment = ? WHERE postid=?", CountComment, postID)
+	if err != nil {
+		fmt.Println("Error function AddingCountComment Insert countComment Posts to the dataBase:")
 		fmt.Printf("err: %v\n", err)
 		panic(err)
 	}

@@ -462,18 +462,6 @@ func home(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// func LikeExists(uid int, pid int) bool {
-	// 	count := 0
-	// 	row := data.Db.QueryRow("SELECT COUNT(*) FROM likes WHERE user_id = ? AND posts_id = ?", uid, pid)
-	// 	err := row.Scan(&count)
-	// 	if err != nil {
-	// 		panic(err)
-	// 	}
-	// 	return count != 0
-	// }
-
-	//var count int
-
 	temp, err := template.ParseFiles("./assets/Home/home.html")
 	if err != nil {
 		log.Println("Error parsing template:", err)
@@ -487,6 +475,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 			for _, v := range user.Post {
 				v.Connected = false
 			}
+			userComment.Connected = false
 			data.DeleteSession(user.Name)
 			http.Redirect(w, r, "/", http.StatusFound)
 			return
@@ -496,17 +485,6 @@ func home(w http.ResponseWriter, r *http.Request) {
 		for _, v := range user.Post {
 			v.Connected = true
 		}
-
-		like := r.FormValue("like")
-
-		if like != "" {
-			fmt.Printf("click Like ! : %v\n", like)
-		}
-
-		// user.Name = profil["name"]
-		// user.UUID = profil["uuid"]
-		// user.Email = profil["email"]
-		// user.Image = profil["userImage"]
 
 		err = temp.ExecuteTemplate(w, "home", map[string]any{
 			"User":     user,
@@ -527,6 +505,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 		}
 
 	}
+
 }
 
 /*************************** FUNCTION PROFIL **********************************/
@@ -559,10 +538,11 @@ func profil(w http.ResponseWriter, r *http.Request) {
 			MaxAge: -1,
 		}
 		http.SetCookie(w, &cookie)
-		data.DeleteSession(user.Name)
+
 		user.Connected = false
 		Posts.Connected = false
 		userComment.Connected = false
+		data.DeleteSession(user.Name)
 		http.Redirect(w, r, "/", http.StatusFound)
 		return
 	}
@@ -582,9 +562,10 @@ func profil(w http.ResponseWriter, r *http.Request) {
 		for _, v := range user.Post {
 			v.Connected = false
 		}
-		data.DeleteSession(user.Name)
+
 		Posts.Connected = false
 		userComment.Connected = false
+		data.DeleteSession(user.Name)
 		http.Redirect(w, r, "/", http.StatusFound)
 		return
 	}

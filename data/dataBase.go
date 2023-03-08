@@ -446,7 +446,7 @@ func GetUserProfil() map[string]string {
 	err := Db.QueryRow("SELECT * FROM session ORDER BY id DESC LIMIT 1").Scan(&id, &name, &uuid, &cookie)
 	if err != nil {
 		fmt.Println("Erreur SELECT fonction GetUserProfil dataBase:")
-		log.Fatal(err)
+		fmt.Println(err)
 	}
 
 	var userImage, userEmail, admin string
@@ -454,7 +454,7 @@ func GetUserProfil() map[string]string {
 	err = Db.QueryRow("SELECT image,email,admin  FROM users WHERE name = ?", name).Scan(&userImage, &userEmail, &admin)
 	if err != nil {
 		fmt.Println("Erreur SELECT #2 fonction GetUserProfil dataBase:")
-		log.Fatal(err)
+		fmt.Println(err)
 	}
 
 	ans["name"] = name

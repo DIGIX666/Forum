@@ -364,7 +364,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Printf("len(uAccount): %v\n", len(uAccount))
 
-	if len(uAccount) > 0 {
+	if len(uAccount) > 0 && user.Connected {
 		profil := data.GetUserProfil()
 		user.Name = profil["name"]
 		user.Email = profil["email"]

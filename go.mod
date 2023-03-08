@@ -9,7 +9,7 @@ require (
 )
 
 require (
-	github.com/Nik-U/pbc v0.0.0-20181205041846-3e516ca0c5d6 // indirect
+ 	github.com/Nik-U/pbc v0.0.0-20181205041846-3e516ca0c5d6 // indirect
 	github.com/Nik-U/ringsig v0.0.0-20150214231607-cc567940e6b3 // indirect
 	github.com/nik-u/ringsig v0.0.0-20150214231607-cc567940e6b3 // indirect
 	github.com/patrickmn/go-cache v2.1.0+incompatible // indirect

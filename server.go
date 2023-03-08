@@ -438,22 +438,26 @@ func home(w http.ResponseWriter, r *http.Request) {
 
 			postid := r.FormValue("like")
 			countLike := 0
-			row := data.Db.QueryRow("SELECT countLikes FROM posts WHERE name = ? AND postid = ?", user.Name, postid)
+			// row := data.Db.QueryRow("SELECT countLikes FROM posts WHERE name = ? AND postid = ?", user.Name, postid)
+			row := data.Db.QueryRow("SELECT COUNT (*) FROM likes WHERE username = ? AND post_id = ?", user.Name, postid)
 			err := row.Scan(&countLike)
 			if err != nil {
-				fmt.Println(err)
+				panic(err)
 			}
-			for i := range user.Post {
-				fmt.Printf("i: %v\n", i)
-				fmt.Printf("user.Post[i].PostID: %v\n", user.Post[i].PostID)
-				if user.Post[i].PostID == postid && countLike < 1 {
-					user.Post[i].Count++
-					countLike = user.Post[i].Count
-				}
-				fmt.Printf("conteur %v\n", user.Post[i].Count)
+			if countLike == 0 {
+				fmt.Printf("countLike: %v\n", countLike)
+				dataBase.AddingCountLike(postid, user.Name, currentTime)
 			}
+			// for i := range user.Post {
+			// 	fmt.Printf("i: %v\n", i)
+			// 	fmt.Printf("user.Post[i].PostID: %v\n", user.Post[i].PostID)
+			// 	if user.Post[i].PostID == postid && countLike < 1 {
+			// 		user.Post[i].Count++
+			// 		countLike = user.Post[i].Count
+			// 	}
+			// 	fmt.Printf("conteur %v\n", user.Post[i].Count)
+			// }
 			fmt.Printf("postid: %v\n", postid)
-			dataBase.AddingCountLike(countLike, postid, "Thox", currentTime)
 			homefeed = dataBase.HomeFeedPost()
 		}
 	}

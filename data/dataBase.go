@@ -674,26 +674,35 @@ func LenUserPost(nameUser string) int {
 }
 
 func AddingCount(countComment int, postID string) {
-
+	fmt.Printf("countComment: %v\n", countComment)
+	fmt.Printf("postID: %v\n", postID)
 	_, err := Db.Exec("UPDATE posts SET countComment = ? WHERE postid=?", countComment, postID)
 	if err != nil {
-		fmt.Println("Error function AddingCount Insert countComment Posts to the dataBase:")
+		fmt.Println("Error function AddingCount Update countComment Posts to the dataBase:")
 		log.Fatal(err)
 	}
 
 }
 
-func AddingCountLike(count int, postID, username, currentTime string) {
-	var id int
-	_, err := Db.Exec("UPDATE posts SET countLikes = ? WHERE postid=?", count, postID)
-	if err != nil {
-		fmt.Println("Error function AddingCount Insert countLikes Posts to the dataBase:")
-		fmt.Printf("err: %v\n", err)
-	}
+func AddingCountLike(postID, username, currentTime string) {
+	var count int
 	fmt.Printf("username: %v\n", username)
-	_, err = Db.Exec("INSERT INTO likes (id, username, datetime, post_id, count) VALUES (?,?,?,?,?)", id, username, currentTime, postID, count)
+	_, err := Db.Exec("INSERT INTO likes (username, datetime, post_id) VALUES (?,?,?)", username, currentTime, postID)
 	if err != nil {
 		fmt.Println("Error function AddingCount Insert countLikes Posts to the dataBase:")
 		fmt.Printf("err: %v\n", err)
+		panic(err)
+	}
+
+	row := Db.QueryRow("SELECT COUNT (*) FROM likes WHERE post_id = ?", postID)
+	err = row.Scan(&count)
+	if err != nil {
+		panic(err)
+	}
+	_, err = Db.Exec("UPDATE posts SET countLikes = ? WHERE postid=?", count, postID)
+	if err != nil {
+		fmt.Println("Error function AddingCount Insert countLikes Posts to the dataBase:")
+		fmt.Printf("err: %v\n", err)
+		panic(err)
 	}
 }

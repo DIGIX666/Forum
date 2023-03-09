@@ -60,9 +60,6 @@
           <a href="#"># Cat 1 </a>
           <a href="#"># Cat 2 </a>
           <a href="#"># Cat 3 </a>
-          <a href="#"># Cat 4 </a>
-          <a href="#"># Cat 5 </a>
-          <a href="#"># Cat 6 </a>
         </div>
       </div>
     </div>
@@ -100,6 +97,16 @@
                   <button type="submit" class="status-share">Send</button>
                 </div>
               </div>
+
+              <label for="cat-select">Choose a categories:</label>
+
+              <select name="cat" id="cat-select">
+                  <option value="">--Please choose an option--</option>
+                  <option value="cat1">Cat 1</option>
+                  <option value="cat2">Cat 2</option>
+                  <option value="cat3">Cat 3</option>
+              </select>
+              
             </form>
             {{end}}
 
@@ -115,7 +122,7 @@
               <div class="status-main">
                 <img src="{{.UserImage}}" class="status-img">
                 <div class="album-detail">
-                  <div class="album-title"><strong>{{.Name}}</strong> create new <span>post</span></div>
+                  <div class="album-title"><strong>{{.Name}}</strong> create new <span>post</span>{{.Categories}}</div>
                   <div class="album-date">{{.DateTime}}</div>
                   <div class="postid">{{.PostID}}</div>
                 </div>

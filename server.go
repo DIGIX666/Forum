@@ -391,12 +391,13 @@ func home(w http.ResponseWriter, r *http.Request) {
 			// user.Image = profil["image"]
 
 			user.Post = preappendPost(structure.Post{
-				PostID:    postid,
-				Name:      user.Name,
-				Message:   message,
-				DateTime:  currentTime,
-				UserImage: user.Image,
-				Connected: true,
+				PostID:     postid,
+				Name:       user.Name,
+				Message:    message,
+				DateTime:   currentTime,
+				UserImage:  user.Image,
+				Categories: Posts.Categories,
+				Connected:  true,
 			})
 			file, header, err := r.FormFile("myFile")
 
@@ -408,7 +409,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 					return
 				}
 				//Put the message in the dataBase
-				dataBase.UserPost(user.Name, message, postid, user.Image, currentTime, imageName, Posts.Count, Posts.CountDis, Posts.CountCom)
+				dataBase.UserPost(user.Name, message, postid, user.Image, currentTime, imageName, Posts.Count, Posts.CountDis, Posts.CountCom, Posts.Categories)
 				homefeed = dataBase.HomeFeedPost()
 
 			} else {
@@ -444,7 +445,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 				if fileStat.Size() > int64(maxImageSize) {
 					os.Remove(imageSRC)
 				} else {
-					_, user.Post = dataBase.UserPost(user.Name, message, postid, user.Image, currentTime, imageSRC, Posts.Count, Posts.CountDis, Posts.CountCom)
+					_, user.Post = dataBase.UserPost(user.Name, message, postid, user.Image, currentTime, imageSRC, Posts.Count, Posts.CountDis, Posts.CountCom, Posts.Categories)
 					homefeed = dataBase.HomeFeedPost()
 					file.Close()
 

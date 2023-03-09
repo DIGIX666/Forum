@@ -34,6 +34,7 @@ type HomeFeedPost struct {
 	NumberOfComment  int
 	NumberOfLikes    int
 	NumberOfDislikes int
+	Categories       string
 }
 
 type UserFeedPost struct {
@@ -46,20 +47,22 @@ type UserFeedPost struct {
 	NumberOfComment  int
 	NumberOfLikes    int
 	NumberOfDislikes int
+	Categories       string
 }
 
 type Post struct {
-	PostID    string
-	Name      string
-	Message   string
-	UserImage string
-	DateTime  string
-	Picture   string
-	CountCom  int
-	Count     int
-	CountDis  int
-	Comment   Comment
-	Connected bool
+	PostID     string
+	Name       string
+	Message    string
+	UserImage  string
+	DateTime   string
+	Picture    string
+	CountCom   int
+	Count      int
+	CountDis   int
+	Comment    Comment
+	Categories string
+	Connected  bool
 }
 
 type Likes struct {

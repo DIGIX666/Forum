@@ -62,7 +62,9 @@ func CreateDataBase() {
         commentid NOT NULL,
         content NOT NULL,
 		date NOT NULL,
-		post_id NOT NULL
+		post_id NOT NULL,
+		commentLike INTEGER DEFAULT 0,
+		commentDislike INTEGER DEFAULT 0
     )`)
 	if err != nil {
 		log.Println("erreur creation de table comments")
@@ -400,40 +402,14 @@ func SetGitHubUUID(userName string) string {
 
 }
 
-/*************************** ADD LIKES **********************************/
-func AddLikes(userName string, postID string, dateTime string) {
+// /*************************** ADD LIKES **********************************/
+// func AddLikes(userName string, postID string, dateTime string) {
 
-	_, err := Db.Exec("INSERT INTO likes (username,datetime,post_id) VALUES (?,?,?)", userName, postID, dateTime)
-	if err != nil {
-		fmt.Println("Error function AddLikes dataBase:")
-		fmt.Printf("err: %v\n", err)
-	}
-}
-
-/*************************** NUMBER OF LIKES POST **********************************/
-// cette fonction permet d'obtenir des likes total d'un post.
-
-// var numberLikes int
-// err := Db.QueryRow("SELECT COUNT (*) FROM likes").Scan(&numberLikes)
-// if err != nil {
-// 	fmt.Println("Error SELECT From NumberODLikes dataBase:")
-// 	log.Fatal(err)
-// }
-// func NumberOFLikesPost(postID string) int {
-
-// 	var numberLikes int
-// 	err := Db.QueryRow("COUNT (*) FROM likes").Scan(&numberLikes)
+// 	_, err := Db.Exec("INSERT INTO likes (username,datetime,post_id) VALUES (?,?,?)", userName, postID, dateTime)
 // 	if err != nil {
-// 		fmt.Println("Error SELECT From NumberODLikes dataBase:")
-// 		log.Fatal(err)
+// 		fmt.Println("Error function AddLikes dataBase:")
+// 		fmt.Printf("err: %v\n", err)
 // 	}
-
-// 	return numberLikes
-// }
-
-/*************************** ADD DISLIKES **********************************/
-// func AddDisLikes() {
-
 // }
 
 /*************************** GET USER PROFIL **********************************/
@@ -574,40 +550,31 @@ func GetPostComment(postID string) []structure.Comment {
 	var _id int
 
 	var name, commentid, content, date, post_id string
+	var commentLike, commentDislike int
 
 	for rows.Next() {
 
-		err := rows.Scan(&_id, &name, &commentid, &content, &date, &post_id)
+		err := rows.Scan(&_id, &name, &commentid, &content, &date, &post_id, &commentLike, &commentDislike)
 		if err != nil {
 			fmt.Println("Error GetPostComment Function in rows.Scan:")
 			log.Fatal(err)
 		}
 
 		ans = prependComment(ans, structure.Comment{
-			Message:   content,
-			Name:      name,
-			DateTime:  date,
-			CommentID: commentid,
-			PostID:    post_id,
-			Connected: false,
+			Message:        content,
+			Name:           name,
+			DateTime:       date,
+			CommentID:      commentid,
+			PostID:         post_id,
+			CommentLike:    commentLike,
+			CommentDislike: commentDislike,
+			Connected:      false,
 		})
 	}
 
 	return ans
 
 }
-
-// func NumberOfComment(postID string) int {
-
-// 	var NumberComment int
-// 	err := Db.QueryRow("SELECT COUNT (*) FROM comments WHERE post_id = ?", postID).Scan(&NumberComment)
-// 	if err != nil {
-// 		fmt.Println("Error SELECT From NumberOfComment dataBase:")
-// 		log.Fatal(err)
-// 	}
-
-// 	return NumberComment
-// }
 
 func preappendUserFeed(x []structure.UserFeedPost, y structure.UserFeedPost) []structure.UserFeedPost {
 	x = append(x, structure.UserFeedPost{})
@@ -619,7 +586,7 @@ func preappendUserFeed(x []structure.UserFeedPost, y structure.UserFeedPost) []s
 /*************************** PROFIL FEED **********************************/
 func ProfilFeed(userName string) []structure.UserFeedPost {
 
-	rows, err := Db.Query("SELECT id,postid,image,message,datetime,picture FROM posts WHERE name = ?", userName)
+	rows, err := Db.Query("SELECT * FROM posts WHERE name = ?", userName)
 	if err != nil {
 		fmt.Println("Error in ProfilFeed Function Query didn't work in dataBase:")
 		log.Fatal(err)
@@ -630,21 +597,25 @@ func ProfilFeed(userName string) []structure.UserFeedPost {
 
 		var id int
 
-		var postID, message, dateTime, image, picture string
+		var postID, name, message, dateTime, image, picture string
+		var NumberOfComment, NumberOfLikes, NumberOfDislikes int
 
-		err := rows.Scan(&id, &postID, &image, &message, &dateTime, &picture)
+		err := rows.Scan(&id, &postID, &name, &image, &message, &dateTime, &picture, &NumberOfComment, &NumberOfLikes, &NumberOfDislikes)
 		if err != nil {
 			fmt.Println("Error ProfilFeed Function in rows.Scan:")
 			log.Fatal(err)
 		}
 
 		Posts = preappendUserFeed(Posts, structure.UserFeedPost{
-			PostID:    postID,
-			Name:      userName,
-			UserImage: image,
-			Message:   message,
-			DateTime:  dateTime,
-			Picture:   picture,
+			PostID:           postID,
+			Name:             userName,
+			UserImage:        image,
+			Message:          message,
+			DateTime:         dateTime,
+			Picture:          picture,
+			NumberOfComment:  NumberOfComment,
+			NumberOfLikes:    NumberOfLikes,
+			NumberOfDislikes: NumberOfDislikes,
 		})
 
 	}
@@ -674,16 +645,7 @@ func LenUserPost(nameUser string) int {
 	return NumberPost
 }
 
-func AddingCount(countComment int, postID string) {
-	fmt.Printf("countComment: %v\n", countComment)
-	fmt.Printf("postID: %v\n", postID)
-	_, err := Db.Exec("UPDATE posts SET countComment = ? WHERE postid=?", countComment, postID)
-	if err != nil {
-		fmt.Println("Error function AddingCount Update countComment Posts to the dataBase:")
-		log.Fatal(err)
-	}
-
-}
+/*************************** ADDING COUNT POST **********************************/
 
 func AddingCountLike(postID, username, currentTime string) {
 	var count int
@@ -731,24 +693,6 @@ func AddingCountDislike(postID, username, currentTime string) {
 	}
 }
 
-//  name NOT NULL,
-//         commentid NOT NULL,
-//         content NOT NULL,
-// 		date NOT NULL,
-// 		post_id NOT NULL
-
-// func NumberOfComment(postID string) int {
-
-// 	var NumberComment int
-// 	err := Db.QueryRow("SELECT COUNT (*) FROM comments WHERE post_id = ?", postID).Scan(&NumberComment)
-// 	if err != nil {
-// 		fmt.Println("Error SELECT From NumberOfComment dataBase:")
-// 		log.Fatal(err)
-// 	}
-
-// 	return NumberComment
-// }
-
 func AddingCountComment(postID, username, currentTime string) {
 	var CountComment int
 	fmt.Printf("username: %v\n", username)
@@ -765,3 +709,49 @@ func AddingCountComment(postID, username, currentTime string) {
 		panic(err)
 	}
 }
+
+/*************************** ADDING COUNT COMMENT **********************************/
+func AddingCommentLike(commentLike int, commentid string) {
+	var count int
+	// _, err := Db.Exec("INSERT INTO comments (commentLike) VALUES (?)", commentLike)
+	// if err != nil {
+	// 	fmt.Println("Error function AddingCount Insert commentLike Comments to the dataBase:")
+	// 	fmt.Printf("err: %v\n", err)
+	// 	panic(err)
+	// }
+
+	row := Db.QueryRow("SELECT COUNT (*) FROM comments WHERE commentid = ?", commentid)
+	err := row.Scan(&count)
+	if err != nil {
+		panic(err)
+	}
+	_, err = Db.Exec("UPDATE comments SET commentLike = ? WHERE commentid=?", count, commentid)
+	if err != nil {
+		fmt.Println("Error function AddingCountLike Insert countLikes Posts to the dataBase:")
+		fmt.Printf("err: %v\n", err)
+		panic(err)
+	}
+}
+
+// func AddingCommentDislike(postID, username, currentTime string) {
+// 	var CountDis int
+// 	fmt.Printf("username: %v\n", username)
+// 	_, err := Db.Exec("INSERT INTO dislikes (username, datetime, post_id) VALUES (?,?,?)", username, currentTime, postID)
+// 	if err != nil {
+// 		fmt.Println("Error function AddingCountDislike Insert countDislikes Posts to the dataBase:")
+// 		fmt.Printf("err: %v\n", err)
+// 		panic(err)
+// 	}
+
+// 	row := Db.QueryRow("SELECT COUNT (*) FROM dislikes WHERE post_id = ?", postID)
+// 	err = row.Scan(&CountDis)
+// 	if err != nil {
+// 		panic(err)
+// 	}
+// 	_, err = Db.Exec("UPDATE posts SET countDislikes = ? WHERE postid=?", CountDis, postID)
+// 	if err != nil {
+// 		fmt.Println("Error function AddingCountDislikes Insert countDislikes Posts to the dataBase:")
+// 		fmt.Printf("err: %v\n", err)
+// 		panic(err)
+// 	}
+// }

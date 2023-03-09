@@ -14,12 +14,14 @@ type UserAccount struct {
 }
 
 type Comment struct {
-	Name      string
-	CommentID string
-	Message   string
-	DateTime  string
-	PostID    string
-	Connected bool
+	Name           string
+	CommentID      string
+	Message        string
+	DateTime       string
+	PostID         string
+	CommentLike    int
+	CommentDislike int
+	Connected      bool
 }
 
 type HomeFeedPost struct {
@@ -35,13 +37,15 @@ type HomeFeedPost struct {
 }
 
 type UserFeedPost struct {
-	PostID          string
-	Name            string
-	Message         string
-	UserImage       string
-	DateTime        string
-	Picture         string
-	NumberOfComment int
+	PostID           string
+	Name             string
+	Message          string
+	UserImage        string
+	DateTime         string
+	Picture          string
+	NumberOfComment  int
+	NumberOfLikes    int
+	NumberOfDislikes int
 }
 
 type Post struct {

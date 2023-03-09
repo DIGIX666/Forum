@@ -589,7 +589,7 @@ func GetPostComment(postID string) []structure.Comment {
 			DateTime:  date,
 			CommentID: commentid,
 			PostID:    post_id,
-			Connected: false,
+			Connected: true,
 		})
 	}
 

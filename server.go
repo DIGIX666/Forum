@@ -11,7 +11,6 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-
 	"text/template"
 	"time"
 
@@ -129,11 +128,12 @@ func login(w http.ResponseWriter, r *http.Request) {
 			}
 			http.SetCookie(w, &cookie)
 
+			dataBase.AddSession(uName, uuidUser, cookie.Value)
 			user.Connected = true
 			Posts.Connected = true
 			userComment.Connected = true
 			data.SetGoogleUserUUID(uEmail)
-			dataBase.AddSession(uName, uuidUser, cookie.Value)
+			uAccount = data.GetAllUsers()
 			http.Redirect(w, r, "/profil", http.StatusFound)
 			return
 		}
@@ -148,12 +148,12 @@ func login(w http.ResponseWriter, r *http.Request) {
 				Name:   "session",
 				MaxAge: 7200,
 			}
+			dataBase.AddSession(GitHub_UserName, uuidGithubUser, cookie.Value)
 			http.SetCookie(w, &cookie)
 			user.Connected = true
 			Posts.Connected = true
 			userComment.Connected = true
-			dataBase.AddSession(GitHub_UserName, uuidGithubUser, cookie.Value)
-
+			uAccount = data.GetAllUsers()
 			http.Redirect(w, r, "/profil", http.StatusFound)
 			return
 		}
@@ -211,7 +211,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 				Posts.Connected = true
 				userComment.Connected = true
 
-				http.Redirect(w, r, "/", http.StatusFound)
+				http.Redirect(w, r, "/profil", http.StatusFound)
 				return
 
 			} else {
@@ -224,6 +224,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	} else if r.Method == "GET" {
+		// uAccount = data.GetAllUsers()
 		t := template.New("login")
 		t = template.Must(t.ParseFiles("./assets/login.html"))
 		err := t.ExecuteTemplate(w, "login", nil)
@@ -268,7 +269,7 @@ func register(w http.ResponseWriter, r *http.Request) {
 			user.Connected = true
 			Posts.Connected = true
 			userComment.Connected = true
-			http.Redirect(w, r, "/", http.StatusFound)
+			http.Redirect(w, r, "/profil", http.StatusFound)
 			return
 		}
 
@@ -287,7 +288,7 @@ func register(w http.ResponseWriter, r *http.Request) {
 			Posts.Connected = true
 			userComment.Connected = true
 
-			http.Redirect(w, r, "/", http.StatusFound)
+			http.Redirect(w, r, "/profil", http.StatusFound)
 			return
 		} else if googleUserEmail != "" {
 			http.Redirect(w, r, "/login", http.StatusFound)
@@ -339,7 +340,7 @@ func register(w http.ResponseWriter, r *http.Request) {
 						log.Fatal(err)
 						return
 					}
-					http.Redirect(w, r, "/", http.StatusFound)
+					http.Redirect(w, r, "/profil", http.StatusFound)
 					return
 				}
 			} else {
@@ -398,6 +399,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 			})
 
 			file, header, err := r.FormFile("myFile")
+
 			imageName := ""
 			if err != nil {
 				if err != http.ErrMissingFile {
@@ -421,6 +423,9 @@ func home(w http.ResponseWriter, r *http.Request) {
 				}
 
 				imageSRC = "./assets/upload-image/" + imageName
+				// fileIMAGE, _ := os.Open(imageSRC)
+				// fileStat, _ := fileIMAGE.Stat()
+				// fileStat.Size()
 
 				err = ioutil.WriteFile(imageSRC, fileBytes, 0o666)
 				if err != nil {
@@ -474,7 +479,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 			}
 			if countDislike == 0 {
 				fmt.Printf("countDislike: %v\n", countDislike)
-				dataBase.AddingCountDislike(postid, user.Name, currentTime)
+				data.AddingCountDislike(postid, user.Name, currentTime)
 			}
 			// for i := range user.Post {
 			// 	fmt.Printf("i: %v\n", i)

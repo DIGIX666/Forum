@@ -11,6 +11,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"text/template"
 	"time"
 
@@ -397,10 +398,10 @@ func home(w http.ResponseWriter, r *http.Request) {
 				UserImage: user.Image,
 				Connected: true,
 			})
-
 			file, header, err := r.FormFile("myFile")
 
 			imageName := ""
+			maxImageSize := 20 * 1024 * 1024 // 20Mo en octets
 			if err != nil {
 				if err != http.ErrMissingFile {
 					http.Error(w, err.Error(), http.StatusBadRequest)
@@ -432,9 +433,22 @@ func home(w http.ResponseWriter, r *http.Request) {
 					log.Fatal(err)
 				}
 
-				_, user.Post = dataBase.UserPost(user.Name, message, postid, user.Image, currentTime, imageSRC, Posts.Count, Posts.CountDis, Posts.CountCom)
-				homefeed = dataBase.HomeFeedPost()
-				file.Close()
+				fileIMAGE, err := os.Open(imageSRC)
+				if err != nil {
+					fmt.Println(err)
+				}
+				fileStat, err := fileIMAGE.Stat()
+				if err != nil {
+					fmt.Println(err)
+				}
+				if fileStat.Size() > int64(maxImageSize) {
+					os.Remove(imageSRC)
+				} else {
+					_, user.Post = dataBase.UserPost(user.Name, message, postid, user.Image, currentTime, imageSRC, Posts.Count, Posts.CountDis, Posts.CountCom)
+					homefeed = dataBase.HomeFeedPost()
+					file.Close()
+
+				}
 
 			}
 		}

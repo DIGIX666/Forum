@@ -393,7 +393,7 @@ func SetGitHubUUID(userName string) string {
 	uuidGenerated, _ := uuid.NewV4()
 	uuid := uuidGenerated.String()
 
-	_, err := Db.Exec("UPDATE users SET UUID = ? WHER_, user.Post = data.GetUserProfil()E name = ?", uuid, userName)
+	_, err := Db.Exec("UPDATE users SET UUID = ? WHERE name = ?", uuid, userName)
 	if err != nil {
 		fmt.Println("Error function SetGitUUID dataBase:")
 		fmt.Println(err)
@@ -568,13 +568,66 @@ func GetPostComment(postID string) []structure.Comment {
 			PostID:         post_id,
 			CommentLike:    commentLike,
 			CommentDislike: commentDislike,
-			Connected:      false,
+			Connected:      true,
 		})
 	}
 
 	return ans
 
 }
+
+func LenUserComment(postID string) int {
+
+	var NumberComment int
+	err := Db.QueryRow("SELECT COUNT (*) FROM posts WHERE postid = ?", postID).Scan(&NumberComment)
+	if err != nil {
+		fmt.Println("Error SELECT From LenUserPost dataBase:")
+		log.Fatal(err)
+	}
+
+	return NumberComment
+}
+
+func GetComment(postID string) []structure.Comment {
+
+	rows, err := Db.Query("SELECT * FROM comments WHERE post_id = ?", postID)
+	if err != nil {
+		fmt.Println("Error in GetPostCommnet Query didn't work:")
+		log.Fatal(err)
+	}
+
+	var ans []structure.Comment
+
+	var _id int
+
+	var name, commentid, content, date, post_id string
+	var commentLike, commentDislike int
+
+	for rows.Next() {
+
+		err := rows.Scan(&_id, &name, &commentid, &content, &date, &post_id, &commentLike, &commentDislike)
+		if err != nil {
+			fmt.Println("Error GetPostComment Function in rows.Scan:")
+			log.Fatal(err)
+		}
+
+		ans = prependComment(ans, structure.Comment{
+			Message:        content,
+			Name:           name,
+			DateTime:       date,
+			CommentID:      commentid,
+			PostID:         post_id,
+			CommentLike:    commentLike,
+			CommentDislike: commentDislike,
+			Connected:      true,
+		})
+	}
+
+	return ans
+
+}
+
+/******************************************************************************************************/
 
 func preappendUserFeed(x []structure.UserFeedPost, y structure.UserFeedPost) []structure.UserFeedPost {
 	x = append(x, structure.UserFeedPost{})
@@ -596,11 +649,10 @@ func ProfilFeed(userName string) []structure.UserFeedPost {
 	for rows.Next() {
 
 		var id int
-
 		var postID, name, message, dateTime, image, picture string
 		var NumberOfComment, NumberOfLikes, NumberOfDislikes int
 
-		err := rows.Scan(&id, &postID, &name, &image, &message, &dateTime, &picture, &NumberOfComment, &NumberOfLikes, &NumberOfDislikes)
+		err := rows.Scan(&id, &postID, &image, &name, &message, &dateTime, &picture, &NumberOfComment, &NumberOfLikes, &NumberOfDislikes)
 		if err != nil {
 			fmt.Println("Error ProfilFeed Function in rows.Scan:")
 			log.Fatal(err)
@@ -643,6 +695,18 @@ func LenUserPost(nameUser string) int {
 	}
 
 	return NumberPost
+}
+
+func LenUser() int {
+
+	var NumberUser int
+	err := Db.QueryRow("SELECT COUNT (*) FROM users").Scan(&NumberUser)
+	if err != nil {
+		fmt.Println("Error SELECT From LenUserPost dataBase:")
+		log.Fatal(err)
+	}
+
+	return NumberUser
 }
 
 /*************************** ADDING COUNT POST **********************************/
@@ -713,19 +777,19 @@ func AddingCountComment(postID, username, currentTime string) {
 /*************************** ADDING COUNT COMMENT **********************************/
 func AddingCommentLike(commentLike int, commentid string) {
 	var count int
-	// _, err := Db.Exec("INSERT INTO comments (commentLike) VALUES (?)", commentLike)
-	// if err != nil {
-	// 	fmt.Println("Error function AddingCount Insert commentLike Comments to the dataBase:")
-	// 	fmt.Printf("err: %v\n", err)
-	// 	panic(err)
-	// }
+	_, err := Db.Exec("INSERT INTO comments (commentLike) VALUES (?)", commentLike)
+	if err != nil {
+		fmt.Println("Error function AddingCount Insert commentLike Comments to the dataBase:")
+		fmt.Printf("err: %v\n", err)
+		panic(err)
+	}
 
 	row := Db.QueryRow("SELECT COUNT (*) FROM comments WHERE commentid = ?", commentid)
-	err := row.Scan(&count)
+	err = row.Scan(&count)
 	if err != nil {
 		panic(err)
 	}
-	_, err = Db.Exec("UPDATE comments SET commentLike = ? WHERE commentid=?", count, commentid)
+	_, err = Db.Exec("UPDATE comments SET commentLike = ? WHERE commentid=?", count+1, commentid)
 	if err != nil {
 		fmt.Println("Error function AddingCountLike Insert countLikes Posts to the dataBase:")
 		fmt.Printf("err: %v\n", err)

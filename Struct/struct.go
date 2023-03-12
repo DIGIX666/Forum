@@ -17,6 +17,7 @@ type Comment struct {
 	Name           string
 	CommentID      string
 	Message        string
+	UserImage      string
 	DateTime       string
 	PostID         string
 	CommentLike    int

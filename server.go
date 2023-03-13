@@ -407,6 +407,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 				Message:     message,
 				DateTime:    currentTime,
 				UserImage:   user.Image,
+				CountCom:    data.LenUserComment(postid),
 				Categories:  Posts.Categories,
 				Categories2: Posts.Categories2,
 				Connected:   true,
@@ -546,6 +547,8 @@ func home(w http.ResponseWriter, r *http.Request) {
 			v.Connected = true
 		}
 
+		homefeed = data.HomeFeedPost()
+
 		err = temp.ExecuteTemplate(w, "home", map[string]any{
 			"User":     user,
 			"HomeFeed": homefeed,
@@ -555,6 +558,8 @@ func home(w http.ResponseWriter, r *http.Request) {
 		}
 
 	} else {
+
+		homefeed = data.HomeFeedPost()
 
 		err = temp.ExecuteTemplate(w, "home", map[string]any{
 			"User":     user,
@@ -906,6 +911,10 @@ func comment(w http.ResponseWriter, r *http.Request) {
 
 		if message != "" {
 			dataBase.UserComment(user.Name, message, script.GenerateCommentID(), currentTime, postID)
+			data.HomeFeedPost()
+			// for _, v := range data.HomeFeedPost() {
+			// 	v.NumberOfComment = data.LenUserComment(postID)
+			// }
 		}
 
 		commentid := r.FormValue("like")

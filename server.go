@@ -912,28 +912,29 @@ func comment(w http.ResponseWriter, r *http.Request) {
 		if message != "" {
 			dataBase.UserComment(user.Name, message, script.GenerateCommentID(), currentTime, postID)
 			data.HomeFeedPost()
-			// for _, v := range data.HomeFeedPost() {
-			// 	v.NumberOfComment = data.LenUserComment(postID)
-			// }
+
 		}
 
 		commentid := r.FormValue("like")
 
 		fmt.Printf("commentid: %v\n", commentid)
 
-		if commentid != "" && user.Connected {
+		if commentid != "" && user.Connected && postID != "" {
 
 			fmt.Println("Enter the Like Section !!!!")
 
 			commentLike := 0
+			commentUserName := ""
 
-			row := data.Db.QueryRow("SELECT COUNT (*) FROM comments WHERE name = ? AND commentid = ?", user.Name, commentid)
-			err := row.Scan(&commentLike)
+			row := data.Db.QueryRow("SELECT COUNT (*), name FROM comments WHERE post_id = ? AND commentid = ?", postID, commentid)
+			err := row.Scan(&commentLike, &commentUserName)
 			if err != nil {
 				panic(err)
 			}
+
 			fmt.Printf("commentLike: %v\n", commentLike)
-			if commentLike >= 0 {
+			fmt.Printf("commentUserName: %v\n", commentUserName)
+			if user.Name != commentUserName {
 
 				dataBase.AddingCommentLike(commentLike, commentid)
 			}
@@ -941,9 +942,6 @@ func comment(w http.ResponseWriter, r *http.Request) {
 			for _, v := range comments {
 				fmt.Printf("v.CommentLike: %v\n", v.CommentLike)
 			}
-			// if len(comments) < data.LenUserComment(postID) {
-			// 	comments = data.GetPostComment(postID)
-			// }
 
 			comments = data.GetPostComment(postID)
 
@@ -965,7 +963,6 @@ func comment(w http.ResponseWriter, r *http.Request) {
 	} else if r.Method == "GET" {
 
 		postid := r.URL.Query().Get("postid")
-		// commentid := r.URL.Query().Get("like")
 
 		fmt.Printf("postid: %v\n", postid)
 		if user.Connected && postid != "" {

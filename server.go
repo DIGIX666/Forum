@@ -64,6 +64,9 @@ func main() {
 
 	// Use the limiter as middleware for the "/" handler
 	http.Handle("/", tollbooth.LimitFuncHandler(lmt, home))
+	http.Handle("/categorie1", tollbooth.LimitFuncHandler(lmt, categorie1))
+	http.Handle("/categorie2", tollbooth.LimitFuncHandler(lmt, categorie2))
+	http.Handle("/categorie3", tollbooth.LimitFuncHandler(lmt, categorie3))
 	http.Handle("/profil", tollbooth.LimitFuncHandler(lmt, profil))
 	http.Handle("/comment", tollbooth.LimitFuncHandler(lmt, comment))
 	http.Handle("/login", tollbooth.LimitFuncHandler(lmt, login))
@@ -382,7 +385,10 @@ func home(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 
 		message := r.FormValue("message")
+		Posts.Categories = r.FormValue("categories")
+		Posts.Categories2 = r.FormValue("categories2")
 
+		fmt.Printf("Posts.Categories: %v\n", Posts.Categories)
 		if message != "" && user.Connected {
 			postid := script.GeneratePostID()
 			currentTime := time.Now().Format("15:04  2-Janv-2006")
@@ -391,13 +397,14 @@ func home(w http.ResponseWriter, r *http.Request) {
 			// user.Image = profil["image"]
 
 			user.Post = preappendPost(structure.Post{
-				PostID:     postid,
-				Name:       user.Name,
-				Message:    message,
-				DateTime:   currentTime,
-				UserImage:  user.Image,
-				Categories: Posts.Categories,
-				Connected:  true,
+				PostID:      postid,
+				Name:        user.Name,
+				Message:     message,
+				DateTime:    currentTime,
+				UserImage:   user.Image,
+				Categories:  Posts.Categories,
+				Categories2: Posts.Categories2,
+				Connected:   true,
 			})
 			file, header, err := r.FormFile("myFile")
 
@@ -409,7 +416,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 					return
 				}
 				//Put the message in the dataBase
-				dataBase.UserPost(user.Name, message, postid, user.Image, currentTime, imageName, Posts.Count, Posts.CountDis, Posts.CountCom, Posts.Categories)
+				dataBase.UserPost(user.Name, message, postid, user.Image, currentTime, imageName, Posts.Count, Posts.CountDis, Posts.CountCom, Posts.Categories, Posts.Categories2)
 				homefeed = dataBase.HomeFeedPost()
 
 			} else {
@@ -445,7 +452,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 				if fileStat.Size() > int64(maxImageSize) {
 					os.Remove(imageSRC)
 				} else {
-					_, user.Post = dataBase.UserPost(user.Name, message, postid, user.Image, currentTime, imageSRC, Posts.Count, Posts.CountDis, Posts.CountCom, Posts.Categories)
+					_, user.Post = dataBase.UserPost(user.Name, message, postid, user.Image, currentTime, imageSRC, Posts.Count, Posts.CountDis, Posts.CountCom, Posts.Categories, Posts.Categories2)
 					homefeed = dataBase.HomeFeedPost()
 					file.Close()
 
@@ -633,6 +640,245 @@ func profil(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+/********************************************************************************/
+
+/*************************** FUNCTION CATEGORIE 1 **********************************/
+func categorie1(w http.ResponseWriter, r *http.Request) {
+
+	var categorie1 map[string]string
+	categorie1 = data.GetUserProfil()
+	user.Name = categorie1["name"]
+	user.Email = categorie1["email"]
+	user.Image = categorie1["userImage"]
+	user.UUID = categorie1["uuid"]
+	if categorie1["admin"] == "true" {
+		user.Admin = true
+	} else {
+		user.Admin = false
+	}
+
+	var userHomeFeed []structure.UserFeedPost
+
+	if err := r.ParseForm(); err != nil {
+		fmt.Fprintf(w, "ParseForm() err: %v", err)
+		return
+	}
+
+	if r.FormValue("logout") != "" {
+
+		cookie := http.Cookie{
+			Value:  "",
+			Name:   "session",
+			MaxAge: -1,
+		}
+		http.SetCookie(w, &cookie)
+
+		user.Connected = false
+		Posts.Connected = false
+		userComment.Connected = false
+		data.DeleteSession(user.Name)
+		http.Redirect(w, r, "/", http.StatusFound)
+		return
+	}
+	for _, v := range user.Post {
+		v.Connected = true
+	}
+
+	temp, err := template.ParseFiles("./assets/Categories/Cat-1/cat1.html")
+	if err != nil {
+		log.Println("Error parsing template:", err)
+		return
+	}
+
+	_, err = r.Cookie("session")
+	if err != nil {
+		user.Connected = false
+		for _, v := range user.Post {
+			v.Connected = false
+		}
+
+		Posts.Connected = false
+		userComment.Connected = false
+		data.DeleteSession(user.Name)
+		http.Redirect(w, r, "/", http.StatusFound)
+		return
+	}
+
+	fmt.Printf("len(user.Post): %v\n", len(user.Post))
+	fmt.Printf("data.LenUserPost(user.Name): %v\n", data.LenUserPost(user.Name))
+	if len(userHomeFeed) < data.LenUserPost(user.Name) {
+		userHomeFeed = data.ProfilFeed(user.Name)
+	}
+
+	if err = temp.ExecuteTemplate(w, "categorie1", map[string]any{
+		"user":     user,
+		"UserPost": userHomeFeed,
+	}); err != nil {
+		log.Println("Error executing template:", err)
+		return
+	}
+}
+
+/********************************************************************************/
+
+/*************************** FUNCTION CATEGORIE 2 **********************************/
+func categorie2(w http.ResponseWriter, r *http.Request) {
+
+	var categorie2 map[string]string
+	categorie2 = data.GetUserProfil()
+	user.Name = categorie2["name"]
+	user.Email = categorie2["email"]
+	user.Image = categorie2["userImage"]
+	user.UUID = categorie2["uuid"]
+	if categorie2["admin"] == "true" {
+		user.Admin = true
+	} else {
+		user.Admin = false
+	}
+
+	var userHomeFeed []structure.UserFeedPost
+
+	if err := r.ParseForm(); err != nil {
+		fmt.Fprintf(w, "ParseForm() err: %v", err)
+		return
+	}
+
+	if r.FormValue("logout") != "" {
+
+		cookie := http.Cookie{
+			Value:  "",
+			Name:   "session",
+			MaxAge: -1,
+		}
+		http.SetCookie(w, &cookie)
+
+		user.Connected = false
+		Posts.Connected = false
+		userComment.Connected = false
+		data.DeleteSession(user.Name)
+		http.Redirect(w, r, "/", http.StatusFound)
+		return
+	}
+	for _, v := range user.Post {
+		v.Connected = true
+	}
+
+	temp, err := template.ParseFiles("./assets/Categories/Cat-2/cat2.html")
+	if err != nil {
+		log.Println("Error parsing template:", err)
+		return
+	}
+
+	_, err = r.Cookie("session")
+	if err != nil {
+		user.Connected = false
+		for _, v := range user.Post {
+			v.Connected = false
+		}
+
+		Posts.Connected = false
+		userComment.Connected = false
+		data.DeleteSession(user.Name)
+		http.Redirect(w, r, "/", http.StatusFound)
+		return
+	}
+
+	fmt.Printf("len(user.Post): %v\n", len(user.Post))
+	fmt.Printf("data.LenUserPost(user.Name): %v\n", data.LenUserPost(user.Name))
+	if len(userHomeFeed) < data.LenUserPost(user.Name) {
+		userHomeFeed = data.ProfilFeed(user.Name)
+	}
+
+	if err = temp.ExecuteTemplate(w, "categorie2", map[string]any{
+		"user":     user,
+		"UserPost": userHomeFeed,
+	}); err != nil {
+		log.Println("Error executing template:", err)
+		return
+	}
+}
+
+/********************************************************************************/
+
+/*************************** FUNCTION CATEGORIE 3 **********************************/
+func categorie3(w http.ResponseWriter, r *http.Request) {
+
+	var categorie3 map[string]string
+	categorie3 = data.GetUserProfil()
+	user.Name = categorie3["name"]
+	user.Email = categorie3["email"]
+	user.Image = categorie3["userImage"]
+	user.UUID = categorie3["uuid"]
+	if categorie3["admin"] == "true" {
+		user.Admin = true
+	} else {
+		user.Admin = false
+	}
+
+	var userHomeFeed []structure.UserFeedPost
+
+	if err := r.ParseForm(); err != nil {
+		fmt.Fprintf(w, "ParseForm() err: %v", err)
+		return
+	}
+
+	if r.FormValue("logout") != "" {
+
+		cookie := http.Cookie{
+			Value:  "",
+			Name:   "session",
+			MaxAge: -1,
+		}
+		http.SetCookie(w, &cookie)
+
+		user.Connected = false
+		Posts.Connected = false
+		userComment.Connected = false
+		data.DeleteSession(user.Name)
+		http.Redirect(w, r, "/", http.StatusFound)
+		return
+	}
+	for _, v := range user.Post {
+		v.Connected = true
+	}
+
+	temp, err := template.ParseFiles("./assets/Categories/Cat-3/cat3.html")
+	if err != nil {
+		log.Println("Error parsing template:", err)
+		return
+	}
+
+	_, err = r.Cookie("session")
+	if err != nil {
+		user.Connected = false
+		for _, v := range user.Post {
+			v.Connected = false
+		}
+
+		Posts.Connected = false
+		userComment.Connected = false
+		data.DeleteSession(user.Name)
+		http.Redirect(w, r, "/", http.StatusFound)
+		return
+	}
+
+	fmt.Printf("len(user.Post): %v\n", len(user.Post))
+	fmt.Printf("data.LenUserPost(user.Name): %v\n", data.LenUserPost(user.Name))
+	if len(userHomeFeed) < data.LenUserPost(user.Name) {
+		userHomeFeed = data.ProfilFeed(user.Name)
+	}
+
+	if err = temp.ExecuteTemplate(w, "categorie3", map[string]any{
+		"user":     user,
+		"UserPost": userHomeFeed,
+	}); err != nil {
+		log.Println("Error executing template:", err)
+		return
+	}
+}
+
+/********************************************************************************/
 
 /*************************** FUNCTION COMMENT **********************************/
 

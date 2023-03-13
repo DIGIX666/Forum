@@ -81,7 +81,9 @@ func CreateDataBase() {
 		picture NOT NULL,
 		countComment INTEGER DEFAULT 0,
 		countLikes INTEGER DEFAULT 0,
-		countDislikes INTEGER DEFAULT 0
+		countDislikes INTEGER DEFAULT 0,
+		categories NOT NULL,
+		categories2 NOT NULL
 
     )`)
 
@@ -332,14 +334,14 @@ func CheckUserLogin(email string, password string, uuid string) bool {
 }
 
 /************************* USER POST **********************************/
-func UserPost(userName string, message string, postID string, image string, dateTime string, pictureURL string, countComment int, countLikes int, countDislikes int) (bool, []structure.Post) {
+func UserPost(userName string, message string, postID string, image string, dateTime string, pictureURL string, countComment int, countLikes int, countDislikes int, categories string, categories2 string) (bool, []structure.Post) {
 
 	// NumberOfComment := 0
 
 	fmt.Printf("image: %v", pictureURL)
 	fmt.Println("")
 
-	_, err := Db.Exec("INSERT INTO posts (name, message, postid,image, datetime,picture,countComment, countLikes, countDislikes) VALUES (?, ?, ?,?,?,?,?,?, ?)", userName, message, postID, image, dateTime, pictureURL, countComment, countLikes, countDislikes)
+	_, err := Db.Exec("INSERT INTO posts (name, message, postid,image, datetime,picture,countComment, countLikes, countDislikes, categories, categories2) VALUES (?, ?, ?,?,?,?,?,?,?,?, ?)", userName, message, postID, image, dateTime, pictureURL, countComment, countLikes, countDislikes, categories, categories2)
 	if err != nil {
 		fmt.Println("Error Insert user Post to the dataBase:")
 		log.Fatal(err)
@@ -347,15 +349,17 @@ func UserPost(userName string, message string, postID string, image string, date
 	} else {
 
 		user.Post = preappendPost(structure.Post{
-			PostID:    postID,
-			Name:      userName,
-			Message:   message,
-			DateTime:  dateTime,
-			Picture:   pictureURL,
-			Connected: true,
-			CountCom:  countComment,
-			Count:     countLikes,
-			CountDis:  countDislikes,
+			PostID:      postID,
+			Name:        userName,
+			Message:     message,
+			DateTime:    dateTime,
+			Picture:     pictureURL,
+			Connected:   true,
+			CountCom:    countComment,
+			Count:       countLikes,
+			CountDis:    countDislikes,
+			Categories:  categories,
+			Categories2: categories2,
 		})
 
 		return true, user.Post
@@ -446,7 +450,7 @@ func GetUserProfil() map[string]string {
 /*************************** GET USER POST **********************************/
 
 func GetUserPosts(name string) []structure.Post {
-	rows, err := Db.Query("SELECT  postid, name, message, image, datetime,picture, countComment, countLikes, countDislikes FROM posts WHERE name = ?", name)
+	rows, err := Db.Query("SELECT  postid, name, message, image, datetime,picture, countComment, countLikes, countDislikes, categories, categories2 FROM posts WHERE name = ?", name)
 	if err != nil {
 		fmt.Println("Erreur SELECT #3 fonction GetUserProfil dataBase:")
 		log.Fatal(err)
@@ -458,24 +462,28 @@ func GetUserPosts(name string) []structure.Post {
 	userImage := ""
 	dateTime := ""
 	pictureURL := ""
+	categories := ""
+	categories2 := ""
 	// NumberOfComment := 0
 
 	var userPosts []structure.Post
 
 	for rows.Next() {
 
-		err = rows.Scan(&postID, &userName, &message, &userImage, &dateTime, &pictureURL)
+		err = rows.Scan(&postID, &userName, &message, &userImage, &dateTime, &pictureURL, &categories, &categories2)
 		if err != nil {
 			log.Fatal(err)
 		}
 
 		userPosts = preappendPost(structure.Post{
-			PostID:    postID,
-			Name:      userName,
-			Message:   message,
-			UserImage: userImage,
-			DateTime:  dateTime,
-			Picture:   pictureURL,
+			PostID:      postID,
+			Name:        userName,
+			Message:     message,
+			UserImage:   userImage,
+			DateTime:    dateTime,
+			Picture:     pictureURL,
+			Categories:  categories,
+			Categories2: categories2,
 			// NumberOfComment: NumberOfComment,
 			Connected: true,
 		})
@@ -503,11 +511,11 @@ func HomeFeedPost() []structure.HomeFeedPost {
 	}
 	var Posts []structure.HomeFeedPost
 	var id, NumberOfComment, NumberOfLikes, NumberOfDislikes int
-	var postID, userName, message, image, dateTime, picture string
+	var postID, userName, message, image, dateTime, picture, categories, categories2 string
 
 	for rows.Next() {
 
-		err := rows.Scan(&id, &postID, &image, &userName, &message, &dateTime, &picture, &NumberOfComment, &NumberOfLikes, &NumberOfDislikes)
+		err := rows.Scan(&id, &postID, &image, &userName, &message, &dateTime, &picture, &NumberOfComment, &NumberOfLikes, &NumberOfDislikes, &categories, &categories2)
 		if err != nil {
 			fmt.Println("Error HomeFeedPost Function in rows.Scan:")
 			log.Fatal(err)
@@ -523,6 +531,8 @@ func HomeFeedPost() []structure.HomeFeedPost {
 			NumberOfComment:  LenUserComment(postID),
 			NumberOfLikes:    NumberOfLikes,
 			NumberOfDislikes: NumberOfDislikes,
+			Categories:       categories,
+			Categories2:      categories2,
 		})
 	}
 
@@ -651,10 +661,11 @@ func ProfilFeed(userName string) []structure.UserFeedPost {
 	for rows.Next() {
 
 		var id int
-		var postID, name, message, dateTime, image, picture string
+
+		var postID, name, message, dateTime, image, picture, categories, categories2 string
 		var NumberOfComment, NumberOfLikes, NumberOfDislikes int
 
-		err := rows.Scan(&id, &postID, &image, &name, &message, &dateTime, &picture, &NumberOfComment, &NumberOfLikes, &NumberOfDislikes)
+		err := rows.Scan(&id, &postID, &name, &image, &message, &dateTime, &picture, &NumberOfComment, &NumberOfLikes, &NumberOfDislikes, &categories, &categories2)
 		if err != nil {
 			fmt.Println("Error ProfilFeed Function in rows.Scan:")
 			log.Fatal(err)
@@ -672,6 +683,8 @@ func ProfilFeed(userName string) []structure.UserFeedPost {
 			NumberOfComment:  NumberOfComment,
 			NumberOfLikes:    NumberOfLikes,
 			NumberOfDislikes: NumberOfDislikes,
+			Categories:       categories,
+			Categories2:      categories2,
 		})
 
 	}

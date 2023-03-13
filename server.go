@@ -555,16 +555,13 @@ func home(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			log.Fatal(err)
 		}
-
 	}
-
 }
 
 /*************************** FUNCTION PROFIL **********************************/
 func profil(w http.ResponseWriter, r *http.Request) {
 
-	var profil map[string]string
-	profil = data.GetUserProfil()
+	profil := data.GetUserProfil()
 	user.Name = profil["name"]
 	user.Email = profil["email"]
 	user.Image = profil["userImage"]
@@ -679,18 +676,20 @@ func comment(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				panic(err)
 			}
+			fmt.Printf("commentLike: %v\n", commentLike)
+			if commentLike >= 0 {
 
-			if commentLike == 0 {
-				fmt.Printf("commentLike: %v\n", commentLike)
 				dataBase.AddingCommentLike(commentLike, commentid)
 			}
 
 			for _, v := range comments {
 				fmt.Printf("v.CommentLike: %v\n", v.CommentLike)
 			}
-			if len(comments) < data.LenUserComment(postID) {
-				comments = data.GetPostComment(postID)
-			}
+			// if len(comments) < data.LenUserComment(postID) {
+			// 	comments = data.GetPostComment(postID)
+			// }
+
+			comments = data.GetPostComment(postID)
 
 			if err := temp.ExecuteTemplate(w, "comment", map[string]any{
 				"PostID":    postID,
@@ -744,7 +743,5 @@ func comment(w http.ResponseWriter, r *http.Request) {
 			log.Println("Error executing template:", err)
 			return
 		}
-
 	}
-
 }

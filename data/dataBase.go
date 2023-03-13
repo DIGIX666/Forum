@@ -512,6 +512,7 @@ func HomeFeedPost() []structure.HomeFeedPost {
 			fmt.Println("Error HomeFeedPost Function in rows.Scan:")
 			log.Fatal(err)
 		}
+
 		Posts = prependHomeFeedPost(Posts, structure.HomeFeedPost{
 			PostID:           postID,
 			Name:             userName,
@@ -519,11 +520,12 @@ func HomeFeedPost() []structure.HomeFeedPost {
 			Message:          message,
 			DateTime:         dateTime,
 			Picture:          picture,
-			NumberOfComment:  NumberOfComment,
+			NumberOfComment:  LenUserComment(postID),
 			NumberOfLikes:    NumberOfLikes,
 			NumberOfDislikes: NumberOfDislikes,
 		})
 	}
+
 	return Posts
 
 }
@@ -579,7 +581,7 @@ func GetPostComment(postID string) []structure.Comment {
 func LenUserComment(postID string) int {
 
 	var NumberComment int
-	err := Db.QueryRow("SELECT COUNT (*) FROM posts WHERE postid = ?", postID).Scan(&NumberComment)
+	err := Db.QueryRow("SELECT COUNT (*) FROM comments WHERE post_id = ?", postID).Scan(&NumberComment)
 	if err != nil {
 		fmt.Println("Error SELECT From LenUserPost dataBase:")
 		log.Fatal(err)
@@ -657,6 +659,8 @@ func ProfilFeed(userName string) []structure.UserFeedPost {
 			fmt.Println("Error ProfilFeed Function in rows.Scan:")
 			log.Fatal(err)
 		}
+
+		fmt.Printf("NumberOfComment: %v\n", NumberOfComment)
 
 		Posts = preappendUserFeed(Posts, structure.UserFeedPost{
 			PostID:           postID,
@@ -777,23 +781,24 @@ func AddingCountComment(postID, username, currentTime string) {
 /*************************** ADDING COUNT COMMENT **********************************/
 func AddingCommentLike(commentLike int, commentid string) {
 	var count int
-	_, err := Db.Exec("INSERT INTO comments (commentLike) VALUES (?)", commentLike)
-	if err != nil {
-		fmt.Println("Error function AddingCount Insert commentLike Comments to the dataBase:")
-		fmt.Printf("err: %v\n", err)
-		panic(err)
-	}
+	// _, err := Db.Exec("INSERT INTO comments (commentLike) VALUES (?)", commentLike)
+	// if err != nil {
+	// 	fmt.Println("Error function AddingCount Insert commentLike Comments to the dataBase:")
+	// 	fmt.Printf("err: %v\n", err)
+	// 	panic(err)
+	// }
 
 	row := Db.QueryRow("SELECT COUNT (*) FROM comments WHERE commentid = ?", commentid)
-	err = row.Scan(&count)
+	err := row.Scan(&count)
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
-	_, err = Db.Exec("UPDATE comments SET commentLike = ? WHERE commentid=?", count+1, commentid)
+	fmt.Printf("count AddingCommentLike: %v\n", count)
+	_, err = Db.Exec("UPDATE comments SET commentLike = ? WHERE commentid = ?", count, commentid)
 	if err != nil {
 		fmt.Println("Error function AddingCountLike Insert countLikes Posts to the dataBase:")
 		fmt.Printf("err: %v\n", err)
-		panic(err)
+		log.Fatal(err)
 	}
 }
 

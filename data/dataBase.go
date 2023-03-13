@@ -58,7 +58,7 @@ func CreateDataBase() {
 
 	_, err = Db.Exec(`CREATE TABLE IF NOT EXISTS comments (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name NOT NULL,
+        name TEXT DEFAULT 'nothing',
         commentid NOT NULL,
         content NOT NULL,
 		date NOT NULL,
@@ -798,7 +798,7 @@ func AddingCommentLike(commentLike int, commentid string) {
 	// if err != nil {
 	// 	fmt.Println("Error function AddingCount Insert commentLike Comments to the dataBase:")
 	// 	fmt.Printf("err: %v\n", err)
-	// 	panic(err)
+
 	// }
 
 	row := Db.QueryRow("SELECT COUNT (*) FROM comments WHERE commentid = ?", commentid)
@@ -807,7 +807,7 @@ func AddingCommentLike(commentLike int, commentid string) {
 		log.Fatal(err)
 	}
 	fmt.Printf("count AddingCommentLike: %v\n", count)
-	_, err = Db.Exec("UPDATE comments SET commentLike = ? WHERE commentid = ?", count, commentid)
+	_, err = Db.Exec("UPDATE comments SET commentLike = ? WHERE commentid = ?", count+1, commentid)
 	if err != nil {
 		fmt.Println("Error function AddingCountLike Insert countLikes Posts to the dataBase:")
 		fmt.Printf("err: %v\n", err)

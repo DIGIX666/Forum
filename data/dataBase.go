@@ -58,11 +58,11 @@ func CreateDataBase() {
 
 	_, err = Db.Exec(`CREATE TABLE IF NOT EXISTS comments (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT DEFAULT 'nothing',
-        commentid NOT NULL,
-        content NOT NULL,
-		date NOT NULL,
-		post_id NOT NULL,
+        name TEXT DEFAULT '',
+        commentid TEXT DEFAULT '',
+        content TEXT DEFAULT '',
+		date TEXT DEFAULT '',
+		post_id TEXT DEFAULT '',
 		commentLike INTEGER DEFAULT 0,
 		commentDislike INTEGER DEFAULT 0
     )`)
@@ -774,7 +774,7 @@ func AddingCountDislike(postID, username, currentTime string) {
 	}
 }
 
-func AddingCountComment(postID, username, currentTime string) {
+func AddingCountComment(postID, username string) {
 	var CountComment int
 	fmt.Printf("username: %v\n", username)
 
@@ -792,22 +792,22 @@ func AddingCountComment(postID, username, currentTime string) {
 }
 
 /*************************** ADDING COUNT COMMENT **********************************/
-func AddingCommentLike(commentLike int, commentid string) {
+func AddingCommentLike(commentLike int, commentid string, currentTime string, userName string, postID string) {
 	var count int
-	// _, err := Db.Exec("INSERT INTO comments (commentLike) VALUES (?)", commentLike)
-	// if err != nil {
-	// 	fmt.Println("Error function AddingCount Insert commentLike Comments to the dataBase:")
-	// 	fmt.Printf("err: %v\n", err)
+	_, err := Db.Exec("INSERT INTO comments (name,commentLike,date,commentid) VALUES (?,?,?,?)", userName, commentLike, currentTime, commentid)
+	if err != nil {
+		fmt.Println("Error function AddingCommentLike Insert commentLike,date Comments to the dataBase:")
+		fmt.Printf("err: %v\n", err)
+	}
 
-	// }
-
-	row := Db.QueryRow("SELECT COUNT (*) FROM comments WHERE commentid = ?", commentid)
-	err := row.Scan(&count)
+	row := Db.QueryRow("SELECT COUNT (*) FROM comments WHERE commentid = ? AND name = ? AND post_id = ?", commentid, userName, postID)
+	err = row.Scan(&count)
 	if err != nil {
 		log.Fatal(err)
 	}
 	fmt.Printf("count AddingCommentLike: %v\n", count)
-	_, err = Db.Exec("UPDATE comments SET commentLike = ? WHERE commentid = ?", count+1, commentid)
+
+	_, err = Db.Exec("UPDATE comments SET commentLike = ? WHERE commentid = ?", count, commentid)
 	if err != nil {
 		fmt.Println("Error function AddingCountLike Insert countLikes Posts to the dataBase:")
 		fmt.Printf("err: %v\n", err)

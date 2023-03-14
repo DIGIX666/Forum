@@ -477,7 +477,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				panic(err)
 			}
-			if countLike == 0 {
+			if countLike >= 0 {
 				fmt.Printf("countLike: %v\n", countLike)
 				dataBase.AddingCountLike(postid, user.Name, currentTime)
 			}
@@ -919,31 +919,24 @@ func comment(w http.ResponseWriter, r *http.Request) {
 
 		fmt.Printf("commentid: %v\n", commentid)
 
-		if commentid != "" && user.Connected && postID != "" {
+		if commentid != "" && postID != "" {
 
-			fmt.Println("Enter the Like Section !!!!")
+			currentTime := time.Now().Format("15:04  2-Janv-2006")
 
-			commentLike := 0
-			commentUserName := ""
-
-			row := data.Db.QueryRow("SELECT COUNT (*), name FROM comments WHERE post_id = ? AND commentid = ?", postID, commentid)
-			err := row.Scan(&commentLike, &commentUserName)
+			countLike := 0
+			row := data.Db.QueryRow("SELECT COUNT (*) FROM comments WHERE name = ? AND post_id = ?", user.Name, postID)
+			err := row.Scan(&countLike)
 			if err != nil {
 				panic(err)
 			}
-
-			fmt.Printf("commentLike: %v\n", commentLike)
-			fmt.Printf("commentUserName: %v\n", commentUserName)
-			if user.Name != commentUserName {
-
-				dataBase.AddingCommentLike(commentLike, commentid)
+			if countLike >= 0 {
+				fmt.Printf("countLike: %v\n", countLike)
+				dataBase.AddingCommentLike(countLike, user.Name, currentTime, user.Name, postID)
 			}
 
-			for _, v := range comments {
-				fmt.Printf("v.CommentLike: %v\n", v.CommentLike)
-			}
-
-			comments = data.GetPostComment(postID)
+			fmt.Printf("postid: %v\n", postID)
+			// homefeed = dataBase.HomeFeedPost()
+			comments = data.GetComment(postID)
 
 			if err := temp.ExecuteTemplate(w, "comment", map[string]any{
 				"PostID":    postID,
@@ -958,6 +951,7 @@ func comment(w http.ResponseWriter, r *http.Request) {
 
 		if r.FormValue("like") == "" && postID != "" && message != "" {
 			http.Redirect(w, r, "/comment?postid="+postID, http.StatusSeeOther)
+			return
 		}
 
 	} else if r.Method == "GET" {
@@ -966,7 +960,7 @@ func comment(w http.ResponseWriter, r *http.Request) {
 
 		fmt.Printf("postid: %v\n", postid)
 		if user.Connected && postid != "" {
-			currentTime := time.Now().Format("15:04  2-Janv-2006")
+			// currentTime := time.Now().Format("15:04  2-Janv-2006")
 
 			countComment := 0
 
@@ -977,7 +971,7 @@ func comment(w http.ResponseWriter, r *http.Request) {
 			}
 			if countComment == 0 {
 				fmt.Printf("countComment: %v\n", countComment)
-				dataBase.AddingCountComment(postid, user.Name, currentTime)
+				dataBase.AddingCountComment(postid, user.Name)
 			}
 			fmt.Printf("postid: %v\n", postid)
 		}

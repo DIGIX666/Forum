@@ -650,19 +650,18 @@ func profil(w http.ResponseWriter, r *http.Request) {
 /*************************** FUNCTION CATEGORIE 1 **********************************/
 func categorie1(w http.ResponseWriter, r *http.Request) {
 
-	var categorie1 map[string]string
-	categorie1 = data.GetUserProfil()
-	user.Name = categorie1["name"]
-	user.Email = categorie1["email"]
-	user.Image = categorie1["userImage"]
-	user.UUID = categorie1["uuid"]
-	if categorie1["admin"] == "true" {
+	profil := data.GetUserProfil()
+	user.Name = profil["name"]
+	user.Email = profil["email"]
+	user.Image = profil["userImage"]
+	user.UUID = profil["uuid"]
+	if profil["admin"] == "true" {
 		user.Admin = true
 	} else {
 		user.Admin = false
 	}
 
-	var userHomeFeed []structure.UserFeedPost
+	var categorie1Feed []structure.Categorie1FeedPost
 
 	if err := r.ParseForm(); err != nil {
 		fmt.Fprintf(w, "ParseForm() err: %v", err)
@@ -709,19 +708,18 @@ func categorie1(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Printf("len(user.Post): %v\n", len(user.Post))
-	fmt.Printf("data.LenUserPost(user.Name): %v\n", data.LenUserPost(user.Name))
-	if len(userHomeFeed) < data.LenUserPost(user.Name) {
-		userHomeFeed = data.ProfilFeed(user.Name)
-	}
+	data.Categorie1FeedPost(user.Name)
+	fmt.Printf("user.Name: %v\n", user.Name)
 
 	if err = temp.ExecuteTemplate(w, "categorie1", map[string]any{
-		"user":     user,
-		"UserPost": userHomeFeed,
+		"user":       user,
+		"categories": data.Categorie1FeedPost(user.Name),
+		"categries2": data.Categorie1FeedPost(user.Name),
 	}); err != nil {
 		log.Println("Error executing template:", err)
 		return
 	}
+	fmt.Printf("categorie1Feed: %v\n", categorie1Feed)
 }
 
 /********************************************************************************/
@@ -729,19 +727,18 @@ func categorie1(w http.ResponseWriter, r *http.Request) {
 /*************************** FUNCTION CATEGORIE 2 **********************************/
 func categorie2(w http.ResponseWriter, r *http.Request) {
 
-	var categorie2 map[string]string
-	categorie2 = data.GetUserProfil()
-	user.Name = categorie2["name"]
-	user.Email = categorie2["email"]
-	user.Image = categorie2["userImage"]
-	user.UUID = categorie2["uuid"]
-	if categorie2["admin"] == "true" {
+	profil := data.GetUserProfil()
+	user.Name = profil["name"]
+	user.Email = profil["email"]
+	user.Image = profil["userImage"]
+	user.UUID = profil["uuid"]
+	if profil["admin"] == "true" {
 		user.Admin = true
 	} else {
 		user.Admin = false
 	}
 
-	var userHomeFeed []structure.UserFeedPost
+	var categorie2Feed []structure.Categorie2FeedPost
 
 	if err := r.ParseForm(); err != nil {
 		fmt.Fprintf(w, "ParseForm() err: %v", err)
@@ -788,19 +785,17 @@ func categorie2(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Printf("len(user.Post): %v\n", len(user.Post))
-	fmt.Printf("data.LenUserPost(user.Name): %v\n", data.LenUserPost(user.Name))
-	if len(userHomeFeed) < data.LenUserPost(user.Name) {
-		userHomeFeed = data.ProfilFeed(user.Name)
-	}
+	data.Categorie2FeedPost(user.Name)
+	fmt.Printf("user.Name: %v\n", user.Name)
 
 	if err = temp.ExecuteTemplate(w, "categorie2", map[string]any{
-		"user":     user,
-		"UserPost": userHomeFeed,
+		"user":        user,
+		"categories2": data.Categorie2FeedPost(user.Name),
 	}); err != nil {
 		log.Println("Error executing template:", err)
 		return
 	}
+	fmt.Printf("categorie2Feed: %v\n", categorie2Feed)
 }
 
 /********************************************************************************/
@@ -808,19 +803,18 @@ func categorie2(w http.ResponseWriter, r *http.Request) {
 /*************************** FUNCTION CATEGORIE 3 **********************************/
 func categorie3(w http.ResponseWriter, r *http.Request) {
 
-	var categorie3 map[string]string
-	categorie3 = data.GetUserProfil()
-	user.Name = categorie3["name"]
-	user.Email = categorie3["email"]
-	user.Image = categorie3["userImage"]
-	user.UUID = categorie3["uuid"]
-	if categorie3["admin"] == "true" {
+	profil := data.GetUserProfil()
+	user.Name = profil["name"]
+	user.Email = profil["email"]
+	user.Image = profil["userImage"]
+	user.UUID = profil["uuid"]
+	if profil["admin"] == "true" {
 		user.Admin = true
 	} else {
 		user.Admin = false
 	}
 
-	var userHomeFeed []structure.UserFeedPost
+	var categorie3Feed []structure.Categorie3FeedPost
 
 	if err := r.ParseForm(); err != nil {
 		fmt.Fprintf(w, "ParseForm() err: %v", err)
@@ -867,19 +861,17 @@ func categorie3(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Printf("len(user.Post): %v\n", len(user.Post))
-	fmt.Printf("data.LenUserPost(user.Name): %v\n", data.LenUserPost(user.Name))
-	if len(userHomeFeed) < data.LenUserPost(user.Name) {
-		userHomeFeed = data.ProfilFeed(user.Name)
-	}
+	data.Categorie3FeedPost(user.Name)
+	fmt.Printf("user.Name: %v\n", user.Name)
 
 	if err = temp.ExecuteTemplate(w, "categorie3", map[string]any{
-		"user":     user,
-		"UserPost": userHomeFeed,
+		"user":        user,
+		"categories3": data.Categorie3FeedPost(user.Name),
 	}); err != nil {
 		log.Println("Error executing template:", err)
 		return
 	}
+	fmt.Printf("categorie3Feed: %v\n", categorie3Feed)
 }
 
 /********************************************************************************/

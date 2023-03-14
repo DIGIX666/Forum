@@ -69,7 +69,11 @@
     <div class="main">
       <div class="search-bar"></div>
       <div class="main-container">
+<<<<<<< HEAD
         <div class="profile">
+=======
+        <!-- <div class="profile"> -->
+>>>>>>> Theo
           <!-- <div class="profile-avatar">
             <img src="{{.user.Image}}" alt="user picture" class="profile-img">
            
@@ -91,12 +95,12 @@
 
             <!--------------.Armature Post.----------->
 
-            {{range .HomeFeed}}
+            {{range .categories}}
             <div class="album box">
               <div class="status-main">
                  <img src="{{.UserImage}}" class="status-img"> 
                 <div class="album-detail">
-                  <div class="album-title"><strong>{{.Name}}</strong>create new<span>post</span>{{.Categories}}</div>
+                  <div class="album-title"><strong>{{.Name}}</strong>create new<span>post</span>{{.Categories}}{{.Categories2}}</div>
                   <div class="album-date">{{.DateTime}}</div>
                 </div>
               </div>
@@ -112,8 +116,8 @@
                     <path
                       d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
                   </svg>
+                  <div id="like-count">{{.NumberOfLikes}}</div>
                 </a>
-                <div id="like-count">{{.NumberOfLikes}}</div>
                 
                 
                 <a href="" class="album-action">
@@ -121,8 +125,8 @@
                   class="css-i6dzq1" viewBox="0 0 24 24">
                   <path d="M18 6L6 18M6 6l12 12" />
                 </svg>
-                </a>
                 <div id="dislike-count">{{.NumberOfDislikes}}</div>
+                </a>
                
                 
                 <a href="/comment?postid={{.PostID}}" class="album-action">
@@ -130,8 +134,8 @@
                     class="css-i6dzq1" viewBox="0 0 24 24">
                     <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
                   </svg>
+                  <div id="compteur-comment">{{.NumberOfComment}}</div>
                 </a>
-                <div id="compteur-comment">{{.NumberOfComment}}</div>
               </div>
             </div>
             {{end}}
@@ -324,7 +328,10 @@
 <!-----------------------------------.FIN BODY.--------------------------------->
 
 <!-----------------------------------.SCRIPT.----------------------------------->
+<<<<<<< HEAD
 
+=======
+>>>>>>> Theo
 <!------------------------------------------------------------------------------>
 
 </html>

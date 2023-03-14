@@ -837,3 +837,119 @@ func AddingCommentLike(commentLike int, commentid string) {
 // 		panic(err)
 // 	}
 // }
+
+/*************************** CATEGORIE 1 FEED POST **********************************/
+func Categorie1FeedPost() []structure.HomeFeedPost {
+
+	rows, err := Db.Query("SELECT * FROM posts WHERE categories = ?", "cat1")
+	if err != nil {
+		fmt.Println("Error in HomeFeed Function dataBase:")
+		log.Fatal(err)
+	}
+	var Posts []structure.HomeFeedPost
+	var id, NumberOfComment, NumberOfLikes, NumberOfDislikes int
+	var postID, userName, message, image, dateTime, picture, categories, categories2 string
+
+	for rows.Next() {
+
+		err := rows.Scan(&id, &postID, &image, &userName, &message, &dateTime, &picture, &NumberOfComment, &NumberOfLikes, &NumberOfDislikes, &categories, &categories2)
+		if err != nil {
+			fmt.Println("Error HomeFeedPost Function in rows.Scan:")
+			log.Fatal(err)
+		}
+
+		Posts = prependHomeFeedPost(Posts, structure.HomeFeedPost{
+			PostID:           postID,
+			Name:             userName,
+			UserImage:        image,
+			Message:          message,
+			DateTime:         dateTime,
+			Picture:          picture,
+			NumberOfComment:  LenUserComment(postID),
+			NumberOfLikes:    NumberOfLikes,
+			NumberOfDislikes: NumberOfDislikes,
+			Categories:       categories,
+			Categories2:      categories2,
+		})
+	}
+	return Posts
+
+}
+
+/*************************** CATEGORIE 2 FEED POST **********************************/
+func Categorie2FeedPost() []structure.HomeFeedPost {
+
+	rows, err := Db.Query("SELECT * FROM posts WHERE categories = ?", "cat2")
+	if err != nil {
+		fmt.Println("Error in HomeFeed Function dataBase:")
+		log.Fatal(err)
+	}
+	var Posts []structure.HomeFeedPost
+	var id, NumberOfComment, NumberOfLikes, NumberOfDislikes int
+	var postID, userName, message, image, dateTime, picture, categories, categories2 string
+
+	for rows.Next() {
+
+		err := rows.Scan(&id, &postID, &image, &userName, &message, &dateTime, &picture, &NumberOfComment, &NumberOfLikes, &NumberOfDislikes, &categories, &categories2)
+		if err != nil {
+			fmt.Println("Error HomeFeedPost Function in rows.Scan:")
+			log.Fatal(err)
+		}
+
+		Posts = prependHomeFeedPost(Posts, structure.HomeFeedPost{
+			PostID:           postID,
+			Name:             userName,
+			UserImage:        image,
+			Message:          message,
+			DateTime:         dateTime,
+			Picture:          picture,
+			NumberOfComment:  LenUserComment(postID),
+			NumberOfLikes:    NumberOfLikes,
+			NumberOfDislikes: NumberOfDislikes,
+			Categories:       categories,
+			Categories2:      categories2,
+		})
+	}
+
+	return Posts
+
+}
+
+/*************************** CATEGORIE 3 FEED POST **********************************/
+func Categorie3FeedPost() []structure.HomeFeedPost {
+
+	rows, err := Db.Query("SELECT * FROM posts WHERE categories = ?", "cat3")
+	if err != nil {
+		fmt.Println("Error in HomeFeed Function dataBase:")
+		log.Fatal(err)
+	}
+	var Posts []structure.HomeFeedPost
+	var id, NumberOfComment, NumberOfLikes, NumberOfDislikes int
+	var postID, userName, message, image, dateTime, picture, categories, categories2 string
+
+	for rows.Next() {
+
+		err := rows.Scan(&id, &postID, &image, &userName, &message, &dateTime, &picture, &NumberOfComment, &NumberOfLikes, &NumberOfDislikes, &categories, &categories2)
+		if err != nil {
+			fmt.Println("Error HomeFeedPost Function in rows.Scan:")
+			log.Fatal(err)
+		}
+
+		Posts = prependHomeFeedPost(Posts, structure.HomeFeedPost{
+			PostID:           postID,
+			Name:             userName,
+			UserImage:        image,
+			Message:          message,
+			DateTime:         dateTime,
+			Picture:          picture,
+			NumberOfComment:  LenUserComment(postID),
+			NumberOfLikes:    NumberOfLikes,
+			NumberOfDislikes: NumberOfDislikes,
+			Categories:       categories,
+			Categories2:      categories2,
+		})
+	}
+
+	return Posts
+
+}

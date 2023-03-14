@@ -65,9 +65,9 @@ func main() {
 
 	// Use the limiter as middleware for the "/" handler
 	http.Handle("/", tollbooth.LimitFuncHandler(lmt, home))
-	http.Handle("/categorie1", tollbooth.LimitFuncHandler(lmt, categorie1))
-	http.Handle("/categorie2", tollbooth.LimitFuncHandler(lmt, categorie2))
-	http.Handle("/categorie3", tollbooth.LimitFuncHandler(lmt, categorie3))
+	// http.Handle("/categorie1", tollbooth.LimitFuncHandler(lmt, categorie1))
+	// http.Handle("/categorie2", tollbooth.LimitFuncHandler(lmt, categorie2))
+	// http.Handle("/categorie3", tollbooth.LimitFuncHandler(lmt, categorie3))
 	http.Handle("/profil", tollbooth.LimitFuncHandler(lmt, profil))
 	http.Handle("/comment", tollbooth.LimitFuncHandler(lmt, comment))
 	http.Handle("/login", tollbooth.LimitFuncHandler(lmt, login))
@@ -521,6 +521,20 @@ func home(w http.ResponseWriter, r *http.Request) {
 			fmt.Printf("postid: %v\n", postid)
 			homefeed = dataBase.HomeFeedPost()
 		}
+		if r.FormValue("cat1") == categories {
+			temp, err := template.ParseFiles("./assets/Categories/Cat-1/cat1.html")
+			if err != nil {
+				log.Println("Error parsing template:", err)
+				return
+			}
+			err = temp.ExecuteTemplate(w, "home", map[string]any{
+				"User":     user,
+				"HomeFeed": homefeed,
+			})
+			if err != nil {
+				log.Fatal(err)
+			}
+		}
 	}
 
 	temp, err := template.ParseFiles("./assets/Home/home.html")
@@ -662,7 +676,7 @@ func categorie1(w http.ResponseWriter, r *http.Request) {
 		user.Admin = false
 	}
 
-	var userHomeFeed []structure.UserFeedPost
+	// var userHomeFeed []structure.UserFeedPost
 
 	if err := r.ParseForm(); err != nil {
 		fmt.Fprintf(w, "ParseForm() err: %v", err)
@@ -709,15 +723,15 @@ func categorie1(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Printf("len(user.Post): %v\n", len(user.Post))
-	fmt.Printf("data.LenUserPost(user.Name): %v\n", data.LenUserPost(user.Name))
-	if len(userHomeFeed) < data.LenUserPost(user.Name) {
-		userHomeFeed = data.ProfilFeed(user.Name)
-	}
+	// fmt.Printf("len(user.Post): %v\n", len(user.Post))
+	// fmt.Printf("data.LenUserPost(user.Name): %v\n", data.LenUserPost(user.Name))
+	// if len(userHomeFeed) < data.LenUserPost(user.Name) {
+	// 	userHomeFeed = data.ProfilFeed(user.Name)
+	// }
 
 	if err = temp.ExecuteTemplate(w, "categorie1", map[string]any{
 		"user":     user,
-		"UserPost": userHomeFeed,
+		"HomeFeed": homefeed,
 	}); err != nil {
 		log.Println("Error executing template:", err)
 		return
@@ -741,7 +755,7 @@ func categorie2(w http.ResponseWriter, r *http.Request) {
 		user.Admin = false
 	}
 
-	var userHomeFeed []structure.UserFeedPost
+	// var userHomeFeed []structure.UserFeedPost
 
 	if err := r.ParseForm(); err != nil {
 		fmt.Fprintf(w, "ParseForm() err: %v", err)
@@ -788,15 +802,15 @@ func categorie2(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Printf("len(user.Post): %v\n", len(user.Post))
-	fmt.Printf("data.LenUserPost(user.Name): %v\n", data.LenUserPost(user.Name))
-	if len(userHomeFeed) < data.LenUserPost(user.Name) {
-		userHomeFeed = data.ProfilFeed(user.Name)
-	}
+	// fmt.Printf("len(user.Post): %v\n", len(user.Post))
+	// fmt.Printf("data.LenUserPost(user.Name): %v\n", data.LenUserPost(user.Name))
+	// if len(userHomeFeed) < data.LenUserPost(user.Name) {
+	// 	userHomeFeed = data.ProfilFeed(user.Name)
+	// }
 
 	if err = temp.ExecuteTemplate(w, "categorie2", map[string]any{
 		"user":     user,
-		"UserPost": userHomeFeed,
+		"HomeFeed": homefeed,
 	}); err != nil {
 		log.Println("Error executing template:", err)
 		return
@@ -820,7 +834,7 @@ func categorie3(w http.ResponseWriter, r *http.Request) {
 		user.Admin = false
 	}
 
-	var userHomeFeed []structure.UserFeedPost
+	// var userHomeFeed []structure.UserFeedPost
 
 	if err := r.ParseForm(); err != nil {
 		fmt.Fprintf(w, "ParseForm() err: %v", err)
@@ -867,15 +881,15 @@ func categorie3(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Printf("len(user.Post): %v\n", len(user.Post))
-	fmt.Printf("data.LenUserPost(user.Name): %v\n", data.LenUserPost(user.Name))
-	if len(userHomeFeed) < data.LenUserPost(user.Name) {
-		userHomeFeed = data.ProfilFeed(user.Name)
-	}
+	// fmt.Printf("len(user.Post): %v\n", len(user.Post))
+	// fmt.Printf("data.LenUserPost(user.Name): %v\n", data.LenUserPost(user.Name))
+	// if len(userHomeFeed) < data.LenUserPost(user.Name) {
+	// 	userHomeFeed = data.ProfilFeed(user.Name)
+	// }
 
 	if err = temp.ExecuteTemplate(w, "categorie3", map[string]any{
 		"user":     user,
-		"UserPost": userHomeFeed,
+		"HomeFeed": homefeed,
 	}); err != nil {
 		log.Println("Error executing template:", err)
 		return

@@ -680,7 +680,7 @@ func ProfilFeed(userName string) []structure.UserFeedPost {
 			Message:          message,
 			DateTime:         dateTime,
 			Picture:          picture,
-			NumberOfComment:  NumberOfComment,
+			NumberOfComment:  LenUserComment(postID),
 			NumberOfLikes:    NumberOfLikes,
 			NumberOfDislikes: NumberOfDislikes,
 			Categories:       categories,

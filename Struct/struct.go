@@ -53,6 +53,48 @@ type UserFeedPost struct {
 	Categories2      string
 }
 
+type Categorie1FeedPost struct {
+	PostID           string
+	Name             string
+	Message          string
+	UserImage        string
+	DateTime         string
+	Picture          string
+	NumberOfComment  int
+	NumberOfLikes    int
+	NumberOfDislikes int
+	Categories       string
+	Categories2      string
+}
+
+type Categorie2FeedPost struct {
+	PostID           string
+	Name             string
+	Message          string
+	UserImage        string
+	DateTime         string
+	Picture          string
+	NumberOfComment  int
+	NumberOfLikes    int
+	NumberOfDislikes int
+	Categories       string
+	Categories2      string
+}
+
+type Categorie3FeedPost struct {
+	PostID           string
+	Name             string
+	Message          string
+	UserImage        string
+	DateTime         string
+	Picture          string
+	NumberOfComment  int
+	NumberOfLikes    int
+	NumberOfDislikes int
+	Categories       string
+	Categories2      string
+}
+
 type Post struct {
 	PostID      string
 	Name        string

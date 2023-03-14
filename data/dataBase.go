@@ -82,8 +82,8 @@ func CreateDataBase() {
 		countComment INTEGER DEFAULT 0,
 		countLikes INTEGER DEFAULT 0,
 		countDislikes INTEGER DEFAULT 0,
-		categories NOT NULL,
-		categories2 NOT NULL
+		categories TEXT NOT NULL,
+		categories2 TEXT NOT NULL
 
     )`)
 
@@ -648,6 +648,25 @@ func preappendUserFeed(x []structure.UserFeedPost, y structure.UserFeedPost) []s
 	return x
 }
 
+func preappendCategorie1FeedPost(x []structure.Categorie1FeedPost, y structure.Categorie1FeedPost) []structure.Categorie1FeedPost {
+	x = append(x, structure.Categorie1FeedPost{})
+	copy(x[1:], x)
+	x[0] = y
+	return x
+}
+func preappendCategorie2FeedPost(x []structure.Categorie2FeedPost, y structure.Categorie2FeedPost) []structure.Categorie2FeedPost {
+	x = append(x, structure.Categorie2FeedPost{})
+	copy(x[1:], x)
+	x[0] = y
+	return x
+}
+func preappendCategorie3FeedPost(x []structure.Categorie3FeedPost, y structure.Categorie3FeedPost) []structure.Categorie3FeedPost {
+	x = append(x, structure.Categorie3FeedPost{})
+	copy(x[1:], x)
+	x[0] = y
+	return x
+}
+
 /*************************** PROFIL FEED **********************************/
 func ProfilFeed(userName string) []structure.UserFeedPost {
 
@@ -839,26 +858,31 @@ func AddingCommentLike(commentLike int, commentid string) {
 // }
 
 /*************************** CATEGORIE 1 FEED POST **********************************/
-func Categorie1FeedPost() []structure.HomeFeedPost {
+func Categorie1FeedPost(userName string) []structure.Categorie1FeedPost {
 
-	rows, err := Db.Query("SELECT * FROM posts WHERE categories = ?", "cat1")
+	rows, err := Db.Query("SELECT * FROM posts WHERE categories = ? OR categories2 = ?", "cat1", "cat1")
 	if err != nil {
-		fmt.Println("Error in HomeFeed Function dataBase:")
+		fmt.Println("Error in ProfilFeed Function Query didn't work in dataBase:")
 		log.Fatal(err)
 	}
-	var Posts []structure.HomeFeedPost
-	var id, NumberOfComment, NumberOfLikes, NumberOfDislikes int
-	var postID, userName, message, image, dateTime, picture, categories, categories2 string
+	var Posts []structure.Categorie1FeedPost
 
+	var id int
+
+	var postID, name, message, dateTime, image, picture, categories, categories2 string
+	var NumberOfComment, NumberOfLikes, NumberOfDislikes int
+	fmt.Printf("rows.Next(): %v\n", rows.Next())
 	for rows.Next() {
 
-		err := rows.Scan(&id, &postID, &image, &userName, &message, &dateTime, &picture, &NumberOfComment, &NumberOfLikes, &NumberOfDislikes, &categories, &categories2)
+		err := rows.Scan(&id, &postID, &name, &image, &message, &dateTime, &picture, &NumberOfComment, &NumberOfLikes, &NumberOfDislikes, &categories, &categories2)
 		if err != nil {
-			fmt.Println("Error HomeFeedPost Function in rows.Scan:")
+			fmt.Println("Error ProfilFeed Function in rows.Scan:")
 			log.Fatal(err)
 		}
 
-		Posts = prependHomeFeedPost(Posts, structure.HomeFeedPost{
+		fmt.Printf("NumberOfComment: %v\n", NumberOfComment)
+
+		Posts = preappendCategorie1FeedPost(Posts, structure.Categorie1FeedPost{
 			PostID:           postID,
 			Name:             userName,
 			UserImage:        image,
@@ -871,32 +895,38 @@ func Categorie1FeedPost() []structure.HomeFeedPost {
 			Categories:       categories,
 			Categories2:      categories2,
 		})
+		fmt.Printf("Posts: %v\n", Posts)
 	}
-	return Posts
 
+	return Posts
 }
 
 /*************************** CATEGORIE 2 FEED POST **********************************/
-func Categorie2FeedPost() []structure.HomeFeedPost {
+func Categorie2FeedPost(userName string) []structure.Categorie2FeedPost {
 
-	rows, err := Db.Query("SELECT * FROM posts WHERE categories = ?", "cat2")
+	rows, err := Db.Query("SELECT * FROM posts WHERE categories = ? OR categories2 = ?", "cat2", "cat2")
 	if err != nil {
-		fmt.Println("Error in HomeFeed Function dataBase:")
+		fmt.Println("Error in ProfilFeed Function Query didn't work in dataBase:")
 		log.Fatal(err)
 	}
-	var Posts []structure.HomeFeedPost
-	var id, NumberOfComment, NumberOfLikes, NumberOfDislikes int
-	var postID, userName, message, image, dateTime, picture, categories, categories2 string
+	var Posts []structure.Categorie2FeedPost
 
+	var id int
+
+	var postID, name, message, dateTime, image, picture, categories, categories2 string
+	var NumberOfComment, NumberOfLikes, NumberOfDislikes int
+	fmt.Printf("rows.Next(): %v\n", rows.Next())
 	for rows.Next() {
 
-		err := rows.Scan(&id, &postID, &image, &userName, &message, &dateTime, &picture, &NumberOfComment, &NumberOfLikes, &NumberOfDislikes, &categories, &categories2)
+		err := rows.Scan(&id, &postID, &name, &image, &message, &dateTime, &picture, &NumberOfComment, &NumberOfLikes, &NumberOfDislikes, &categories, &categories2)
 		if err != nil {
-			fmt.Println("Error HomeFeedPost Function in rows.Scan:")
+			fmt.Println("Error ProfilFeed Function in rows.Scan:")
 			log.Fatal(err)
 		}
 
-		Posts = prependHomeFeedPost(Posts, structure.HomeFeedPost{
+		fmt.Printf("NumberOfComment: %v\n", NumberOfComment)
+
+		Posts = preappendCategorie2FeedPost(Posts, structure.Categorie2FeedPost{
 			PostID:           postID,
 			Name:             userName,
 			UserImage:        image,
@@ -909,33 +939,38 @@ func Categorie2FeedPost() []structure.HomeFeedPost {
 			Categories:       categories,
 			Categories2:      categories2,
 		})
+		fmt.Printf("Posts: %v\n", Posts)
 	}
 
 	return Posts
-
 }
 
 /*************************** CATEGORIE 3 FEED POST **********************************/
-func Categorie3FeedPost() []structure.HomeFeedPost {
+func Categorie3FeedPost(userName string) []structure.Categorie3FeedPost {
 
-	rows, err := Db.Query("SELECT * FROM posts WHERE categories = ?", "cat3")
+	rows, err := Db.Query("SELECT * FROM posts WHERE categories = ? OR categories2 = ?", "cat3", "cat3")
 	if err != nil {
-		fmt.Println("Error in HomeFeed Function dataBase:")
+		fmt.Println("Error in ProfilFeed Function Query didn't work in dataBase:")
 		log.Fatal(err)
 	}
-	var Posts []structure.HomeFeedPost
-	var id, NumberOfComment, NumberOfLikes, NumberOfDislikes int
-	var postID, userName, message, image, dateTime, picture, categories, categories2 string
+	var Posts []structure.Categorie3FeedPost
 
+	var id int
+
+	var postID, name, message, dateTime, image, picture, categories, categories2 string
+	var NumberOfComment, NumberOfLikes, NumberOfDislikes int
+	fmt.Printf("rows.Next(): %v\n", rows.Next())
 	for rows.Next() {
 
-		err := rows.Scan(&id, &postID, &image, &userName, &message, &dateTime, &picture, &NumberOfComment, &NumberOfLikes, &NumberOfDislikes, &categories, &categories2)
+		err := rows.Scan(&id, &postID, &name, &image, &message, &dateTime, &picture, &NumberOfComment, &NumberOfLikes, &NumberOfDislikes, &categories, &categories2)
 		if err != nil {
-			fmt.Println("Error HomeFeedPost Function in rows.Scan:")
+			fmt.Println("Error ProfilFeed Function in rows.Scan:")
 			log.Fatal(err)
 		}
 
-		Posts = prependHomeFeedPost(Posts, structure.HomeFeedPost{
+		fmt.Printf("NumberOfComment: %v\n", NumberOfComment)
+
+		Posts = preappendCategorie3FeedPost(Posts, structure.Categorie3FeedPost{
 			PostID:           postID,
 			Name:             userName,
 			UserImage:        image,
@@ -948,8 +983,8 @@ func Categorie3FeedPost() []structure.HomeFeedPost {
 			Categories:       categories,
 			Categories2:      categories2,
 		})
+		fmt.Printf("Posts: %v\n", Posts)
 	}
 
 	return Posts
-
 }

@@ -695,8 +695,8 @@ func ProfilFeed(userName string) []structure.UserFeedPost {
 		Posts = preappendUserFeed(Posts, structure.UserFeedPost{
 			PostID:           postID,
 			Name:             userName,
-			UserImage:        image,
 			Message:          message,
+			UserImage:        image,
 			DateTime:         dateTime,
 			Picture:          picture,
 			NumberOfComment:  LenUserComment(postID),
@@ -725,6 +725,18 @@ func LenUserPost(nameUser string) int {
 
 	var NumberPost int
 	err := Db.QueryRow("SELECT COUNT (*) FROM posts WHERE name = ?", nameUser).Scan(&NumberPost)
+	if err != nil {
+		fmt.Println("Error SELECT From LenUserPost dataBase:")
+		log.Fatal(err)
+	}
+
+	return NumberPost
+}
+
+func LenCategories1UserPost() int {
+
+	var NumberPost int
+	err := Db.QueryRow("SELECT COUNT (*) FROM posts WHERE categories = ? OR categories2 = ?", "cat1", "cat1").Scan(&NumberPost)
 	if err != nil {
 		fmt.Println("Error SELECT From LenUserPost dataBase:")
 		log.Fatal(err)
@@ -834,29 +846,6 @@ func AddingCommentLike(commentLike int, commentid string) {
 	}
 }
 
-// func AddingCommentDislike(postID, username, currentTime string) {
-// 	var CountDis int
-// 	fmt.Printf("username: %v\n", username)
-// 	_, err := Db.Exec("INSERT INTO dislikes (username, datetime, post_id) VALUES (?,?,?)", username, currentTime, postID)
-// 	if err != nil {
-// 		fmt.Println("Error function AddingCountDislike Insert countDislikes Posts to the dataBase:")
-// 		fmt.Printf("err: %v\n", err)
-// 		panic(err)
-// 	}
-
-// 	row := Db.QueryRow("SELECT COUNT (*) FROM dislikes WHERE post_id = ?", postID)
-// 	err = row.Scan(&CountDis)
-// 	if err != nil {
-// 		panic(err)
-// 	}
-// 	_, err = Db.Exec("UPDATE posts SET countDislikes = ? WHERE postid=?", CountDis, postID)
-// 	if err != nil {
-// 		fmt.Println("Error function AddingCountDislikes Insert countDislikes Posts to the dataBase:")
-// 		fmt.Printf("err: %v\n", err)
-// 		panic(err)
-// 	}
-// }
-
 /*************************** CATEGORIE 1 FEED POST **********************************/
 func Categorie1FeedPost(userName string) []structure.Categorie1FeedPost {
 
@@ -869,10 +858,10 @@ func Categorie1FeedPost(userName string) []structure.Categorie1FeedPost {
 
 	var id int
 
-	var postID, name, message, dateTime, image, picture, categories, categories2 string
-	var NumberOfComment, NumberOfLikes, NumberOfDislikes int
 	fmt.Printf("rows.Next(): %v\n", rows.Next())
 	for rows.Next() {
+		var postID, name, message, dateTime, image, picture, categories, categories2 string
+		var NumberOfComment, NumberOfLikes, NumberOfDislikes int
 
 		err := rows.Scan(&id, &postID, &name, &image, &message, &dateTime, &picture, &NumberOfComment, &NumberOfLikes, &NumberOfDislikes, &categories, &categories2)
 		if err != nil {

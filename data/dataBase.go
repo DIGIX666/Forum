@@ -792,48 +792,60 @@ func AddingCountComment(postID, username string) {
 }
 
 /*************************** ADDING COUNT COMMENT **********************************/
-func AddingCommentLike(commentLike int, commentid string, currentTime string, userName string, postID string) {
-	var count int
-	_, err := Db.Exec("INSERT INTO comments (name,commentLike,date,commentid) VALUES (?,?,?,?)", userName, commentLike, currentTime, commentid)
-	if err != nil {
-		fmt.Println("Error function AddingCommentLike Insert commentLike,date Comments to the dataBase:")
-		fmt.Printf("err: %v\n", err)
+func AddingCommentLike(commentid string, countLike int, userName string, currentTime string) {
+
+	if countLike == 0 {
+		_, err := Db.Exec("INSERT INTO comments (name,date,commentid) VALUES (?,?,?)", userName, currentTime, commentid)
+		if err != nil {
+			fmt.Println("Error function AddingCommentLike Insert commentLike,date Comments to the dataBase:")
+			fmt.Printf("err: %v\n", err)
+		}
 	}
 
-	row := Db.QueryRow("SELECT COUNT (*) FROM comments WHERE commentid = ? AND name = ? AND post_id = ?", commentid, userName, postID)
-	err = row.Scan(&count)
+	count := 0
+	row := Db.QueryRow("SELECT COUNT (*) FROM comments WHERE commentid = ?", commentid)
+	err := row.Scan(&count)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println("Error Select Count in AddingCommentLike in Database:")
+		fmt.Println(err)
+
 	}
-	fmt.Printf("count AddingCommentLike: %v\n", count)
+	fmt.Printf("count in database: %v\n", count)
 
 	_, err = Db.Exec("UPDATE comments SET commentLike = ? WHERE commentid = ?", count, commentid)
 	if err != nil {
 		fmt.Println("Error function AddingCountLike Insert countLikes Posts to the dataBase:")
 		fmt.Printf("err: %v\n", err)
-		log.Fatal(err)
+
 	}
+
 }
 
-// func AddingCommentDislike(postID, username, currentTime string) {
-// 	var CountDis int
-// 	fmt.Printf("username: %v\n", username)
-// 	_, err := Db.Exec("INSERT INTO dislikes (username, datetime, post_id) VALUES (?,?,?)", username, currentTime, postID)
-// 	if err != nil {
-// 		fmt.Println("Error function AddingCountDislike Insert countDislikes Posts to the dataBase:")
-// 		fmt.Printf("err: %v\n", err)
-// 		panic(err)
-// 	}
+func AddingCommentDisLike(commentid string, countLike int, userName string, currentTime string) {
 
-// 	row := Db.QueryRow("SELECT COUNT (*) FROM dislikes WHERE post_id = ?", postID)
-// 	err = row.Scan(&CountDis)
-// 	if err != nil {
-// 		panic(err)
-// 	}
-// 	_, err = Db.Exec("UPDATE posts SET countDislikes = ? WHERE postid=?", CountDis, postID)
-// 	if err != nil {
-// 		fmt.Println("Error function AddingCountDislikes Insert countDislikes Posts to the dataBase:")
-// 		fmt.Printf("err: %v\n", err)
-// 		panic(err)
-// 	}
-// }
+	if countLike == 0 {
+		_, err := Db.Exec("INSERT INTO comments (name,date,commentid) VALUES (?,?,?)", userName, currentTime, commentid)
+		if err != nil {
+			fmt.Println("Error function AddingCommentLike Insert commentLike,date Comments to the dataBase:")
+			fmt.Printf("err: %v\n", err)
+		}
+	}
+
+	count := 0
+	row := Db.QueryRow("SELECT COUNT (*) FROM comments WHERE commentid = ?", commentid)
+	err := row.Scan(&count)
+	if err != nil {
+		fmt.Println("Error Select Count in AddingCommentLike in Database:")
+		fmt.Println(err)
+
+	}
+	fmt.Printf("count in database: %v\n", count)
+
+	_, err = Db.Exec("UPDATE comments SET commentDislike = ? WHERE commentid = ?", count, commentid)
+	if err != nil {
+		fmt.Println("Error function AddingCountLike Insert countLikes Posts to the dataBase:")
+		fmt.Printf("err: %v\n", err)
+
+	}
+
+}

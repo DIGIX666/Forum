@@ -12,6 +12,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 	"text/template"
 	"time"
 
@@ -477,7 +478,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				panic(err)
 			}
-			if countLike >= 0 {
+			if countLike == 0 {
 				fmt.Printf("countLike: %v\n", countLike)
 				dataBase.AddingCountLike(postid, user.Name, currentTime)
 			}
@@ -908,50 +909,83 @@ func comment(w http.ResponseWriter, r *http.Request) {
 		}
 
 		message := r.FormValue("message")
+		fmt.Printf("message: %v\n", message)
 
 		if message != "" {
 			dataBase.UserComment(user.Name, message, script.GenerateCommentID(), currentTime, postID)
-			data.HomeFeedPost()
+			homefeed = data.HomeFeedPost()
+		}
+		var commentid, pressed string
+		buttonLike := r.FormValue("like")
+		buttonDislike := r.FormValue("dislike")
+		if buttonLike != "" {
 
+			cutLike := strings.Split(buttonLike, "+")
+			fmt.Printf("cutLike: %v\n", cutLike)
+			commentid = cutLike[0]
+			pressed = cutLike[1]
 		}
 
-		commentid := r.FormValue("like")
+		if buttonDislike != "" {
+			cutDisLike := strings.Split(buttonDislike, "+")
+			fmt.Printf("cutDisLike: %v\n", cutDisLike)
+			commentid = cutDisLike[0]
+			pressed = cutDisLike[1]
+		}
 
 		fmt.Printf("commentid: %v\n", commentid)
 
-		if commentid != "" && postID != "" {
-
-			currentTime := time.Now().Format("15:04  2-Janv-2006")
+		if commentid != "" && postID != "" && pressed == "like" {
 
 			countLike := 0
-			row := data.Db.QueryRow("SELECT COUNT (*) FROM comments WHERE name = ? AND post_id = ?", user.Name, postID)
+			row := data.Db.QueryRow("SELECT COUNT (*) FROM comments WHERE name = ? AND commentid = ?", user.Name, commentid)
 			err := row.Scan(&countLike)
 			if err != nil {
 				panic(err)
 			}
-			if countLike >= 0 {
-				fmt.Printf("countLike: %v\n", countLike)
-				dataBase.AddingCommentLike(countLike, user.Name, currentTime, user.Name, postID)
-			}
 
-			fmt.Printf("postid: %v\n", postID)
-			// homefeed = dataBase.HomeFeedPost()
+			fmt.Printf("countLike: %v\n", countLike)
+
+			data.AddingCommentLike(commentid, countLike, user.Name, currentTime)
+
+			// fmt.Printf("postid: %v\n", postID)
+			homefeed = dataBase.HomeFeedPost()
 			comments = data.GetComment(postID)
 
-			if err := temp.ExecuteTemplate(w, "comment", map[string]any{
-				"PostID":    postID,
-				"UserImage": user.Image,
-				"UserName":  user.Name,
-				"Comments":  comments,
-			}); err != nil {
-				log.Println("Error executing template:", err)
-				return
-			}
 		}
 
-		if r.FormValue("like") == "" && postID != "" && message != "" {
-			http.Redirect(w, r, "/comment?postid="+postID, http.StatusSeeOther)
+		if commentid != "" && postID != "" && pressed == "dislike" {
+
+			countLike := 0
+			row := data.Db.QueryRow("SELECT COUNT (*) FROM comments WHERE name = ? AND commentid = ?", user.Name, commentid)
+			err := row.Scan(&countLike)
+			if err != nil {
+				panic(err)
+			}
+
+			fmt.Printf("countLike: %v\n", countLike)
+
+			data.AddingCommentDisLike(commentid, countLike, user.Name, currentTime)
+
+			// fmt.Printf("postid: %v\n", postID)
+
+		}
+
+		homefeed = dataBase.HomeFeedPost()
+		comments = data.GetComment(postID)
+		if err := temp.ExecuteTemplate(w, "comment", map[string]any{
+			"PostID":    postID,
+			"UserImage": user.Image,
+			"UserName":  user.Name,
+			"Comments":  comments,
+		}); err != nil {
+			log.Println("Error executing template:", err)
 			return
+		}
+
+		if postID != "" && message != "" {
+			http.Redirect(w, r, "/comment?postid="+postID, http.StatusSeeOther)
+
 		}
 
 	} else if r.Method == "GET" {
@@ -969,7 +1003,7 @@ func comment(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				panic(err)
 			}
-			if countComment == 0 {
+			if countComment >= 0 {
 				fmt.Printf("countComment: %v\n", countComment)
 				dataBase.AddingCountComment(postid, user.Name)
 			}
@@ -980,7 +1014,7 @@ func comment(w http.ResponseWriter, r *http.Request) {
 			http.Redirect(w, r, "/comment", http.StatusNotFound)
 			return
 		}
-
+		homefeed = data.HomeFeedPost()
 		if err := temp.ExecuteTemplate(w, "comment", map[string]any{
 			"PostID":    postid,
 			"UserImage": user.Image,

@@ -107,7 +107,7 @@
               <div class="album-content">{{.Message}}</div>
               <form method="post" class="album-action" action="/comment">
                 <input type="text" value="{{.PostID}}" name="Post_values" style="display: none;">
-                <button name="like" value="{{.CommentID}}" class="like">
+                <button name="like" value="{{.CommentID}}+like" class="like">
                   <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
                     viewBox="0 0 24 24">
                     <path
@@ -116,6 +116,18 @@
                 </button>
                 <div id="like-count">{{.CommentLike}}</div>
               </form>
+
+
+              <form method="post" class="album-action" action="/comment">
+                <button name="dislike" value="{{.CommentID}}+dislike" class="dislike">
+                  <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"
+                    stroke-linejoin="round" class="css-i6dzq1" viewBox="0 0 24 24">
+                    <path d="M18 6L6 18M6 6l12 12" />
+                  </svg>
+                </button>
+                <div id="dislike-count">{{.CommentDislike}}</div>
+              </form>
+
             </div>
             {{end}}
           </div>

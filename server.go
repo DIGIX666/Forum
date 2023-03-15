@@ -934,6 +934,7 @@ func comment(w http.ResponseWriter, r *http.Request) {
 		}
 
 		fmt.Printf("commentid: %v\n", commentid)
+		fmt.Printf("pressed: %v\n", pressed)
 
 		if commentid != "" && postID != "" && pressed == "like" {
 
@@ -948,13 +949,14 @@ func comment(w http.ResponseWriter, r *http.Request) {
 
 			data.AddingCommentLike(commentid, countLike, user.Name, currentTime)
 
-			// fmt.Printf("postid: %v\n", postID)
 			homefeed = dataBase.HomeFeedPost()
 			comments = data.GetComment(postID)
 
 		}
 
 		if commentid != "" && postID != "" && pressed == "dislike" {
+
+			fmt.Println("Enter the Dislike condition")
 
 			countLike := 0
 			row := data.Db.QueryRow("SELECT COUNT (*) FROM comments WHERE name = ? AND commentid = ?", user.Name, commentid)
@@ -966,6 +968,9 @@ func comment(w http.ResponseWriter, r *http.Request) {
 			fmt.Printf("countLike: %v\n", countLike)
 
 			data.AddingCommentDisLike(commentid, countLike, user.Name, currentTime)
+
+			homefeed = dataBase.HomeFeedPost()
+			comments = data.GetComment(postID)
 
 			// fmt.Printf("postid: %v\n", postID)
 
@@ -983,7 +988,7 @@ func comment(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		if postID != "" && message != "" {
+		if postID != "" && message != "" && (r.FormValue("like") == "" || r.FormValue("dislike") == "") {
 			http.Redirect(w, r, "/comment?postid="+postID, http.StatusSeeOther)
 
 		}
@@ -1010,9 +1015,9 @@ func comment(w http.ResponseWriter, r *http.Request) {
 			fmt.Printf("postid: %v\n", postid)
 		}
 
-		if r.Method == "POST" && r.FormValue("like") != "" {
+		if r.Method == "POST" && (r.FormValue("like") != "" || r.FormValue("dislike") != "") {
 			http.Redirect(w, r, "/comment", http.StatusNotFound)
-			return
+
 		}
 		homefeed = data.HomeFeedPost()
 		if err := temp.ExecuteTemplate(w, "comment", map[string]any{

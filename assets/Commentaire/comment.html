@@ -119,6 +119,7 @@
 
 
               <form method="post" class="album-action" action="/comment">
+                <input type="text" value="{{.PostID}}" name="Post_values" style="display: none;">
                 <button name="dislike" value="{{.CommentID}}+dislike" class="dislike">
                   <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"
                     stroke-linejoin="round" class="css-i6dzq1" viewBox="0 0 24 24">

@@ -22,7 +22,6 @@ import (
 
 /****************************** FUNCTION ERREUR *******************************/
 var user structure.UserAccount
-var cat1 []structure.Categorie1FeedPost
 var userComment structure.Comment
 var Posts structure.Post
 var uAccount []structure.UserAccount
@@ -425,8 +424,6 @@ func home(w http.ResponseWriter, r *http.Request) {
 				//Put the message in the dataBase
 				dataBase.UserPost(user.Name, message, postid, user.Image, currentTime, imageName, Posts.Count, Posts.CountDis, Posts.CountCom, Posts.Categories, Posts.Categories2)
 				homefeed = dataBase.HomeFeedPost()
-				cat1 = data.Categorie1FeedPost(user.Name)
-				fmt.Printf("user.Name: %v\n", user.Name)
 
 			} else {
 				imageName = header.Filename
@@ -664,7 +661,7 @@ func categorie1(w http.ResponseWriter, r *http.Request) {
 		user.Admin = false
 	}
 
-	var categorie1Feed []structure.Categorie1FeedPost
+	// var categorie1Feed []structure.Categorie1FeedPost
 
 	if err := r.ParseForm(); err != nil {
 		fmt.Fprintf(w, "ParseForm() err: %v", err)
@@ -711,18 +708,18 @@ func categorie1(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cat1 = data.Categorie1FeedPost(user.Name)
+	// data.Categorie1FeedPost(user.Name)
 	fmt.Printf("user.Name: %v\n", user.Name)
 
 	if err = temp.ExecuteTemplate(w, "categorie1", map[string]any{
 		"user":       user,
-		"categories": cat1,
+		"categories": data.Categorie1FeedPost(user.Name),
 		// "categries2": data.Categorie1FeedPost(user.Name),
 	}); err != nil {
 		log.Println("Error executing template:", err)
 		return
 	}
-	fmt.Printf("categorie1Feed: %v\n", categorie1Feed)
+	// fmt.Printf("categorie1Feed: %v\n", categorie1Feed)
 }
 
 /********************************************************************************/

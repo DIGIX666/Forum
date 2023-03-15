@@ -858,10 +858,10 @@ func Categorie1FeedPost(userName string) []structure.Categorie1FeedPost {
 
 	var id int
 
+	var postID, name, message, dateTime, image, picture, categories, categories2 string
+	var NumberOfComment, NumberOfLikes, NumberOfDislikes int
 	fmt.Printf("rows.Next(): %v\n", rows.Next())
 	for rows.Next() {
-		var postID, name, message, dateTime, image, picture, categories, categories2 string
-		var NumberOfComment, NumberOfLikes, NumberOfDislikes int
 
 		err := rows.Scan(&id, &postID, &name, &image, &message, &dateTime, &picture, &NumberOfComment, &NumberOfLikes, &NumberOfDislikes, &categories, &categories2)
 		if err != nil {
@@ -869,7 +869,7 @@ func Categorie1FeedPost(userName string) []structure.Categorie1FeedPost {
 			log.Fatal(err)
 		}
 
-		fmt.Printf("NumberOfComment: %v\n", NumberOfComment)
+		// fmt.Printf("NumberOfComment: %v\n", NumberOfComment)
 
 		Posts = preappendCategorie1FeedPost(Posts, structure.Categorie1FeedPost{
 			PostID:           postID,

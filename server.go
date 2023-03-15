@@ -901,7 +901,7 @@ func comment(w http.ResponseWriter, r *http.Request) {
 
 		message := r.FormValue("message")
 
-		if message != "" {
+		if message != "" && user.Connected {
 			dataBase.UserComment(user.Name, message, script.GenerateCommentID(), currentTime, postID)
 			data.HomeFeedPost()
 

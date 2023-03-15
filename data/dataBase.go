@@ -684,7 +684,7 @@ func ProfilFeed(userName string) []structure.UserFeedPost {
 		var postID, name, message, dateTime, image, picture, categories, categories2 string
 		var NumberOfComment, NumberOfLikes, NumberOfDislikes int
 
-		err := rows.Scan(&id, &postID, &name, &image, &message, &dateTime, &picture, &NumberOfComment, &NumberOfLikes, &NumberOfDislikes, &categories, &categories2)
+		err := rows.Scan(&id, &postID, &image, &name, &message, &dateTime, &picture, &NumberOfComment, &NumberOfLikes, &NumberOfDislikes, &categories, &categories2)
 		if err != nil {
 			fmt.Println("Error ProfilFeed Function in rows.Scan:")
 			log.Fatal(err)
@@ -694,8 +694,8 @@ func ProfilFeed(userName string) []structure.UserFeedPost {
 
 		Posts = preappendUserFeed(Posts, structure.UserFeedPost{
 			PostID:           postID,
-			Name:             userName,
 			UserImage:        image,
+			Name:             userName,
 			Message:          message,
 			DateTime:         dateTime,
 			Picture:          picture,
@@ -725,6 +725,18 @@ func LenUserPost(nameUser string) int {
 
 	var NumberPost int
 	err := Db.QueryRow("SELECT COUNT (*) FROM posts WHERE name = ?", nameUser).Scan(&NumberPost)
+	if err != nil {
+		fmt.Println("Error SELECT From LenUserPost dataBase:")
+		log.Fatal(err)
+	}
+
+	return NumberPost
+}
+
+func LenCategories1UserPost() int {
+
+	var NumberPost int
+	err := Db.QueryRow("SELECT COUNT (*) FROM posts WHERE categories = ? OR categories2 = ?", "cat1", "cat1").Scan(&NumberPost)
 	if err != nil {
 		fmt.Println("Error SELECT From LenUserPost dataBase:")
 		log.Fatal(err)
@@ -867,4 +879,128 @@ func AddingCommentDisLike(commentid string, countLike int, userName string, curr
 
 	}
 
+}
+
+/*************************** CATEGORIE 1 FEED POST **********************************/
+func Categorie1FeedPost(userName string) []structure.Categorie1FeedPost {
+
+	rows, err := Db.Query("SELECT * FROM posts WHERE categories = ? OR categories2 = ?", "cat1", "cat1")
+	if err != nil {
+		fmt.Println("Error in ProfilFeed Function Query didn't work in dataBase:")
+		log.Fatal(err)
+	}
+	var Posts []structure.Categorie1FeedPost
+
+	var id int
+
+	var postID, name, message, dateTime, image, picture, categories, categories2 string
+	var NumberOfComment, NumberOfLikes, NumberOfDislikes int
+	for rows.Next() {
+
+		err := rows.Scan(&id, &postID, &image, &name, &message, &dateTime, &picture, &NumberOfComment, &NumberOfLikes, &NumberOfDislikes, &categories, &categories2)
+		if err != nil {
+			fmt.Println("Error function AddingCommentLike Insert commentLike,date Comments to the dataBase:")
+			fmt.Printf("err: %v\n", err)
+		}
+
+		Posts = preappendCategorie1FeedPost(Posts, structure.Categorie1FeedPost{
+			PostID:           postID,
+			Name:             userName,
+			UserImage:        image,
+			Message:          message,
+			DateTime:         dateTime,
+			Picture:          picture,
+			NumberOfComment:  LenUserComment(postID),
+			NumberOfLikes:    NumberOfLikes,
+			NumberOfDislikes: NumberOfDislikes,
+			Categories:       categories,
+			Categories2:      categories2,
+		})
+		fmt.Printf("Posts: %v\n", Posts)
+	}
+	return Posts
+}
+
+/*************************** CATEGORIE 2 FEED POST **********************************/
+func Categorie2FeedPost(userName string) []structure.Categorie2FeedPost {
+
+	rows, err := Db.Query("SELECT * FROM posts WHERE categories = ? OR categories2 = ?", "cat2", "cat2")
+	if err != nil {
+		fmt.Println("Error in ProfilFeed Function Query didn't work in dataBase:")
+		log.Fatal(err)
+	}
+	var Posts []structure.Categorie2FeedPost
+	var id int
+
+	var postID, name, message, dateTime, image, picture, categories, categories2 string
+	var NumberOfComment, NumberOfLikes, NumberOfDislikes int
+	for rows.Next() {
+
+		err := rows.Scan(&id, &postID, &image, &name, &message, &dateTime, &picture, &NumberOfComment, &NumberOfLikes, &NumberOfDislikes, &categories, &categories2)
+		if err != nil {
+			fmt.Println("Error ProfilFeed Function in rows.Scan:")
+			log.Fatal(err)
+		}
+
+		fmt.Printf("NumberOfComment: %v\n", NumberOfComment)
+
+		Posts = preappendCategorie2FeedPost(Posts, structure.Categorie2FeedPost{
+			PostID:           postID,
+			Name:             userName,
+			UserImage:        image,
+			Message:          message,
+			DateTime:         dateTime,
+			Picture:          picture,
+			NumberOfComment:  LenUserComment(postID),
+			NumberOfLikes:    NumberOfLikes,
+			NumberOfDislikes: NumberOfDislikes,
+			Categories:       categories,
+			Categories2:      categories2,
+		})
+		fmt.Printf("Posts: %v\n", Posts)
+	}
+
+	return Posts
+}
+
+/*************************** CATEGORIE 3 FEED POST **********************************/
+func Categorie3FeedPost(userName string) []structure.Categorie3FeedPost {
+
+	rows, err := Db.Query("SELECT * FROM posts WHERE categories = ? OR categories2 = ?", "cat3", "cat3")
+	if err != nil {
+		fmt.Println("Error in ProfilFeed Function Query didn't work in dataBase:")
+		log.Fatal(err)
+	}
+	var Posts []structure.Categorie3FeedPost
+	var id int
+
+	var postID, name, message, dateTime, image, picture, categories, categories2 string
+	var NumberOfComment, NumberOfLikes, NumberOfDislikes int
+	for rows.Next() {
+
+		err := rows.Scan(&id, &postID, &image, &name, &message, &dateTime, &picture, &NumberOfComment, &NumberOfLikes, &NumberOfDislikes, &categories, &categories2)
+		if err != nil {
+			fmt.Println("Error ProfilFeed Function in rows.Scan:")
+			log.Fatal(err)
+		}
+
+		fmt.Printf("NumberOfComment: %v\n", NumberOfComment)
+
+		Posts = preappendCategorie3FeedPost(Posts, structure.Categorie3FeedPost{
+			PostID:           postID,
+			Name:             userName,
+			UserImage:        image,
+			Message:          message,
+			DateTime:         dateTime,
+			Picture:          picture,
+			NumberOfComment:  LenUserComment(postID),
+			NumberOfLikes:    NumberOfLikes,
+			NumberOfDislikes: NumberOfDislikes,
+			Categories:       categories,
+			Categories2:      categories2,
+		})
+		fmt.Printf("Posts: %v\n", Posts)
+	}
+
+	return Posts
 }

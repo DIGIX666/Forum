@@ -662,7 +662,7 @@ func categorie1(w http.ResponseWriter, r *http.Request) {
 		user.Admin = false
 	}
 
-	var categorie1Feed []structure.Categorie1FeedPost
+	// var categorie1Feed []structure.Categorie1FeedPost
 
 	if err := r.ParseForm(); err != nil {
 		fmt.Fprintf(w, "ParseForm() err: %v", err)
@@ -709,18 +709,18 @@ func categorie1(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data.Categorie1FeedPost(user.Name)
+	// data.Categorie1FeedPost(user.Name)
 	fmt.Printf("user.Name: %v\n", user.Name)
 
 	if err = temp.ExecuteTemplate(w, "categorie1", map[string]any{
 		"user":       user,
 		"categories": data.Categorie1FeedPost(user.Name),
-		"categries2": data.Categorie1FeedPost(user.Name),
+		// "categries2": data.Categorie1FeedPost(user.Name),
 	}); err != nil {
 		log.Println("Error executing template:", err)
 		return
 	}
-	fmt.Printf("categorie1Feed: %v\n", categorie1Feed)
+	// fmt.Printf("categorie1Feed: %v\n", categorie1Feed)
 }
 
 /********************************************************************************/
@@ -739,7 +739,7 @@ func categorie2(w http.ResponseWriter, r *http.Request) {
 		user.Admin = false
 	}
 
-	var categorie2Feed []structure.Categorie2FeedPost
+	// var categorie2Feed []structure.Categorie2FeedPost
 
 	if err := r.ParseForm(); err != nil {
 		fmt.Fprintf(w, "ParseForm() err: %v", err)
@@ -796,7 +796,7 @@ func categorie2(w http.ResponseWriter, r *http.Request) {
 		log.Println("Error executing template:", err)
 		return
 	}
-	fmt.Printf("categorie2Feed: %v\n", categorie2Feed)
+	fmt.Printf("data.Categorie2FeedPost(): %v\n", data.Categorie2FeedPost(user.Name))
 }
 
 /********************************************************************************/
@@ -903,7 +903,7 @@ func comment(w http.ResponseWriter, r *http.Request) {
 		message := r.FormValue("message")
 		fmt.Printf("message: %v\n", message)
 
-		if message != "" {
+		if message != "" && user.Connected {
 			dataBase.UserComment(user.Name, message, script.GenerateCommentID(), currentTime, postID)
 			homefeed = data.HomeFeedPost()
 		}

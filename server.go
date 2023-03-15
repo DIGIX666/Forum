@@ -980,8 +980,9 @@ func comment(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		if postID != "" && message != "" && (r.FormValue("like") == "" || r.FormValue("dislike") == "") {
+		if postID != "" && message != "" && (r.FormValue("like") == "" && r.FormValue("dislike") == "") {
 			http.Redirect(w, r, "/comment?postid="+postID, http.StatusSeeOther)
+			return
 
 		}
 
@@ -1009,6 +1010,7 @@ func comment(w http.ResponseWriter, r *http.Request) {
 
 		if r.Method == "POST" && (r.FormValue("like") != "" || r.FormValue("dislike") != "") {
 			http.Redirect(w, r, "/comment", http.StatusNotFound)
+			return
 
 		}
 		homefeed = data.HomeFeedPost()

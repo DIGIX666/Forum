@@ -931,15 +931,17 @@ func comment(w http.ResponseWriter, r *http.Request) {
 		if commentid != "" && postID != "" && pressed == "like" {
 
 			countLike := 0
-			row := data.Db.QueryRow("SELECT COUNT (*) FROM comments WHERE name = ? AND commentid = ?", user.Name, commentid)
+			row := data.Db.QueryRow("SELECT COUNT (*) FROM likes WHERE username = ? AND comment_id = ?", user.Name, commentid)
 			err := row.Scan(&countLike)
 			if err != nil {
 				panic(err)
 			}
 
 			fmt.Printf("countLike: %v\n", countLike)
+			if countLike == 0 {
+				data.AddingCommentLike(commentid, countLike, user.Name, currentTime)
 
-			data.AddingCommentLike(commentid, countLike, user.Name, currentTime)
+			}
 
 			homefeed = dataBase.HomeFeedPost()
 			comments = data.GetComment(postID)
@@ -951,15 +953,17 @@ func comment(w http.ResponseWriter, r *http.Request) {
 			fmt.Println("Enter the Dislike condition")
 
 			countLike := 0
-			row := data.Db.QueryRow("SELECT COUNT (*) FROM comments WHERE name = ? AND commentid = ?", user.Name, commentid)
+			row := data.Db.QueryRow("SELECT COUNT (*) FROM dislikes WHERE username = ? AND comment_id = ?", user.Name, commentid)
 			err := row.Scan(&countLike)
 			if err != nil {
 				panic(err)
 			}
 
 			fmt.Printf("countLike: %v\n", countLike)
+			if countLike == 0 {
+				data.AddingCommentDisLike(commentid, countLike, user.Name, currentTime)
 
-			data.AddingCommentDisLike(commentid, countLike, user.Name, currentTime)
+			}
 
 			homefeed = dataBase.HomeFeedPost()
 			comments = data.GetComment(postID)

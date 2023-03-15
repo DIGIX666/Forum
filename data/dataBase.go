@@ -105,10 +105,12 @@ func CreateDataBase() {
 
 	_, err = Db.Exec(`CREATE TABLE IF NOT EXISTS likes (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-		username NOT NULL,
-        datetime NOT NULL,
+		username TEXT NOT NULL,
+        datetime TEXT NOT NULL,
 		post_id INTEGER,
-		FOREIGN KEY (post_id) REFERENCES posts(postid)
+		comment_id INTEGER,
+		FOREIGN KEY (post_id) REFERENCES posts(postid),
+		FOREIGN KEY (comment_id) REFERENCES comments(commentid)
 
     )`)
 	if err != nil {
@@ -121,7 +123,10 @@ func CreateDataBase() {
 		username NOT NULL,
         datetime NOT NULL,
 		post_id INTEGER,
-		FOREIGN KEY (post_id) REFERENCES posts(postid)
+		comment_id,
+		FOREIGN KEY (post_id) REFERENCES posts(postid),
+		FOREIGN KEY (comment_id) REFERENCES comments(commentid)
+
     )`)
 	if err != nil {
 		log.Println("erreur creation de table dislikes")
@@ -825,17 +830,15 @@ func AddingCountComment(postID, username string) {
 /*************************** ADDING COUNT COMMENT **********************************/
 func AddingCommentLike(commentid string, countLike int, userName string, currentTime string) {
 
-	if countLike == 0 {
-		_, err := Db.Exec("INSERT INTO comments (name,date,commentid) VALUES (?,?,?)", userName, currentTime, commentid)
-		if err != nil {
-			fmt.Println("Error function AddingCommentLike Insert commentLike,date Comments to the dataBase:")
-			fmt.Printf("err: %v\n", err)
-		}
+	_, err := Db.Exec("INSERT INTO likes (username,datetime,comment_id) VALUES (?,?,?)", userName, currentTime, commentid)
+	if err != nil {
+		fmt.Println("Error function AddingCommentLike Insert commentLike,date Comments to the dataBase:")
+		fmt.Printf("err: %v\n", err)
 	}
 
 	count := 0
-	row := Db.QueryRow("SELECT COUNT (*) FROM comments WHERE commentid = ?", commentid)
-	err := row.Scan(&count)
+	row := Db.QueryRow("SELECT COUNT (*) FROM likes WHERE comment_id = ?", commentid)
+	err = row.Scan(&count)
 	if err != nil {
 		fmt.Println("Error Select Count in AddingCommentLike in Database:")
 		fmt.Println(err)
@@ -854,17 +857,15 @@ func AddingCommentLike(commentid string, countLike int, userName string, current
 
 func AddingCommentDisLike(commentid string, countLike int, userName string, currentTime string) {
 
-	if countLike == 0 {
-		_, err := Db.Exec("INSERT INTO comments (name,date,commentid) VALUES (?,?,?)", userName, currentTime, commentid)
-		if err != nil {
-			fmt.Println("Error function AddingCommentLike Insert commentLike,date Comments to the dataBase:")
-			fmt.Printf("err: %v\n", err)
-		}
+	_, err := Db.Exec("INSERT INTO dislikes (username,datetime,comment_id) VALUES (?,?,?)", userName, currentTime, commentid)
+	if err != nil {
+		fmt.Println("Error function AddingCommentLike Insert commentLike,date Comments to the dataBase:")
+		fmt.Printf("err: %v\n", err)
 	}
 
 	count := 0
-	row := Db.QueryRow("SELECT COUNT (*) FROM comments WHERE commentid = ?", commentid)
-	err := row.Scan(&count)
+	row := Db.QueryRow("SELECT COUNT (*) FROM dislikes WHERE comment_id = ?", commentid)
+	err = row.Scan(&count)
 	if err != nil {
 		fmt.Println("Error Select Count in AddingCommentLike in Database:")
 		fmt.Println(err)

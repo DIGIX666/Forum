@@ -684,7 +684,7 @@ func ProfilFeed(userName string) []structure.UserFeedPost {
 		var postID, name, message, dateTime, image, picture, categories, categories2 string
 		var NumberOfComment, NumberOfLikes, NumberOfDislikes int
 
-		err := rows.Scan(&id, &postID, &name, &image, &message, &dateTime, &picture, &NumberOfComment, &NumberOfLikes, &NumberOfDislikes, &categories, &categories2)
+		err := rows.Scan(&id, &postID, &image, &name, &message, &dateTime, &picture, &NumberOfComment, &NumberOfLikes, &NumberOfDislikes, &categories, &categories2)
 		if err != nil {
 			fmt.Println("Error ProfilFeed Function in rows.Scan:")
 			log.Fatal(err)
@@ -694,9 +694,9 @@ func ProfilFeed(userName string) []structure.UserFeedPost {
 
 		Posts = preappendUserFeed(Posts, structure.UserFeedPost{
 			PostID:           postID,
+			UserImage:        image,
 			Name:             userName,
 			Message:          message,
-			UserImage:        image,
 			DateTime:         dateTime,
 			Picture:          picture,
 			NumberOfComment:  LenUserComment(postID),
@@ -862,7 +862,7 @@ func Categorie1FeedPost(userName string) []structure.Categorie1FeedPost {
 	var NumberOfComment, NumberOfLikes, NumberOfDislikes int
 	for rows.Next() {
 
-		err := rows.Scan(&id, &postID, &name, &image, &message, &dateTime, &picture, &NumberOfComment, &NumberOfLikes, &NumberOfDislikes, &categories, &categories2)
+		err := rows.Scan(&id, &postID, &image, &name, &message, &dateTime, &picture, &NumberOfComment, &NumberOfLikes, &NumberOfDislikes, &categories, &categories2)
 		if err != nil {
 			fmt.Println("Error ProfilFeed Function in rows.Scan:")
 			log.Fatal(err)
@@ -903,7 +903,7 @@ func Categorie2FeedPost(userName string) []structure.Categorie2FeedPost {
 	var NumberOfComment, NumberOfLikes, NumberOfDislikes int
 	for rows.Next() {
 
-		err := rows.Scan(&id, &postID, &name, &image, &message, &dateTime, &picture, &NumberOfComment, &NumberOfLikes, &NumberOfDislikes, &categories, &categories2)
+		err := rows.Scan(&id, &postID, &image, &name, &message, &dateTime, &picture, &NumberOfComment, &NumberOfLikes, &NumberOfDislikes, &categories, &categories2)
 		if err != nil {
 			fmt.Println("Error ProfilFeed Function in rows.Scan:")
 			log.Fatal(err)
@@ -946,7 +946,7 @@ func Categorie3FeedPost(userName string) []structure.Categorie3FeedPost {
 	var NumberOfComment, NumberOfLikes, NumberOfDislikes int
 	for rows.Next() {
 
-		err := rows.Scan(&id, &postID, &name, &image, &message, &dateTime, &picture, &NumberOfComment, &NumberOfLikes, &NumberOfDislikes, &categories, &categories2)
+		err := rows.Scan(&id, &postID, &image, &name, &message, &dateTime, &picture, &NumberOfComment, &NumberOfLikes, &NumberOfDislikes, &categories, &categories2)
 		if err != nil {
 			fmt.Println("Error ProfilFeed Function in rows.Scan:")
 			log.Fatal(err)

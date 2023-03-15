@@ -12,6 +12,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 	"text/template"
 	"time"
 
@@ -900,56 +901,88 @@ func comment(w http.ResponseWriter, r *http.Request) {
 		}
 
 		message := r.FormValue("message")
+		fmt.Printf("message: %v\n", message)
 
 		if message != "" {
 			dataBase.UserComment(user.Name, message, script.GenerateCommentID(), currentTime, postID)
-			data.HomeFeedPost()
+			homefeed = data.HomeFeedPost()
+		}
+		var commentid, pressed string
+		buttonLike := r.FormValue("like")
+		buttonDislike := r.FormValue("dislike")
+		if buttonLike != "" {
 
+			cutLike := strings.Split(buttonLike, "+")
+			fmt.Printf("cutLike: %v\n", cutLike)
+			commentid = cutLike[0]
+			pressed = cutLike[1]
 		}
 
-		commentid := r.FormValue("like")
+		if buttonDislike != "" {
+			cutDisLike := strings.Split(buttonDislike, "+")
+			fmt.Printf("cutDisLike: %v\n", cutDisLike)
+			commentid = cutDisLike[0]
+			pressed = cutDisLike[1]
+		}
 
 		fmt.Printf("commentid: %v\n", commentid)
+		fmt.Printf("pressed: %v\n", pressed)
 
-		if commentid != "" && user.Connected && postID != "" {
+		if commentid != "" && postID != "" && pressed == "like" {
 
-			fmt.Println("Enter the Like Section !!!!")
-
-			commentLike := 0
-			commentUserName := ""
-
-			row := data.Db.QueryRow("SELECT COUNT (*), name FROM comments WHERE post_id = ? AND commentid = ?", postID, commentid)
-			err := row.Scan(&commentLike, &commentUserName)
+			countLike := 0
+			row := data.Db.QueryRow("SELECT COUNT (*) FROM comments WHERE name = ? AND commentid = ?", user.Name, commentid)
+			err := row.Scan(&countLike)
 			if err != nil {
 				panic(err)
 			}
 
-			fmt.Printf("commentLike: %v\n", commentLike)
-			fmt.Printf("commentUserName: %v\n", commentUserName)
-			if user.Name != commentUserName {
+			fmt.Printf("countLike: %v\n", countLike)
 
-				dataBase.AddingCommentLike(commentLike, commentid)
-			}
+			data.AddingCommentLike(commentid, countLike, user.Name, currentTime)
 
-			for _, v := range comments {
-				fmt.Printf("v.CommentLike: %v\n", v.CommentLike)
-			}
+			homefeed = dataBase.HomeFeedPost()
+			comments = data.GetComment(postID)
 
-			comments = data.GetPostComment(postID)
-
-			if err := temp.ExecuteTemplate(w, "comment", map[string]any{
-				"PostID":    postID,
-				"UserImage": user.Image,
-				"UserName":  user.Name,
-				"Comments":  comments,
-			}); err != nil {
-				log.Println("Error executing template:", err)
-				return
-			}
 		}
 
-		if r.FormValue("like") == "" && postID != "" && message != "" {
+		if commentid != "" && postID != "" && pressed == "dislike" {
+
+			fmt.Println("Enter the Dislike condition")
+
+			countLike := 0
+			row := data.Db.QueryRow("SELECT COUNT (*) FROM comments WHERE name = ? AND commentid = ?", user.Name, commentid)
+			err := row.Scan(&countLike)
+			if err != nil {
+				panic(err)
+			}
+
+			fmt.Printf("countLike: %v\n", countLike)
+
+			data.AddingCommentDisLike(commentid, countLike, user.Name, currentTime)
+
+			homefeed = dataBase.HomeFeedPost()
+			comments = data.GetComment(postID)
+
+			// fmt.Printf("postid: %v\n", postID)
+
+		}
+
+		homefeed = dataBase.HomeFeedPost()
+		comments = data.GetComment(postID)
+		if err := temp.ExecuteTemplate(w, "comment", map[string]any{
+			"PostID":    postID,
+			"UserImage": user.Image,
+			"UserName":  user.Name,
+			"Comments":  comments,
+		}); err != nil {
+			log.Println("Error executing template:", err)
+			return
+		}
+
+		if postID != "" && message != "" && (r.FormValue("like") == "" || r.FormValue("dislike") == "") {
 			http.Redirect(w, r, "/comment?postid="+postID, http.StatusSeeOther)
+
 		}
 
 	} else if r.Method == "GET" {
@@ -958,7 +991,7 @@ func comment(w http.ResponseWriter, r *http.Request) {
 
 		fmt.Printf("postid: %v\n", postid)
 		if user.Connected && postid != "" {
-			currentTime := time.Now().Format("15:04  2-Janv-2006")
+			// currentTime := time.Now().Format("15:04  2-Janv-2006")
 
 			countComment := 0
 
@@ -967,18 +1000,18 @@ func comment(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				panic(err)
 			}
-			if countComment == 0 {
+			if countComment >= 0 {
 				fmt.Printf("countComment: %v\n", countComment)
-				dataBase.AddingCountComment(postid, user.Name, currentTime)
+				dataBase.AddingCountComment(postid, user.Name)
 			}
 			fmt.Printf("postid: %v\n", postid)
 		}
 
-		if r.Method == "POST" && r.FormValue("like") != "" {
+		if r.Method == "POST" && (r.FormValue("like") != "" || r.FormValue("dislike") != "") {
 			http.Redirect(w, r, "/comment", http.StatusNotFound)
-			return
-		}
 
+		}
+		homefeed = data.HomeFeedPost()
 		if err := temp.ExecuteTemplate(w, "comment", map[string]any{
 			"PostID":    postid,
 			"UserImage": user.Image,

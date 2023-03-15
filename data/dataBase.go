@@ -860,7 +860,6 @@ func Categorie1FeedPost(userName string) []structure.Categorie1FeedPost {
 
 	var postID, name, message, dateTime, image, picture, categories, categories2 string
 	var NumberOfComment, NumberOfLikes, NumberOfDislikes int
-	fmt.Printf("rows.Next(): %v\n", rows.Next())
 	for rows.Next() {
 
 		err := rows.Scan(&id, &postID, &name, &image, &message, &dateTime, &picture, &NumberOfComment, &NumberOfLikes, &NumberOfDislikes, &categories, &categories2)
@@ -868,8 +867,6 @@ func Categorie1FeedPost(userName string) []structure.Categorie1FeedPost {
 			fmt.Println("Error ProfilFeed Function in rows.Scan:")
 			log.Fatal(err)
 		}
-
-		// fmt.Printf("NumberOfComment: %v\n", NumberOfComment)
 
 		Posts = preappendCategorie1FeedPost(Posts, structure.Categorie1FeedPost{
 			PostID:           postID,
@@ -904,7 +901,6 @@ func Categorie2FeedPost(userName string) []structure.Categorie2FeedPost {
 
 	var postID, name, message, dateTime, image, picture, categories, categories2 string
 	var NumberOfComment, NumberOfLikes, NumberOfDislikes int
-	fmt.Printf("rows.Next(): %v\n", rows.Next())
 	for rows.Next() {
 
 		err := rows.Scan(&id, &postID, &name, &image, &message, &dateTime, &picture, &NumberOfComment, &NumberOfLikes, &NumberOfDislikes, &categories, &categories2)
@@ -948,7 +944,6 @@ func Categorie3FeedPost(userName string) []structure.Categorie3FeedPost {
 
 	var postID, name, message, dateTime, image, picture, categories, categories2 string
 	var NumberOfComment, NumberOfLikes, NumberOfDislikes int
-	fmt.Printf("rows.Next(): %v\n", rows.Next())
 	for rows.Next() {
 
 		err := rows.Scan(&id, &postID, &name, &image, &message, &dateTime, &picture, &NumberOfComment, &NumberOfLikes, &NumberOfDislikes, &categories, &categories2)

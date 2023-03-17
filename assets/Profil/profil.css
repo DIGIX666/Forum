@@ -708,6 +708,7 @@ body {
 
 .account-user {
   display: inline-flex;
+  cursor: pointer;
   align-items: center;
   color: #64677a;
   font-weight: 600;

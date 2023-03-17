@@ -732,6 +732,10 @@ body {
   font-weight: normal;
 }
 
+.account_link {
+  text-decoration: none;
+}
+
 .account {
   height: 60px;
   display: flex;

@@ -269,18 +269,18 @@
         </svg>
       </button>
       {{if .User.Connected}}
-      <a href="/profil">
+      <a class="account_link" href="/profil">
         <span class="account-user"> {{.User.Name}}
           <img src="{{.User.Image}}" class="account-profile">
         </span>
       </a>
       {{end}}
       {{if not .User.Connected}}
-      <a href="/register">
+      <a class="account_link" href="/register">
         <span class="account-user"> Register
         </span>
       </a>
-      <a href="/login">
+      <a class="account_link" href="/login">
         <span class="account-user"> Login
           <img src="/assets/images/beehive-37436.svg" class="account-profile">
         </span>

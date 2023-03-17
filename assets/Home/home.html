@@ -93,7 +93,7 @@
                     </svg>
                   </a>
                   <input type="file" name="myFile">
-                  <p>max size 20Mo</p>
+                  <p class="descript_img">max size 20Mo</p>
                   <button type="submit" class="status-share">Send</button>
                 </div>
               </div>
@@ -112,8 +112,6 @@
                 <option value="cat2">Cat 2</option>
                 <option value="cat3">Cat 3</option>
               </select>
-              
-              
             </form>
             {{end}}
 
@@ -131,7 +129,7 @@
                 <div class="album-detail">
                   <div class="album-title"><strong>{{.Name}}</strong> create new <span>post</span>{{.Categories}} {{.Categories2}}</div>
                   <div class="album-date">{{.DateTime}}</div>
-                  <div class="postid">{{.PostID}}</div>
+                  <div class="postid" style="display: none;" >{{.PostID}}</div>
                 </div>
               </div>
 
@@ -140,7 +138,7 @@
                 <div class="uploadImage"> <img src="{{.Picture}}" class="upload-image"></div>
               </div>
 
-              <!-- <img src="{{.Picture}}" class="upload-image"> -->
+
               <div class="album-actions">
 
                 <form method="post" class="album-action" action="/">

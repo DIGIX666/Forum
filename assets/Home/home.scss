@@ -571,7 +571,6 @@ body {
  text-decoration: none;
  color: #ccc8db;
  margin-right: 20px;
- display: flex;
  align-items: center;
  svg {
   width: 16px;
@@ -584,6 +583,12 @@ body {
   color: transparent;
   white-space: nowrap;
  }
+}
+
+.descript_img {
+  margin-top: 1px;
+  font-size: 15px;
+  font-style: italic;
 }
 
 .status-share {
@@ -962,4 +967,27 @@ body {
   width: 500px;
   height: 500px;
   margin-left: 20px;
+}
+
+
+
+// select categories
+#cat-select {
+  margin-top: 10px;
+  font-size: 13px;
+  width: 100px;
+  padding: 2px 12px;
+  border: none;
+  border-radius: 10px;
+  background-color: #f5f5f5;
+  color: #333;
+  appearance: none;
+  text-align-last: center;
+  text-transform: uppercase;
+
+  option {
+    color: #333;
+    background-color: #f5f5f5;
+    font-weight: normal;
+  }
 }

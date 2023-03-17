@@ -564,7 +564,6 @@ body {
   text-decoration: none;
   color: #ccc8db;
   margin-right: 20px;
-  display: flex;
   align-items: center;
 }
 .status-action svg {
@@ -579,6 +578,12 @@ body {
     color: transparent;
     white-space: nowrap;
   }
+}
+
+.descript_img {
+  margin-top: 1px;
+  font-size: 15px;
+  font-style: italic;
 }
 
 .status-share {
@@ -950,24 +955,30 @@ body {
   background: rgba(255, 255, 255, 0.1);
 }
 
-/*# sourceMappingURL=home.css.map */
-
-.parentImageUpload{
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  display:flex;
-  justify-content: center;
+.upload-image {
+  width: 500px;
+  height: 500px;
+  margin-left: 20px;
 }
 
-.uploadImage {
-  width: 50%; /* assurez-vous que la div occupe toute la largeur disponible */
-  height: 50%; /* assurez-vous que la div occupe toute la hauteur disponible */
-  overflow: hidden; /* empêche le contenu de déborder de la div */
+#cat-select {
+  margin-top: 10px;
+  font-size: 13px;
+  width: 100px;
+  padding: 2px 12px;
+  border: none;
+  border-radius: 10px;
+  background-color: #f5f5f5;
+  color: #333;
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
+  -moz-text-align-last: center;
+       text-align-last: center;
+  text-transform: uppercase;
 }
-
-.upload-image{
-  width: 100%; /* assurez-vous que l'image occupe toute la largeur disponible de la div */
-  height: auto; /* permet à la hauteur de l'image de s'ajuster en fonction de sa largeur pour éviter toute distorsion */
-  display: block; /* assurez-vous que l'image est affichée comme un bloc pour qu'elle occupe toute la largeur disponible de la div */
-}
+#cat-select option {
+  color: #333;
+  background-color: #f5f5f5;
+  font-weight: normal;
+}/*# sourceMappingURL=home.css.map */

@@ -439,9 +439,6 @@ func home(w http.ResponseWriter, r *http.Request) {
 				}
 
 				imageSRC = "./assets/upload-image/" + imageName
-				// fileIMAGE, _ := os.Open(imageSRC)
-				// fileStat, _ := fileIMAGE.Stat()
-				// fileStat.Size()
 
 				err = ioutil.WriteFile(imageSRC, fileBytes, 0o666)
 				if err != nil {

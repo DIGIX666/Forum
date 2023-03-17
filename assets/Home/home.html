@@ -131,7 +131,7 @@
                 <div class="album-detail">
                   <div class="album-title"><strong>{{.Name}}</strong> create new <span>post</span>{{.Categories}} {{.Categories2}}</div>
                   <div class="album-date">{{.DateTime}}</div>
-                  <div class="postid">{{.PostID}}</div>
+                  <div class="postid" style="display: none">{{.PostID}}</div>
                 </div>
               </div>
 
@@ -140,7 +140,6 @@
                 <div class="uploadImage"> <img src="{{.Picture}}" class="upload-image"></div>
               </div>
 
-              <!-- <img src="{{.Picture}}" class="upload-image"> -->
               <div class="album-actions">
 
                 <form method="post" class="album-action" action="/">

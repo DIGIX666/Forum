@@ -1,3 +1,4 @@
+@charset "UTF-8";
 @import url("https://fonts.googleapis.com/css?family=DM+Sans:400,500,700|Source+Sans+Pro:300,400,600,700&display=swap");
 * {
   outline: none;
@@ -950,13 +951,11 @@ body {
   background: rgba(255, 255, 255, 0.1);
 }
 
-/*# sourceMappingURL=home.css.map */
-
-.parentImageUpload{
+.parentImageUpload {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  display:flex;
+  display: flex;
   justify-content: center;
 }
 
@@ -966,8 +965,8 @@ body {
   overflow: hidden; /* empêche le contenu de déborder de la div */
 }
 
-.upload-image{
+.upload-image {
   width: 100%; /* assurez-vous que l'image occupe toute la largeur disponible de la div */
   height: auto; /* permet à la hauteur de l'image de s'ajuster en fonction de sa largeur pour éviter toute distorsion */
   display: block; /* assurez-vous que l'image est affichée comme un bloc pour qu'elle occupe toute la largeur disponible de la div */
-}
+}/*# sourceMappingURL=home.css.map */

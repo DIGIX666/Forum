@@ -53,6 +53,48 @@ type UserFeedPost struct {
 	Categories2      string
 }
 
+type Categorie1FeedPost struct {
+	PostID           string
+	Name             string
+	Message          string
+	UserImage        string
+	DateTime         string
+	Picture          string
+	NumberOfComment  int
+	NumberOfLikes    int
+	NumberOfDislikes int
+	Categories       string
+	Categories2      string
+}
+
+type Categorie2FeedPost struct {
+	PostID           string
+	Name             string
+	Message          string
+	UserImage        string
+	DateTime         string
+	Picture          string
+	NumberOfComment  int
+	NumberOfLikes    int
+	NumberOfDislikes int
+	Categories       string
+	Categories2      string
+}
+
+type Categorie3FeedPost struct {
+	PostID           string
+	Name             string
+	Message          string
+	UserImage        string
+	DateTime         string
+	Picture          string
+	NumberOfComment  int
+	NumberOfLikes    int
+	NumberOfDislikes int
+	Categories       string
+	Categories2      string
+}
+
 type Post struct {
 	PostID      string
 	Name        string
@@ -110,4 +152,12 @@ type GithubUser struct {
 	Avatar_Url string `json:"avatar_url"`
 	Name       string `json:"name"`
 	Email      string `json:"email"`
+}
+
+type AuthDiscord struct {
+	Access_Token  string `json:"access_token"`
+	Token_Type    string `json:"token_type"`
+	Expires_In    int    `json:"expires_in"`
+	Refresh_Token string `json:"refresh_token"`
+	Scope         string `json:"scope"`
 }

@@ -527,7 +527,6 @@ body {
      object-fit: cover;
   border-radius: 50%;
   margin-right: 20px;
- 
 }
 
 .status-main {
@@ -709,6 +708,7 @@ body {
 
 .account-user {
   display: inline-flex;
+  cursor: pointer;
   align-items: center;
   color: #64677a;
   font-weight: 600;
@@ -932,24 +932,3 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.1);
 }/*# sourceMappingURL=profil.css.map */
-
-
-.parentImageUpload{
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  display:flex;
-  justify-content: center;
-}
-
-.uploadImage {
-  width: 50%; /* assurez-vous que la div occupe toute la largeur disponible */
-  height: 50%; /* assurez-vous que la div occupe toute la hauteur disponible */
-  overflow: hidden; /* empêche le contenu de déborder de la div */
-}
-
-.upload-image{
-  width: 100%; /* assurez-vous que l'image occupe toute la largeur disponible de la div */
-  height: auto; /* permet à la hauteur de l'image de s'ajuster en fonction de sa largeur pour éviter toute distorsion */
-  display: block; /* assurez-vous que l'image est affichée comme un bloc pour qu'elle occupe toute la largeur disponible de la div */
-}

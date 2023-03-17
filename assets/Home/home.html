@@ -93,7 +93,7 @@
                     </svg>
                   </a>
                   <input type="file" name="myFile">
-                  <p>max size 20Mo</p>
+                  <p class="descript_img">max size 20Mo</p>
                   <button type="submit" class="status-share">Send</button>
                 </div>
               </div>
@@ -112,8 +112,6 @@
                 <option value="cat2">Cat 2</option>
                 <option value="cat3">Cat 3</option>
               </select>
-              
-              
             </form>
             {{end}}
 
@@ -131,7 +129,7 @@
                 <div class="album-detail">
                   <div class="album-title"><strong>{{.Name}}</strong> create new <span>post</span>{{.Categories}} {{.Categories2}}</div>
                   <div class="album-date">{{.DateTime}}</div>
-                  <div class="postid">{{.PostID}}</div>
+                  <div class="postid" style="display: none">{{.PostID}}</div>
                 </div>
               </div>
 
@@ -140,7 +138,6 @@
                 <div class="uploadImage"> <img src="{{.Picture}}" class="upload-image"></div>
               </div>
 
-              <!-- <img src="{{.Picture}}" class="upload-image"> -->
               <div class="album-actions">
 
                 <form method="post" class="album-action" action="/">
@@ -170,8 +167,8 @@
                       stroke-linejoin="round" class="css-i6dzq1" viewBox="0 0 24 24">
                       <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
                     </svg>
+                    <div id="compteur-comment">{{.NumberOfComment}}</div>
                   </a>
-                  <div id="compteur-comment">{{.NumberOfComment}}</div>
                 
 
 
@@ -272,18 +269,18 @@
         </svg>
       </button>
       {{if .User.Connected}}
-      <a href="/profil">
+      <a class="account_link" href="/profil">
         <span class="account-user"> {{.User.Name}}
           <img src="{{.User.Image}}" class="account-profile">
         </span>
       </a>
       {{end}}
       {{if not .User.Connected}}
-      <a href="/register">
+      <a class="account_link" href="/register">
         <span class="account-user"> Register
         </span>
       </a>
-      <a href="/login">
+      <a class="account_link" href="/login">
         <span class="account-user"> Login
           <img src="/assets/images/beehive-37436.svg" class="account-profile">
         </span>

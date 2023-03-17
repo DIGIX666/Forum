@@ -1,9 +1,5 @@
 # Dossiers à ignorer
-<<<<<<< HEAD
 /upload-image
-=======
-/assets/upload-image
->>>>>>> origin/patching
 
 # Fichiers à ignorer
 *.DS_Store

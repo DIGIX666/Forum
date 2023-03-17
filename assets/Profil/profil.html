@@ -56,12 +56,9 @@
       <div class="side-wrapper">
         <div class="side-title">SUBJECTS</div>
         <div class="side-menu">
-          <a href="#"># Cat 1 </a>
-          <a href="#"># Cat 2 </a>
-          <a href="#"># Cat 3 </a>
-          <a href="#"># Cat 4 </a>
-          <a href="#"># Cat 5 </a>
-          <a href="#"># Cat 6 </a>
+          <a href="/categorie1"># Cat 1 </a>
+          <a href="/categorie2"># Cat 2 </a>
+          <a href="/categorie3"># Cat 3 </a>
         </div>
       </div>
     </div>
@@ -143,8 +140,8 @@
                     <path
                       d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
                   </svg>
+                  <div id="like-count">{{.NumberOfLikes}}</div>
                 </a>
-                <div id="like-count">{{.NumberOfLikes}}</div>
                 
                 
                 <a href="" class="album-action">
@@ -152,8 +149,8 @@
                   class="css-i6dzq1" viewBox="0 0 24 24">
                   <path d="M18 6L6 18M6 6l12 12" />
                 </svg>
-                </a>
                 <div id="dislike-count">{{.NumberOfDislikes}}</div>
+                </a>
                
                 
                 <a href="/comment?postid={{.PostID}}" class="album-action">
@@ -161,8 +158,8 @@
                     class="css-i6dzq1" viewBox="0 0 24 24">
                     <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
                   </svg>
+                  <div id="compteur-comment">{{.NumberOfComment}}</div>
                 </a>
-                <div id="compteur-comment">{{.NumberOfComment}}</div>
               </div>
             </div>
             {{end}}

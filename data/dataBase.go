@@ -82,8 +82,8 @@ func CreateDataBase() {
 		countComment INTEGER DEFAULT 0,
 		countLikes INTEGER DEFAULT 0,
 		countDislikes INTEGER DEFAULT 0,
-		categories NOT NULL,
-		categories2 NOT NULL
+		categories TEXT NOT NULL,
+		categories2 TEXT NOT NULL
 
     )`)
 
@@ -105,10 +105,12 @@ func CreateDataBase() {
 
 	_, err = Db.Exec(`CREATE TABLE IF NOT EXISTS likes (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-		username NOT NULL,
-        datetime NOT NULL,
+		username TEXT NOT NULL,
+        datetime TEXT NOT NULL,
 		post_id INTEGER,
-		FOREIGN KEY (post_id) REFERENCES posts(postid)
+		comment_id INTEGER,
+		FOREIGN KEY (post_id) REFERENCES posts(postid),
+		FOREIGN KEY (comment_id) REFERENCES comments(commentid)
 
     )`)
 	if err != nil {
@@ -121,7 +123,10 @@ func CreateDataBase() {
 		username NOT NULL,
         datetime NOT NULL,
 		post_id INTEGER,
-		FOREIGN KEY (post_id) REFERENCES posts(postid)
+		comment_id,
+		FOREIGN KEY (post_id) REFERENCES posts(postid),
+		FOREIGN KEY (comment_id) REFERENCES comments(commentid)
+
     )`)
 	if err != nil {
 		log.Println("erreur creation de table dislikes")
@@ -648,6 +653,25 @@ func preappendUserFeed(x []structure.UserFeedPost, y structure.UserFeedPost) []s
 	return x
 }
 
+func preappendCategorie1FeedPost(x []structure.Categorie1FeedPost, y structure.Categorie1FeedPost) []structure.Categorie1FeedPost {
+	x = append(x, structure.Categorie1FeedPost{})
+	copy(x[1:], x)
+	x[0] = y
+	return x
+}
+func preappendCategorie2FeedPost(x []structure.Categorie2FeedPost, y structure.Categorie2FeedPost) []structure.Categorie2FeedPost {
+	x = append(x, structure.Categorie2FeedPost{})
+	copy(x[1:], x)
+	x[0] = y
+	return x
+}
+func preappendCategorie3FeedPost(x []structure.Categorie3FeedPost, y structure.Categorie3FeedPost) []structure.Categorie3FeedPost {
+	x = append(x, structure.Categorie3FeedPost{})
+	copy(x[1:], x)
+	x[0] = y
+	return x
+}
+
 /*************************** PROFIL FEED **********************************/
 func ProfilFeed(userName string) []structure.UserFeedPost {
 
@@ -665,7 +689,7 @@ func ProfilFeed(userName string) []structure.UserFeedPost {
 		var postID, name, message, dateTime, image, picture, categories, categories2 string
 		var NumberOfComment, NumberOfLikes, NumberOfDislikes int
 
-		err := rows.Scan(&id, &postID, &name, &image, &message, &dateTime, &picture, &NumberOfComment, &NumberOfLikes, &NumberOfDislikes, &categories, &categories2)
+		err := rows.Scan(&id, &postID, &image, &name, &message, &dateTime, &picture, &NumberOfComment, &NumberOfLikes, &NumberOfDislikes, &categories, &categories2)
 		if err != nil {
 			fmt.Println("Error ProfilFeed Function in rows.Scan:")
 			log.Fatal(err)
@@ -675,12 +699,12 @@ func ProfilFeed(userName string) []structure.UserFeedPost {
 
 		Posts = preappendUserFeed(Posts, structure.UserFeedPost{
 			PostID:           postID,
-			Name:             userName,
 			UserImage:        image,
+			Name:             userName,
 			Message:          message,
 			DateTime:         dateTime,
 			Picture:          picture,
-			NumberOfComment:  NumberOfComment,
+			NumberOfComment:  LenUserComment(postID),
 			NumberOfLikes:    NumberOfLikes,
 			NumberOfDislikes: NumberOfDislikes,
 			Categories:       categories,
@@ -706,6 +730,18 @@ func LenUserPost(nameUser string) int {
 
 	var NumberPost int
 	err := Db.QueryRow("SELECT COUNT (*) FROM posts WHERE name = ?", nameUser).Scan(&NumberPost)
+	if err != nil {
+		fmt.Println("Error SELECT From LenUserPost dataBase:")
+		log.Fatal(err)
+	}
+
+	return NumberPost
+}
+
+func LenCategories1UserPost() int {
+
+	var NumberPost int
+	err := Db.QueryRow("SELECT COUNT (*) FROM posts WHERE categories = ? OR categories2 = ?", "cat1", "cat1").Scan(&NumberPost)
 	if err != nil {
 		fmt.Println("Error SELECT From LenUserPost dataBase:")
 		log.Fatal(err)
@@ -794,17 +830,15 @@ func AddingCountComment(postID, username string) {
 /*************************** ADDING COUNT COMMENT **********************************/
 func AddingCommentLike(commentid string, countLike int, userName string, currentTime string) {
 
-	if countLike == 0 {
-		_, err := Db.Exec("INSERT INTO comments (name,date,commentid) VALUES (?,?,?)", userName, currentTime, commentid)
-		if err != nil {
-			fmt.Println("Error function AddingCommentLike Insert commentLike,date Comments to the dataBase:")
-			fmt.Printf("err: %v\n", err)
-		}
+	_, err := Db.Exec("INSERT INTO likes (username,datetime,comment_id) VALUES (?,?,?)", userName, currentTime, commentid)
+	if err != nil {
+		fmt.Println("Error function AddingCommentLike Insert commentLike,date Comments to the dataBase:")
+		fmt.Printf("err: %v\n", err)
 	}
 
 	count := 0
-	row := Db.QueryRow("SELECT COUNT (*) FROM comments WHERE commentid = ?", commentid)
-	err := row.Scan(&count)
+	row := Db.QueryRow("SELECT COUNT (*) FROM likes WHERE comment_id = ?", commentid)
+	err = row.Scan(&count)
 	if err != nil {
 		fmt.Println("Error Select Count in AddingCommentLike in Database:")
 		fmt.Println(err)
@@ -823,17 +857,15 @@ func AddingCommentLike(commentid string, countLike int, userName string, current
 
 func AddingCommentDisLike(commentid string, countLike int, userName string, currentTime string) {
 
-	if countLike == 0 {
-		_, err := Db.Exec("INSERT INTO comments (name,date,commentid) VALUES (?,?,?)", userName, currentTime, commentid)
-		if err != nil {
-			fmt.Println("Error function AddingCommentLike Insert commentLike,date Comments to the dataBase:")
-			fmt.Printf("err: %v\n", err)
-		}
+	_, err := Db.Exec("INSERT INTO dislikes (username,datetime,comment_id) VALUES (?,?,?)", userName, currentTime, commentid)
+	if err != nil {
+		fmt.Println("Error function AddingCommentLike Insert commentLike,date Comments to the dataBase:")
+		fmt.Printf("err: %v\n", err)
 	}
 
 	count := 0
-	row := Db.QueryRow("SELECT COUNT (*) FROM comments WHERE commentid = ?", commentid)
-	err := row.Scan(&count)
+	row := Db.QueryRow("SELECT COUNT (*) FROM dislikes WHERE comment_id = ?", commentid)
+	err = row.Scan(&count)
 	if err != nil {
 		fmt.Println("Error Select Count in AddingCommentLike in Database:")
 		fmt.Println(err)
@@ -848,4 +880,128 @@ func AddingCommentDisLike(commentid string, countLike int, userName string, curr
 
 	}
 
+}
+
+/*************************** CATEGORIE 1 FEED POST **********************************/
+func Categorie1FeedPost(userName string) []structure.Categorie1FeedPost {
+
+	rows, err := Db.Query("SELECT * FROM posts WHERE categories = ? OR categories2 = ?", "cat1", "cat1")
+	if err != nil {
+		fmt.Println("Error in ProfilFeed Function Query didn't work in dataBase:")
+		log.Fatal(err)
+	}
+	var Posts []structure.Categorie1FeedPost
+
+	var id int
+
+	var postID, name, message, dateTime, image, picture, categories, categories2 string
+	var NumberOfComment, NumberOfLikes, NumberOfDislikes int
+	for rows.Next() {
+
+		err := rows.Scan(&id, &postID, &image, &name, &message, &dateTime, &picture, &NumberOfComment, &NumberOfLikes, &NumberOfDislikes, &categories, &categories2)
+		if err != nil {
+			fmt.Println("Error function AddingCommentLike Insert commentLike,date Comments to the dataBase:")
+			fmt.Printf("err: %v\n", err)
+		}
+
+		Posts = preappendCategorie1FeedPost(Posts, structure.Categorie1FeedPost{
+			PostID:           postID,
+			Name:             userName,
+			UserImage:        image,
+			Message:          message,
+			DateTime:         dateTime,
+			Picture:          picture,
+			NumberOfComment:  LenUserComment(postID),
+			NumberOfLikes:    NumberOfLikes,
+			NumberOfDislikes: NumberOfDislikes,
+			Categories:       categories,
+			Categories2:      categories2,
+		})
+		fmt.Printf("Posts: %v\n", Posts)
+	}
+	return Posts
+}
+
+/*************************** CATEGORIE 2 FEED POST **********************************/
+func Categorie2FeedPost(userName string) []structure.Categorie2FeedPost {
+
+	rows, err := Db.Query("SELECT * FROM posts WHERE categories = ? OR categories2 = ?", "cat2", "cat2")
+	if err != nil {
+		fmt.Println("Error in ProfilFeed Function Query didn't work in dataBase:")
+		log.Fatal(err)
+	}
+	var Posts []structure.Categorie2FeedPost
+	var id int
+
+	var postID, name, message, dateTime, image, picture, categories, categories2 string
+	var NumberOfComment, NumberOfLikes, NumberOfDislikes int
+	for rows.Next() {
+
+		err := rows.Scan(&id, &postID, &image, &name, &message, &dateTime, &picture, &NumberOfComment, &NumberOfLikes, &NumberOfDislikes, &categories, &categories2)
+		if err != nil {
+			fmt.Println("Error ProfilFeed Function in rows.Scan:")
+			log.Fatal(err)
+		}
+
+		fmt.Printf("NumberOfComment: %v\n", NumberOfComment)
+
+		Posts = preappendCategorie2FeedPost(Posts, structure.Categorie2FeedPost{
+			PostID:           postID,
+			Name:             userName,
+			UserImage:        image,
+			Message:          message,
+			DateTime:         dateTime,
+			Picture:          picture,
+			NumberOfComment:  LenUserComment(postID),
+			NumberOfLikes:    NumberOfLikes,
+			NumberOfDislikes: NumberOfDislikes,
+			Categories:       categories,
+			Categories2:      categories2,
+		})
+		fmt.Printf("Posts: %v\n", Posts)
+	}
+
+	return Posts
+}
+
+/*************************** CATEGORIE 3 FEED POST **********************************/
+func Categorie3FeedPost(userName string) []structure.Categorie3FeedPost {
+
+	rows, err := Db.Query("SELECT * FROM posts WHERE categories = ? OR categories2 = ?", "cat3", "cat3")
+	if err != nil {
+		fmt.Println("Error in ProfilFeed Function Query didn't work in dataBase:")
+		log.Fatal(err)
+	}
+	var Posts []structure.Categorie3FeedPost
+	var id int
+
+	var postID, name, message, dateTime, image, picture, categories, categories2 string
+	var NumberOfComment, NumberOfLikes, NumberOfDislikes int
+	for rows.Next() {
+
+		err := rows.Scan(&id, &postID, &image, &name, &message, &dateTime, &picture, &NumberOfComment, &NumberOfLikes, &NumberOfDislikes, &categories, &categories2)
+		if err != nil {
+			fmt.Println("Error ProfilFeed Function in rows.Scan:")
+			log.Fatal(err)
+		}
+
+		fmt.Printf("NumberOfComment: %v\n", NumberOfComment)
+
+		Posts = preappendCategorie3FeedPost(Posts, structure.Categorie3FeedPost{
+			PostID:           postID,
+			Name:             userName,
+			UserImage:        image,
+			Message:          message,
+			DateTime:         dateTime,
+			Picture:          picture,
+			NumberOfComment:  LenUserComment(postID),
+			NumberOfLikes:    NumberOfLikes,
+			NumberOfDislikes: NumberOfDislikes,
+			Categories:       categories,
+			Categories2:      categories2,
+		})
+		fmt.Printf("Posts: %v\n", Posts)
+	}
+
+	return Posts
 }

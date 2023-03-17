@@ -13,6 +13,40 @@ import (
 	"strings"
 )
 
+const DISCORD_CLIENT_ID = "1086324794837962795"
+const DISCORD_CLIENT_SECRET = "EA-iR4RV_VfD5peX0r3DVSZr5XMXSTFe"
+const DISCORD_OAUTH2_TOKEN = "https://discord.com/api/oauth2/token"
+const REDIRECT_URI = "https://localhost:8080/register"
+
+/* ----------------------------------- DISCORD AUTH REGISTER -----------------------------*/
+
+func DiscordAuthRegister(code string, hashPassword string) {
+
+	data := url.Values{}
+	data.Set("client_id", DISCORD_CLIENT_ID)
+	data.Set("client_secret", DISCORD_CLIENT_SECRET)
+	data.Set("code", code)
+	data.Set("redirect_uri", REDIRECT_URI)
+	data.Set("grant_type", "authorization_code")
+
+	responseDiscord, err := http.Post(DISCORD_OAUTH2_TOKEN, "application/x-www-form-urlencoded", strings.NewReader(data.Encode()))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer responseDiscord.Body.Close()
+
+	var discordTokenJSON structure.AuthDiscord
+
+	err = json.NewDecoder(responseDiscord.Body).Decode(&discordTokenJSON)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Printf("discordTokenJSON: %v\n", discordTokenJSON)
+
+}
+
 /* ----------------------------------- GOOGLE AUTH LOG ---------------------------------- */
 func GoogleAuthLog(code string) (bool, string, string, string) {
 

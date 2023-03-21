@@ -153,3 +153,11 @@ type GithubUser struct {
 	Name       string `json:"name"`
 	Email      string `json:"email"`
 }
+
+type AuthDiscord struct {
+	Access_Token  string `json:"access_token"`
+	Token_Type    string `json:"token_type"`
+	Expires_In    int    `json:"expires_in"`
+	Refresh_Token string `json:"refresh_token"`
+	Scope         string `json:"scope"`
+}

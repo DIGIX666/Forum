@@ -22,6 +22,8 @@ const REDIRECT_URI = "https://localhost:8080/register"
 
 func DiscordAuthRegister(code string, hashPassword string) {
 
+	fmt.Printf("code: %v\n", code)
+
 	data := url.Values{}
 	data.Set("client_id", DISCORD_CLIENT_ID)
 	data.Set("client_secret", DISCORD_CLIENT_SECRET)
@@ -44,6 +46,54 @@ func DiscordAuthRegister(code string, hashPassword string) {
 	}
 
 	fmt.Printf("discordTokenJSON: %v\n", discordTokenJSON)
+
+	client := &http.Client{}
+
+	discordAuthResponse, err := http.NewRequest("GET", "https://discord.com/api/users/@me", nil)
+	if err != nil {
+		panic(err)
+	}
+
+	discordAuthResponse.Header.Set("Authorization", "Bot "+discordTokenJSON.Access_Token)
+	resp, err := client.Do(discordAuthResponse)
+	if err != nil {
+		panic(err)
+	}
+	defer resp.Body.Close()
+
+	var discordUser structure.DiscordUser
+	err = json.NewDecoder(resp.Body).Decode(&discordUser)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Printf("discordUser: %v\n", discordUser)
+	fmt.Printf("hashPassword: %v\n", hashPassword)
+
+	// err = dataBase.Db.QueryRow("SELECT COUNT(*) FROM users WHERE email = ?", discordUser.Email).Scan(&count)
+	// if err != nil {
+	// 	fmt.Println("error reading database to found email !!")
+	// }
+	// if count > 0 {
+
+	// 	// fmt.Println("google user already registered")
+
+	// 	return false, discordUser.Email, ""
+
+	// } else {
+
+	// 	if discordUser.Email != "" {
+
+	// 		_, err = dataBase.Db.Exec("INSERT INTO users (name, image, email, uuid, password, admin) VALUES (?, ?, ?,?,?,?)", discordUser.Name, discordUser.Picture, discordUser.Email, "", hashPassword, false)
+	// 		if err != nil {
+	// 			log.Fatal(err)
+	// 		}
+	// 		return true, discordUser.Email, discordUser.Name
+
+	// 	} else {
+	// 		return false, "", ""
+	// 	}
+	// }
 
 }
 

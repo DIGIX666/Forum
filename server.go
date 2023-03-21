@@ -260,6 +260,7 @@ func register(w http.ResponseWriter, r *http.Request) {
 		hashPassword := script.GenerateHash(script.GenerateRandomString())
 
 		checkGoogleUserRegistered, googleUserEmail, userGoogleName := function.GoogleAuthRegister(r.FormValue("code"), hashPassword)
+		function.DiscordAuthRegister(r.FormValue("code"), hashPassword)
 
 		if checkGitHub_User_Registered || userGitHubName != "" {
 

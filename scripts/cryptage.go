@@ -1,6 +1,7 @@
 package script
 
 import (
+	"fmt"
 	"log"
 	"math/rand"
 	"time"
@@ -16,6 +17,7 @@ func GenerateHash(password string) string {
 	cost := 11
 	mpCrypt, err := bcrypt.GenerateFromPassword([]byte(password), cost)
 	if err != nil {
+		fmt.Println("Error in GenerateHash:")
 		log.Fatal(err)
 	}
 

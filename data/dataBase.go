@@ -56,6 +56,15 @@ func CreateDataBase() {
 		log.Fatal(err)
 	}
 
+	_, err = Db.Exec(`CREATE TABLE IF NOT EXISTS notif_admin
+        (id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name NOT NULL
+        )`)
+	if err != nil {
+		log.Println("erreur creation de table users")
+		log.Fatal(err)
+	}
+
 	_, err = Db.Exec(`CREATE TABLE IF NOT EXISTS comments (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT DEFAULT '',
@@ -1012,4 +1021,48 @@ func Categorie3FeedPost(userName string) []structure.Categorie3FeedPost {
 	}
 
 	return Posts
+}
+
+func prependAdminFeedPost(x []structure.AdminFeedPost, y structure.AdminFeedPost) []structure.AdminFeedPost {
+	x = append(x, structure.AdminFeedPost{})
+	copy(x[1:], x)
+	x[0] = y
+	return x
+}
+
+func AdminFeedPost() []structure.AdminFeedPost {
+	rows, err := Db.Query("SELECT * FROM notif_admin ORDER BY id")
+	if err != nil {
+		fmt.Println("Error in AdminFeedPost Function dataBase:")
+		log.Fatal(err)
+	}
+	var Posts []structure.AdminFeedPost
+	var id int
+	var userName string
+
+	for rows.Next() {
+
+		err := rows.Scan(&id, &userName)
+		if err != nil {
+			fmt.Println("Error AdminFeedPost Function in rows.Scan:")
+			log.Fatal(err)
+		}
+
+		Posts = prependAdminFeedPost(Posts, structure.AdminFeedPost{
+			Name: userName,
+		})
+	}
+
+	return Posts
+
+}
+
+func AddingModoRequest(userName string) {
+
+	_, err := Db.Exec("INSERT INTO notif_moderateur (name) VALUES (?)", userName)
+	if err != nil {
+		fmt.Println("Error function AddingModoRequest Insert name to the dataBase:")
+		fmt.Printf("err: %v\n", err)
+	}
+
 }

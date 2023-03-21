@@ -392,19 +392,18 @@ func home(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	var imageSRC string
+	var notif string
 	if r.Method == "POST" {
 
 		message := r.FormValue("message")
 		Posts.Categories = r.FormValue("categories")
 		Posts.Categories2 = r.FormValue("categories2")
+		notif = r.FormValue("selectnone")
 
 		fmt.Printf("Posts.Categories: %v\n", Posts.Categories)
 		if message != "" && user.Connected {
 			postid := script.GeneratePostID()
 			currentTime := time.Now().Format("15:04  2-Janv-2006")
-
-			// user.Name = profil["name"]
-			// user.Image = profil["image"]
 
 			user.Post = preappendPost(structure.Post{
 				PostID:      postid,
@@ -547,6 +546,12 @@ func home(w http.ResponseWriter, r *http.Request) {
 		user.Connected = true
 		for _, v := range user.Post {
 			v.Connected = true
+		}
+
+		if notif == "notif_moderateur" {
+
+			data.AddingModoRequest(user.Name)
+
 		}
 
 		homefeed = data.HomeFeedPost()
@@ -1418,8 +1423,9 @@ func admin(w http.ResponseWriter, r *http.Request) {
 		homefeed = data.HomeFeedPost()
 
 		err = temp.ExecuteTemplate(w, "admin", map[string]any{
-			"User":     user,
-			"HomeFeed": homefeed,
+			"User":      user,
+			"HomeFeed":  homefeed,
+			"AdminFeed": data.AdminFeedPost(),
 		})
 		if err != nil {
 			log.Fatal(err)

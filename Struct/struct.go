@@ -26,6 +26,10 @@ type Comment struct {
 	Connected      bool
 }
 
+type AdminFeedPost struct {
+	Name string
+}
+
 type HomeFeedPost struct {
 	PostID           string
 	Name             string

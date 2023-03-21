@@ -1,17 +1,17 @@
 package structure
 
 type UserAccount struct {
-	Id        int
-	Name      string //Name of the user
-	Image     string //Path src
-	Email     string
-	UUID      string
-	Password  string
-	Post      []Post
-	Comment   []Comment
-	Admin     bool //true: the user is the Admin
-  Moderatteur bool
-	Connected bool
+	Id         int
+	Name       string //Name of the user
+	Image      string //Path src
+	Email      string
+	UUID       string
+	Password   string
+	Post       []Post
+	Comment    []Comment
+	Admin      bool //true: the user is the Admin
+	Moderateur bool
+	Connected  bool
 }
 
 type Comment struct {

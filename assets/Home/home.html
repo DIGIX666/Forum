@@ -51,6 +51,7 @@
             Me
           </a>
           {{end}}
+          {{if .User.Moderateur}}
           <a href="/moderateur">
             <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
             viewBox="0 0 24 24">
@@ -58,6 +59,8 @@
 						</svg>
             Moderateur
           </a>
+          {{end}}
+          {{if .User.Admin}}
           <a href="/admin">
             <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
             viewBox="0 0 24 24">
@@ -65,6 +68,7 @@
 						</svg>
             Admin
           </a>
+          {{end}}
         </div>
       </div>
 

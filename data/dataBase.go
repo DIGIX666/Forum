@@ -226,6 +226,14 @@ func DataBaseRegister(email string, password string) bool {
 
 }
 
+func AddingAdminUser() {
+	_, err := Db.Exec("INSERT INTO users (name, image, email, uuid, password, admin) VALUES (?, ?, ?,?,?,?)", "admin", "../assets/images/beehive-37436.svg", "admin", "admin", script.GenerateHash("adminadmin"), true)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+}
+
 func GetAllUsers() []structure.UserAccount {
 	rows, err := Db.Query("SELECT id,name,image,email,uuid,password,admin FROM users ORDER BY id")
 	if err != nil {

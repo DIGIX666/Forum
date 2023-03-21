@@ -55,6 +55,7 @@ func erreur(w http.ResponseWriter, r *http.Request) {
 func main() {
 	dataBase.CreateDataBase()
 	homefeed = data.HomeFeedPost()
+	data.AddingAdminUser()
 	uAccount = data.GetAllUsers()
 	defer data.Db.Close()
 

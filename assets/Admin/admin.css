@@ -599,13 +599,13 @@ body {
   text-decoration: none;
 }
 
-.like, .dislike, .delete {
+.like, .dislike, .delete, .signal {
   background: transparent;
   border: none;
   cursor: pointer;
   color: #a2a4b4;
 }
-.like:hover, .dislike:hover, .delete:hover {
+.like:hover, .dislike:hover, .delete:hover, .signal:hover {
   color: #fff;
 }
 
@@ -614,8 +614,13 @@ body {
 }
 
 .delete {
-  margin-left: 100px;
-  margin-top: -52px;
+  margin-top: -100px;
+  margin-left: 700px;
+}
+
+.signal {
+  margin-top: -100px;
+  margin-left: 750px;
 }
 
 .hr {

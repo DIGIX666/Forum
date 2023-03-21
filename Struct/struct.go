@@ -10,6 +10,7 @@ type UserAccount struct {
 	Post      []Post
 	Comment   []Comment
 	Admin     bool //true: the user is the Admin
+  Moderatteur bool
 	Connected bool
 }
 
@@ -160,4 +161,11 @@ type AuthDiscord struct {
 	Expires_In    int    `json:"expires_in"`
 	Refresh_Token string `json:"refresh_token"`
 	Scope         string `json:"scope"`
+}
+
+type DiscordUser struct {
+	Identify string `json:"identify"`
+	Username string `json:"username"`
+	Avatar   string `json:"avatar"`
+	Email    string `json:"email"`
 }

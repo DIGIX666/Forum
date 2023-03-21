@@ -1,3 +1,4 @@
+@charset "UTF-8";
 @import url("https://fonts.googleapis.com/css?family=DM+Sans:400,500,700|Source+Sans+Pro:300,400,600,700&display=swap");
 * {
   outline: none;
@@ -352,6 +353,7 @@ body {
 .box {
   background-color: #151728;
   border-radius: 4px;
+  margin-top: -30px;
 }
 
 .intro {
@@ -563,7 +565,6 @@ body {
   text-decoration: none;
   color: #ccc8db;
   margin-right: 20px;
-  display: flex;
   align-items: center;
 }
 .status-action svg {
@@ -580,6 +581,12 @@ body {
   }
 }
 
+.descript_img {
+  margin-top: 1px;
+  font-size: 15px;
+  font-style: italic;
+}
+
 .status-share {
   background-color: #1b86f9;
   border: none;
@@ -589,11 +596,41 @@ body {
   margin-left: auto;
   box-shadow: 0 0 20px #1b86f9;
   cursor: pointer;
+  text-decoration: none;
+}
+
+.like, .dislike, .delete, .signal {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #a2a4b4;
+}
+.like:hover, .dislike:hover, .delete:hover, .signal:hover {
+  color: #fff;
+}
+
+.like:hover {
+  color: #fff;
+}
+
+.delete {
+  margin-top: -100px;
+  margin-left: 700px;
+}
+
+.signal {
+  margin-top: -100px;
+  margin-left: 750px;
+}
+
+.hr {
+  margin-top: 30px;
+  color: #151728;
 }
 
 .album {
   padding-top: 20px;
-  margin-top: 50px;
+  margin-top: 100px;
 }
 .album .status-main {
   border: none;
@@ -656,6 +693,7 @@ body {
 
 .album-actions {
   padding: 0 20px 20px;
+  display: flex;
 }
 
 .album-action {
@@ -708,17 +746,17 @@ body {
 
 .account-user {
   display: inline-flex;
-  cursor: pointer;
   align-items: center;
   color: #64677a;
   font-weight: 600;
-  text-decoration: none;
-  background: transparent;
-  border: none;
 }
 .account-user span {
   font-size: 10px;
   font-weight: normal;
+}
+
+.account_link {
+  text-decoration: none;
 }
 
 .account {
@@ -933,72 +971,44 @@ body {
   background: rgba(255, 255, 255, 0.1);
 }
 
-.selectnone {
-  width: 150px;
-  height: 50px;
-  background: none;
-  border: 2px solid #ccc8db;
-  border-radius: 50px;
-  cursor: pointer;
+.parentImageUpload {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
   display: flex;
-  margin-left: 20px;
-  align-items: center;
   justify-content: center;
-  transition: 0.4s;
 }
 
-.selectnone:hover {
-  width: 170px;
-  box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.4);
+.uploadImage {
+  width: 50%; /* assurez-vous que la div occupe toute la largeur disponible */
+  height: 50%; /* assurez-vous que la div occupe toute la hauteur disponible */
+  overflow: hidden; /* empêche le contenu de déborder de la div */
 }
 
-.moderateur, .moderateur-svg {
-  position: absolute;
-  color: #ccc8db;
-  fill: transparent;
-  transition: 0.4s;
+.upload-image {
+  width: 100%; /* assurez-vous que l'image occupe toute la largeur disponible de la div */
+  height: auto; /* permet à la hauteur de l'image de s'ajuster en fonction de sa largeur pour éviter toute distorsion */
+  display: block; /* assurez-vous que l'image est affichée comme un bloc pour qu'elle occupe toute la largeur disponible de la div */
 }
 
-.selectnone:hover .moderateur {
-  transition: 0.4s;
+#cat-select {
+  margin-top: 10px;
   font-size: 13px;
+  width: 100px;
+  padding: 2px 12px;
+  border: none;
+  border-radius: 10px;
+  background-color: #f5f5f5;
+  color: #333;
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
+  -moz-text-align-last: center;
+       text-align-last: center;
+  text-transform: uppercase;
 }
-
-.selectnone:focus {
-  outline: none;
-  box-shadow: none;
-  border: 2px solid transparent;
-  width: 50px;
-  border-left: 2px solid #ccc8db;
-  border-bottom: 2px solid #ccc8db;
-  animation: spin 2s 500ms forwards;
-}
-
-.selectnone:focus .moderateur {
-  color: transparent;
-}
-
-.selectnone:focus .moderateur-svg {
-  animation: check 500ms 2300ms forwards;
-}
-
-@keyframes spin {
-  80% {
-    border: 2px solid transparent;
-    border-left: 2px solid #ccc8db;
-  }
-  100% {
-    transform: rotate(1080deg);
-    border: 2px solid #ccc8db;
-  }
-}
-@keyframes check {
-  to {
-    fill: #ccc8db;
-  }
-}
-@keyframes circle {
-  to {
-    border: 2px solid #ccc8db;
-  }
-}/*# sourceMappingURL=profil.css.map */
+#cat-select option {
+  color: #333;
+  background-color: #f5f5f5;
+  font-weight: normal;
+}/*# sourceMappingURL=admin.css.map */

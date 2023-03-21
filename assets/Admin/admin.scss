@@ -605,7 +605,7 @@ body {
 }
 
 
-.like, .dislike, .delete, .signal{
+.like, .dislike, .delete, .signal, .delete-profil{
   background: transparent;
   border: none;
   cursor: pointer;
@@ -617,6 +617,11 @@ body {
 
 .like:hover {
   color: #fff;
+}
+
+.delete-profil {
+  margin-left: 90px;
+  margin-top: -51px;
 }
 
 .delete {

@@ -599,18 +599,23 @@ body {
   text-decoration: none;
 }
 
-.like, .dislike, .delete, .signal {
+.like, .dislike, .delete, .signal, .delete-profil {
   background: transparent;
   border: none;
   cursor: pointer;
   color: #a2a4b4;
 }
-.like:hover, .dislike:hover, .delete:hover, .signal:hover {
+.like:hover, .dislike:hover, .delete:hover, .signal:hover, .delete-profil:hover {
   color: #fff;
 }
 
 .like:hover {
   color: #fff;
+}
+
+.delete-profil {
+  margin-left: 90px;
+  margin-top: -51px;
 }
 
 .delete {

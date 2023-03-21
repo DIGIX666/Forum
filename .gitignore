@@ -1,5 +1,5 @@
 # Dossiers à ignorer
-/upload-image
+/upload-image/*
 
 # Fichiers à ignorer
 *.DS_Store
@@ -8,3 +8,4 @@
 *.war
 *.jar
 *.db
+*.gif

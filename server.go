@@ -66,6 +66,8 @@ func main() {
 
 	// Use the limiter as middleware for the "/" handler
 	http.Handle("/", tollbooth.LimitFuncHandler(lmt, home))
+	http.Handle("/moderateur", tollbooth.LimitFuncHandler(lmt, moderateur))
+	http.Handle("/admin", tollbooth.LimitFuncHandler(lmt, admin))
 	http.Handle("/categorie1", tollbooth.LimitFuncHandler(lmt, categorie1))
 	http.Handle("/categorie2", tollbooth.LimitFuncHandler(lmt, categorie2))
 	http.Handle("/categorie3", tollbooth.LimitFuncHandler(lmt, categorie3))
@@ -1024,6 +1026,414 @@ func comment(w http.ResponseWriter, r *http.Request) {
 		}); err != nil {
 			log.Println("Error executing template:", err)
 			return
+		}
+	}
+}
+
+/*************************** FUNCTION MODERATION **********************************/
+
+func moderateur(w http.ResponseWriter, r *http.Request) {
+
+	if len(uAccount) < data.LenUser() {
+		uAccount = data.GetAllUsers()
+	}
+
+	fmt.Printf("len(uAccount): %v\n", len(uAccount))
+
+	if len(uAccount) > 0 && user.Connected {
+		profil := data.GetUserProfil()
+		user.Name = profil["name"]
+		user.Email = profil["email"]
+		user.Image = profil["userImage"]
+		user.UUID = profil["uuid"]
+		if profil["admin"] == "true" {
+			user.Admin = true
+		} else {
+			user.Admin = false
+		}
+	}
+	var imageSRC string
+	if r.Method == "POST" {
+
+		message := r.FormValue("message")
+		Posts.Categories = r.FormValue("categories")
+		Posts.Categories2 = r.FormValue("categories2")
+
+		fmt.Printf("Posts.Categories: %v\n", Posts.Categories)
+		if message != "" && user.Connected {
+			postid := script.GeneratePostID()
+			currentTime := time.Now().Format("15:04  2-Janv-2006")
+
+			// user.Name = profil["name"]
+			// user.Image = profil["image"]
+
+			user.Post = preappendPost(structure.Post{
+				PostID:      postid,
+				Name:        user.Name,
+				Message:     message,
+				DateTime:    currentTime,
+				UserImage:   user.Image,
+				CountCom:    data.LenUserComment(postid),
+				Categories:  Posts.Categories,
+				Categories2: Posts.Categories2,
+				Connected:   true,
+			})
+			file, header, err := r.FormFile("myFile")
+
+			imageName := ""
+			maxImageSize := 20 * 1024 * 1024 // 20Mo en octets
+			if err != nil {
+				if err != http.ErrMissingFile {
+					http.Error(w, err.Error(), http.StatusBadRequest)
+					return
+				}
+				//Put the message in the dataBase
+				dataBase.UserPost(user.Name, message, postid, user.Image, currentTime, imageName, Posts.Count, Posts.CountDis, Posts.CountCom, Posts.Categories, Posts.Categories2)
+				homefeed = dataBase.HomeFeedPost()
+
+			} else {
+				imageName = header.Filename
+				fmt.Printf("Uploaded File: %+v\n", header.Filename)
+
+				// read all of the contents of our uploaded file into a
+				// byte array
+				fileBytes, err := ioutil.ReadAll(file)
+
+				if err != nil {
+					fmt.Println(err)
+				}
+
+				imageSRC = "./assets/upload-image/" + imageName
+
+				err = ioutil.WriteFile(imageSRC, fileBytes, 0o666)
+				if err != nil {
+					log.Fatal(err)
+				}
+
+				fileIMAGE, err := os.Open(imageSRC)
+				if err != nil {
+					fmt.Println(err)
+				}
+				fileStat, err := fileIMAGE.Stat()
+				if err != nil {
+					fmt.Println(err)
+				}
+				if fileStat.Size() > int64(maxImageSize) {
+					os.Remove(imageSRC)
+				} else {
+					_, user.Post = dataBase.UserPost(user.Name, message, postid, user.Image, currentTime, imageSRC, Posts.Count, Posts.CountDis, Posts.CountCom, Posts.Categories, Posts.Categories2)
+					homefeed = dataBase.HomeFeedPost()
+					file.Close()
+
+				}
+
+			}
+		}
+		if r.FormValue("like") != "" && user.Connected {
+			currentTime := time.Now().Format("15:04  2-Janv-2006")
+
+			postid := r.FormValue("like")
+			countLike := 0
+			// row := data.Db.QueryRow("SELECT countLikes FROM posts WHERE name = ? AND postid = ?", user.Name, postid)
+			row := data.Db.QueryRow("SELECT COUNT (*) FROM likes WHERE username = ? AND post_id = ?", user.Name, postid)
+			err := row.Scan(&countLike)
+			if err != nil {
+				panic(err)
+			}
+			if countLike == 0 {
+				fmt.Printf("countLike: %v\n", countLike)
+				dataBase.AddingCountLike(postid, user.Name, currentTime)
+			}
+			// for i := range user.Post {
+			// 	fmt.Printf("i: %v\n", i)
+			// 	fmt.Printf("user.Post[i].PostID: %v\n", user.Post[i].PostID)
+			// 	if user.Post[i].PostID == postid && countLike < 1 {
+			// 		user.Post[i].Count++
+			// 		countLike = user.Post[i].Count
+			// 	}
+			// 	fmt.Printf("conteur %v\n", user.Post[i].Count)
+			// }
+			fmt.Printf("postid: %v\n", postid)
+			homefeed = dataBase.HomeFeedPost()
+		}
+
+		if r.FormValue("dislike") != "" && user.Connected {
+			currentTime := time.Now().Format("15:04  2-Janv-2006")
+
+			postid := r.FormValue("dislike")
+			countDislike := 0
+			// row := data.Db.QueryRow("SELECT countLikes FROM posts WHERE name = ? AND postid = ?", user.Name, postid)
+			row := data.Db.QueryRow("SELECT COUNT (*) FROM dislikes WHERE username = ? AND post_id = ?", user.Name, postid)
+			err := row.Scan(&countDislike)
+			if err != nil {
+				panic(err)
+			}
+			if countDislike == 0 {
+				fmt.Printf("countDislike: %v\n", countDislike)
+				data.AddingCountDislike(postid, user.Name, currentTime)
+			}
+			// for i := range user.Post {
+			// 	fmt.Printf("i: %v\n", i)
+			// 	fmt.Printf("user.Post[i].PostID: %v\n", user.Post[i].PostID)
+			// 	if user.Post[i].PostID == postid && countLike < 1 {
+			// 		user.Post[i].Count++
+			// 		countLike = user.Post[i].Count
+			// 	}
+			// 	fmt.Printf("conteur %v\n", user.Post[i].Count)
+			// }
+			fmt.Printf("postid: %v\n", postid)
+			homefeed = dataBase.HomeFeedPost()
+		}
+	}
+
+	temp, err := template.ParseFiles("./assets/Moderateur/moderateur.html")
+	if err != nil {
+		log.Println("Error parsing template:", err)
+		return
+	}
+
+	if user.Connected {
+		_, err = r.Cookie("session")
+		if err != nil {
+			user.Connected = false
+			for _, v := range user.Post {
+				v.Connected = false
+			}
+			userComment.Connected = false
+			data.DeleteSession(user.Name)
+			http.Redirect(w, r, "/", http.StatusFound)
+			return
+		}
+
+		user.Connected = true
+		for _, v := range user.Post {
+			v.Connected = true
+		}
+
+		homefeed = data.HomeFeedPost()
+
+		err = temp.ExecuteTemplate(w, "moderateur", map[string]any{
+			"User":     user,
+			"HomeFeed": homefeed,
+		})
+		if err != nil {
+			log.Fatal(err)
+		}
+
+	} else {
+
+		homefeed = data.HomeFeedPost()
+
+		err = temp.ExecuteTemplate(w, "moderateur", map[string]any{
+			"User":     user,
+			"HomeFeed": homefeed,
+		})
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+}
+
+/*************************** FUNCTION ADMIN **********************************/
+
+func admin(w http.ResponseWriter, r *http.Request) {
+
+	if len(uAccount) < data.LenUser() {
+		uAccount = data.GetAllUsers()
+	}
+
+	fmt.Printf("len(uAccount): %v\n", len(uAccount))
+
+	if len(uAccount) > 0 && user.Connected {
+		profil := data.GetUserProfil()
+		user.Name = profil["name"]
+		user.Email = profil["email"]
+		user.Image = profil["userImage"]
+		user.UUID = profil["uuid"]
+		if profil["admin"] == "true" {
+			user.Admin = true
+		} else {
+			user.Admin = false
+		}
+	}
+	var imageSRC string
+	if r.Method == "POST" {
+
+		message := r.FormValue("message")
+		Posts.Categories = r.FormValue("categories")
+		Posts.Categories2 = r.FormValue("categories2")
+
+		fmt.Printf("Posts.Categories: %v\n", Posts.Categories)
+		if message != "" && user.Connected {
+			postid := script.GeneratePostID()
+			currentTime := time.Now().Format("15:04  2-Janv-2006")
+
+			// user.Name = profil["name"]
+			// user.Image = profil["image"]
+
+			user.Post = preappendPost(structure.Post{
+				PostID:      postid,
+				Name:        user.Name,
+				Message:     message,
+				DateTime:    currentTime,
+				UserImage:   user.Image,
+				CountCom:    data.LenUserComment(postid),
+				Categories:  Posts.Categories,
+				Categories2: Posts.Categories2,
+				Connected:   true,
+			})
+			file, header, err := r.FormFile("myFile")
+
+			imageName := ""
+			maxImageSize := 20 * 1024 * 1024 // 20Mo en octets
+			if err != nil {
+				if err != http.ErrMissingFile {
+					http.Error(w, err.Error(), http.StatusBadRequest)
+					return
+				}
+				//Put the message in the dataBase
+				dataBase.UserPost(user.Name, message, postid, user.Image, currentTime, imageName, Posts.Count, Posts.CountDis, Posts.CountCom, Posts.Categories, Posts.Categories2)
+				homefeed = dataBase.HomeFeedPost()
+
+			} else {
+				imageName = header.Filename
+				fmt.Printf("Uploaded File: %+v\n", header.Filename)
+
+				// read all of the contents of our uploaded file into a
+				// byte array
+				fileBytes, err := ioutil.ReadAll(file)
+
+				if err != nil {
+					fmt.Println(err)
+				}
+
+				imageSRC = "./assets/upload-image/" + imageName
+
+				err = ioutil.WriteFile(imageSRC, fileBytes, 0o666)
+				if err != nil {
+					log.Fatal(err)
+				}
+
+				fileIMAGE, err := os.Open(imageSRC)
+				if err != nil {
+					fmt.Println(err)
+				}
+				fileStat, err := fileIMAGE.Stat()
+				if err != nil {
+					fmt.Println(err)
+				}
+				if fileStat.Size() > int64(maxImageSize) {
+					os.Remove(imageSRC)
+				} else {
+					_, user.Post = dataBase.UserPost(user.Name, message, postid, user.Image, currentTime, imageSRC, Posts.Count, Posts.CountDis, Posts.CountCom, Posts.Categories, Posts.Categories2)
+					homefeed = dataBase.HomeFeedPost()
+					file.Close()
+
+				}
+
+			}
+		}
+		if r.FormValue("like") != "" && user.Connected {
+			currentTime := time.Now().Format("15:04  2-Janv-2006")
+
+			postid := r.FormValue("like")
+			countLike := 0
+			// row := data.Db.QueryRow("SELECT countLikes FROM posts WHERE name = ? AND postid = ?", user.Name, postid)
+			row := data.Db.QueryRow("SELECT COUNT (*) FROM likes WHERE username = ? AND post_id = ?", user.Name, postid)
+			err := row.Scan(&countLike)
+			if err != nil {
+				panic(err)
+			}
+			if countLike == 0 {
+				fmt.Printf("countLike: %v\n", countLike)
+				dataBase.AddingCountLike(postid, user.Name, currentTime)
+			}
+			// for i := range user.Post {
+			// 	fmt.Printf("i: %v\n", i)
+			// 	fmt.Printf("user.Post[i].PostID: %v\n", user.Post[i].PostID)
+			// 	if user.Post[i].PostID == postid && countLike < 1 {
+			// 		user.Post[i].Count++
+			// 		countLike = user.Post[i].Count
+			// 	}
+			// 	fmt.Printf("conteur %v\n", user.Post[i].Count)
+			// }
+			fmt.Printf("postid: %v\n", postid)
+			homefeed = dataBase.HomeFeedPost()
+		}
+
+		if r.FormValue("dislike") != "" && user.Connected {
+			currentTime := time.Now().Format("15:04  2-Janv-2006")
+
+			postid := r.FormValue("dislike")
+			countDislike := 0
+			// row := data.Db.QueryRow("SELECT countLikes FROM posts WHERE name = ? AND postid = ?", user.Name, postid)
+			row := data.Db.QueryRow("SELECT COUNT (*) FROM dislikes WHERE username = ? AND post_id = ?", user.Name, postid)
+			err := row.Scan(&countDislike)
+			if err != nil {
+				panic(err)
+			}
+			if countDislike == 0 {
+				fmt.Printf("countDislike: %v\n", countDislike)
+				data.AddingCountDislike(postid, user.Name, currentTime)
+			}
+			// for i := range user.Post {
+			// 	fmt.Printf("i: %v\n", i)
+			// 	fmt.Printf("user.Post[i].PostID: %v\n", user.Post[i].PostID)
+			// 	if user.Post[i].PostID == postid && countLike < 1 {
+			// 		user.Post[i].Count++
+			// 		countLike = user.Post[i].Count
+			// 	}
+			// 	fmt.Printf("conteur %v\n", user.Post[i].Count)
+			// }
+			fmt.Printf("postid: %v\n", postid)
+			homefeed = dataBase.HomeFeedPost()
+		}
+	}
+
+	temp, err := template.ParseFiles("./assets/Admin/admin.html")
+	if err != nil {
+		log.Println("Error parsing template:", err)
+		return
+	}
+
+	if user.Connected {
+		_, err = r.Cookie("session")
+		if err != nil {
+			user.Connected = false
+			for _, v := range user.Post {
+				v.Connected = false
+			}
+			userComment.Connected = false
+			data.DeleteSession(user.Name)
+			http.Redirect(w, r, "/", http.StatusFound)
+			return
+		}
+
+		user.Connected = true
+		for _, v := range user.Post {
+			v.Connected = true
+		}
+
+		homefeed = data.HomeFeedPost()
+
+		err = temp.ExecuteTemplate(w, "admin", map[string]any{
+			"User":     user,
+			"HomeFeed": homefeed,
+		})
+		if err != nil {
+			log.Fatal(err)
+		}
+
+	} else {
+
+		homefeed = data.HomeFeedPost()
+
+		err = temp.ExecuteTemplate(w, "admin", map[string]any{
+			"User":     user,
+			"HomeFeed": homefeed,
+		})
+		if err != nil {
+			log.Fatal(err)
 		}
 	}
 }

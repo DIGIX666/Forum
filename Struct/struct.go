@@ -27,7 +27,10 @@ type Comment struct {
 }
 
 type AdminFeedPost struct {
-	Name string
+	Name      string
+	UserImage string
+	NotifID   string
+	Date      string
 }
 
 type HomeFeedPost struct {

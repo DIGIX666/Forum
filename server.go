@@ -392,13 +392,12 @@ func home(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	var imageSRC string
-	var notif string
 	if r.Method == "POST" {
 
 		message := r.FormValue("message")
 		Posts.Categories = r.FormValue("categories")
 		Posts.Categories2 = r.FormValue("categories2")
-		notif = r.FormValue("selectnone")
+		// notif = r.FormValue("selectnone")
 		user.Admin = r.FormValue("admin") == "true"
 
 		fmt.Printf("Posts.Categories: %v\n", Posts.Categories)
@@ -550,11 +549,6 @@ func home(w http.ResponseWriter, r *http.Request) {
 			v.Connected = true
 		}
 
-		if notif == "notif_moderateur" {
-
-			data.AddingModoRequest(user.Name)
-
-		}
 		fmt.Printf("user.Admin: %v\n", user.Admin)
 
 		homefeed = data.HomeFeedPost()
@@ -644,6 +638,12 @@ func profil(w http.ResponseWriter, r *http.Request) {
 
 	if len(userHomeFeed) < data.LenUserPost(user.Name) {
 		userHomeFeed = data.ProfilFeed(user.Name)
+	}
+	notif := r.FormValue("notif")
+	if notif == "notif_moderateur" {
+
+		data.AddingModoRequest(user.Name, user.Image, script.GeneratePostID(), time.Now().Format("15:04  2-Janv-2006"))
+
 	}
 
 	if err = temp.ExecuteTemplate(w, "profil", map[string]any{

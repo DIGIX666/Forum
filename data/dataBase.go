@@ -58,10 +58,13 @@ func CreateDataBase() {
 
 	_, err = Db.Exec(`CREATE TABLE IF NOT EXISTS notif_admin
         (id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name NOT NULL
+        name TEXT DEFAULT '',
+        avatar TEXT DEFAULT '',
+        notifid TEXT DEFAULT '',
+        date TEXT DEFAULT ''
         )`)
 	if err != nil {
-		log.Println("erreur creation de table users")
+		log.Println("erreur creation de table notif_admin")
 		log.Fatal(err)
 	}
 
@@ -70,10 +73,10 @@ func CreateDataBase() {
         name TEXT DEFAULT '',
         commentid TEXT DEFAULT '',
         content TEXT DEFAULT '',
-		date TEXT DEFAULT '',
-		post_id TEXT DEFAULT '',
-		commentLike INTEGER DEFAULT 0,
-		commentDislike INTEGER DEFAULT 0
+        date TEXT DEFAULT '',
+        post_id TEXT DEFAULT '',
+        commentLike INTEGER DEFAULT 0,
+        commentDislike INTEGER DEFAULT 0
     )`)
 	if err != nil {
 		log.Println("erreur creation de table comments")
@@ -1062,9 +1065,9 @@ func AdminFeedPost() []structure.AdminFeedPost {
 
 }
 
-func AddingModoRequest(userName string) {
+func AddingModoRequest(userName string, avatar string, notifid string, date string) {
 
-	_, err := Db.Exec("INSERT INTO notif_moderateur (name) VALUES (?)", userName)
+	_, err := Db.Exec("INSERT INTO notif_admin (name, image, notifid,date) VALUES (?,?,?,?)", userName, avatar, notifid, date)
 	if err != nil {
 		fmt.Println("Error function AddingModoRequest Insert name to the dataBase:")
 		fmt.Printf("err: %v\n", err)

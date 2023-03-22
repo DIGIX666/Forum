@@ -38,6 +38,7 @@ type HomeFeedPost struct {
 	NumberOfDislikes int
 	Categories       string
 	Categories2      string
+	Admin            bool
 }
 
 type UserFeedPost struct {
@@ -52,6 +53,7 @@ type UserFeedPost struct {
 	NumberOfDislikes int
 	Categories       string
 	Categories2      string
+	Admin            bool
 }
 
 type Categorie1FeedPost struct {
@@ -110,6 +112,7 @@ type Post struct {
 	Categories  string
 	Categories2 string
 	Connected   bool
+	Admin       bool
 }
 
 type Likes struct {

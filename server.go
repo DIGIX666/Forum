@@ -397,6 +397,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 		message := r.FormValue("message")
 		Posts.Categories = r.FormValue("categories")
 		Posts.Categories2 = r.FormValue("categories2")
+		user.Admin = r.FormValue("admin") == "true"
 
 		fmt.Printf("Posts.Categories: %v\n", Posts.Categories)
 		if message != "" && user.Connected {
@@ -415,6 +416,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 				CountCom:    data.LenUserComment(postid),
 				Categories:  Posts.Categories,
 				Categories2: Posts.Categories2,
+				Admin:       user.Admin,
 				Connected:   true,
 			})
 			file, header, err := r.FormFile("myFile")
@@ -427,7 +429,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 					return
 				}
 				//Put the message in the dataBase
-				dataBase.UserPost(user.Name, message, postid, user.Image, currentTime, imageName, Posts.Count, Posts.CountDis, Posts.CountCom, Posts.Categories, Posts.Categories2)
+				dataBase.UserPost(user.Name, message, postid, user.Image, currentTime, imageName, Posts.Count, Posts.CountDis, Posts.CountCom, Posts.Categories, Posts.Categories2, user.Admin)
 				homefeed = dataBase.HomeFeedPost()
 
 			} else {
@@ -460,7 +462,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 				if fileStat.Size() > int64(maxImageSize) {
 					os.Remove(imageSRC)
 				} else {
-					_, user.Post = dataBase.UserPost(user.Name, message, postid, user.Image, currentTime, imageSRC, Posts.Count, Posts.CountDis, Posts.CountCom, Posts.Categories, Posts.Categories2)
+					_, user.Post = dataBase.UserPost(user.Name, message, postid, user.Image, currentTime, imageSRC, Posts.Count, Posts.CountDis, Posts.CountCom, Posts.Categories, Posts.Categories2, user.Admin)
 					homefeed = dataBase.HomeFeedPost()
 					file.Close()
 
@@ -548,6 +550,8 @@ func home(w http.ResponseWriter, r *http.Request) {
 		for _, v := range user.Post {
 			v.Connected = true
 		}
+
+		fmt.Printf("user.Admin: %v\n", user.Admin)
 
 		homefeed = data.HomeFeedPost()
 
@@ -1089,7 +1093,7 @@ func moderateur(w http.ResponseWriter, r *http.Request) {
 					return
 				}
 				//Put the message in the dataBase
-				dataBase.UserPost(user.Name, message, postid, user.Image, currentTime, imageName, Posts.Count, Posts.CountDis, Posts.CountCom, Posts.Categories, Posts.Categories2)
+				dataBase.UserPost(user.Name, message, postid, user.Image, currentTime, imageName, Posts.Count, Posts.CountDis, Posts.CountCom, Posts.Categories, Posts.Categories2, user.Admin)
 				homefeed = dataBase.HomeFeedPost()
 
 			} else {
@@ -1122,7 +1126,7 @@ func moderateur(w http.ResponseWriter, r *http.Request) {
 				if fileStat.Size() > int64(maxImageSize) {
 					os.Remove(imageSRC)
 				} else {
-					_, user.Post = dataBase.UserPost(user.Name, message, postid, user.Image, currentTime, imageSRC, Posts.Count, Posts.CountDis, Posts.CountCom, Posts.Categories, Posts.Categories2)
+					_, user.Post = dataBase.UserPost(user.Name, message, postid, user.Image, currentTime, imageSRC, Posts.Count, Posts.CountDis, Posts.CountCom, Posts.Categories, Posts.Categories2, user.Admin)
 					homefeed = dataBase.HomeFeedPost()
 					file.Close()
 
@@ -1293,7 +1297,7 @@ func admin(w http.ResponseWriter, r *http.Request) {
 					return
 				}
 				//Put the message in the dataBase
-				dataBase.UserPost(user.Name, message, postid, user.Image, currentTime, imageName, Posts.Count, Posts.CountDis, Posts.CountCom, Posts.Categories, Posts.Categories2)
+				dataBase.UserPost(user.Name, message, postid, user.Image, currentTime, imageName, Posts.Count, Posts.CountDis, Posts.CountCom, Posts.Categories, Posts.Categories2, user.Admin)
 				homefeed = dataBase.HomeFeedPost()
 
 			} else {
@@ -1326,7 +1330,7 @@ func admin(w http.ResponseWriter, r *http.Request) {
 				if fileStat.Size() > int64(maxImageSize) {
 					os.Remove(imageSRC)
 				} else {
-					_, user.Post = dataBase.UserPost(user.Name, message, postid, user.Image, currentTime, imageSRC, Posts.Count, Posts.CountDis, Posts.CountCom, Posts.Categories, Posts.Categories2)
+					_, user.Post = dataBase.UserPost(user.Name, message, postid, user.Image, currentTime, imageSRC, Posts.Count, Posts.CountDis, Posts.CountCom, Posts.Categories, Posts.Categories2, user.Admin)
 					homefeed = dataBase.HomeFeedPost()
 					file.Close()
 

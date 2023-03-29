@@ -49,6 +49,7 @@ func CreateDataBase() {
         email NOT NULL,
         uuid NOT NULL,
         password NOT NULL,
+		moderator BOOLEAN,
         admin BOOLEAN
         )`)
 	if err != nil {
@@ -537,13 +538,13 @@ func HomeFeedPost() []structure.HomeFeedPost {
 		log.Fatal(err)
 	}
 	var Posts []structure.HomeFeedPost
-	var admin bool
+	var admin, moderateur bool
 	var id, NumberOfComment, NumberOfLikes, NumberOfDislikes int
 	var postID, userName, message, image, dateTime, picture, categories, categories2 string
 
 	for rows.Next() {
 
-		err := rows.Scan(&id, &postID, &image, &userName, &message, &dateTime, &picture, &NumberOfComment, &NumberOfLikes, &NumberOfDislikes, &categories, &categories2, &admin)
+		err := rows.Scan(&id, &postID, &image, &userName, &message, &dateTime, &picture, &NumberOfComment, &NumberOfLikes, &NumberOfDislikes, &categories, &categories2, &moderateur, &admin)
 		if err != nil {
 			fmt.Println("Error HomeFeedPost Function in rows.Scan:")
 			log.Fatal(err)
@@ -561,6 +562,7 @@ func HomeFeedPost() []structure.HomeFeedPost {
 			NumberOfDislikes: NumberOfDislikes,
 			Categories:       categories,
 			Categories2:      categories2,
+			Moderateur:       moderateur,
 			Admin:            admin,
 		})
 	}
@@ -1046,20 +1048,23 @@ func AdminFeedPost() []structure.AdminFeedPost {
 	}
 	var Posts []structure.AdminFeedPost
 	var id int
-	var userName string
+	var userName, userImage, notifID, date string
 
 	for rows.Next() {
 
-		err := rows.Scan(&id, &userName)
+		err := rows.Scan(&id, &userName, &userImage, &notifID, &date)
 		if err != nil {
 			fmt.Println("Error AdminFeedPost Function in rows.Scan:")
 			log.Fatal(err)
 		}
 
-		Posts = prependAdminFeedPost(Posts, structure.AdminFeedPost{
-			Name: userName,
-		})
 	}
+	Posts = prependAdminFeedPost(Posts, structure.AdminFeedPost{
+		Name:      userName,
+		UserImage: userImage,
+		NotifID:   notifID,
+		Date:      date,
+	})
 
 	return Posts
 
@@ -1067,7 +1072,7 @@ func AdminFeedPost() []structure.AdminFeedPost {
 
 func AddingModoRequest(userName string, avatar string, notifid string, date string) {
 
-	_, err := Db.Exec("INSERT INTO notif_admin (name, image, notifid,date) VALUES (?,?,?,?)", userName, avatar, notifid, date)
+	_, err := Db.Exec("INSERT INTO notif_admin (name, avatar, notifid,date) VALUES (?,?,?,?)", userName, avatar, notifid, date)
 	if err != nil {
 		fmt.Println("Error function AddingModoRequest Insert name to the dataBase:")
 		fmt.Printf("err: %v\n", err)

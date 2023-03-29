@@ -49,8 +49,8 @@ func CreateDataBase() {
         email NOT NULL,
         uuid NOT NULL,
         password NOT NULL,
-		moderator BOOLEAN,
-        admin BOOLEAN
+		moderateur BOOLEAN DEFAULT FALSE,
+        admin BOOLEAN DEFAULT FALSE
         )`)
 	if err != nil {
 		log.Println("erreur creation de table users")
@@ -97,7 +97,8 @@ func CreateDataBase() {
 		countDislikes INTEGER DEFAULT 0,
 		categories TEXT NOT NULL,
 		categories2 TEXT NOT NULL,
-		admin BOOLEAN
+		moderateur BOOLEAN DEFAULT FALSE,
+		admin BOOLEAN DEFAULT FALSE
 
     )`)
 
@@ -241,9 +242,17 @@ func DataBaseRegister(email string, password string) bool {
 }
 
 func AddingAdminUser() {
-	_, err := Db.Exec("INSERT INTO users (name, image, email, uuid, password, admin) VALUES (?, ?, ?,?,?,?)", "admin", "../assets/images/beehive-37436.svg", "admin", "admin", script.GenerateHash("adminadmin"), true)
+	count := 0
+	err := Db.QueryRow("SELECT COUNT(*) FROM users WHERE admin = ?", 1).Scan(&count)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println("error reading users database function AddingAdminUser")
+	}
+
+	if count == 0 {
+		_, err = Db.Exec("INSERT INTO users (name, image, email, uuid, password, admin) VALUES (?, ?, ?,?,?,?)", "admin", "../assets/images/beehive-37436.svg", "admin", "admin", script.GenerateHash("adminadmin"), true)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 
 }
@@ -711,11 +720,11 @@ func ProfilFeed(userName string) []structure.UserFeedPost {
 	for rows.Next() {
 
 		var id int
-		var admin bool
+		var admin, moderateur bool
 		var postID, name, message, dateTime, image, picture, categories, categories2 string
 		var NumberOfComment, NumberOfLikes, NumberOfDislikes int
 
-		err := rows.Scan(&id, &postID, &image, &name, &message, &dateTime, &picture, &NumberOfComment, &NumberOfLikes, &NumberOfDislikes, &categories, &categories2, &admin)
+		err := rows.Scan(&id, &postID, &image, &name, &message, &dateTime, &picture, &NumberOfComment, &NumberOfLikes, &NumberOfDislikes, &categories, &categories2, &moderateur, &admin)
 		if err != nil {
 			fmt.Println("Error ProfilFeed Function in rows.Scan:")
 			log.Fatal(err)
@@ -735,6 +744,7 @@ func ProfilFeed(userName string) []structure.UserFeedPost {
 			NumberOfDislikes: NumberOfDislikes,
 			Categories:       categories,
 			Categories2:      categories2,
+			Moderateur:       moderateur,
 			Admin:            admin,
 		})
 
@@ -1058,23 +1068,81 @@ func AdminFeedPost() []structure.AdminFeedPost {
 			log.Fatal(err)
 		}
 
+		Posts = prependAdminFeedPost(Posts, structure.AdminFeedPost{
+			Name:      userName,
+			UserImage: userImage,
+			NotifID:   notifID,
+			Date:      date,
+		})
 	}
-	Posts = prependAdminFeedPost(Posts, structure.AdminFeedPost{
-		Name:      userName,
-		UserImage: userImage,
-		NotifID:   notifID,
-		Date:      date,
-	})
 
 	return Posts
 
 }
 
 func AddingModoRequest(userName string, avatar string, notifid string, date string) {
-
-	_, err := Db.Exec("INSERT INTO notif_admin (name, avatar, notifid,date) VALUES (?,?,?,?)", userName, avatar, notifid, date)
+	count := 0
+	row := Db.QueryRow("SELECT COUNT (*) FROM notif_admin WHERE name = ?", userName)
+	err := row.Scan(&count)
 	if err != nil {
-		fmt.Println("Error function AddingModoRequest Insert name to the dataBase:")
+		fmt.Println("Error Select Count in AddingModoRequest in Database:")
+		fmt.Println(err)
+
+	}
+	if count == 0 {
+		_, err = Db.Exec("INSERT INTO notif_admin (name, avatar, notifid,date) VALUES (?,?,?,?)", userName, avatar, notifid, date)
+		if err != nil {
+			fmt.Println("Error function AddingModoRequest Insert name to the dataBase:")
+			fmt.Printf("err: %v\n", err)
+		}
+	}
+
+}
+
+func DeleteAdminRequest(name string, notifID string) {
+
+	_, err := Db.Exec("DELETE FROM notif_admin WHERE name = ? AND notifid=?", name, notifID)
+	if err != nil {
+		fmt.Println("Erreur lors de la suppression de la session dans la base de données, func DeleteSession:")
+		log.Fatal(err)
+	}
+}
+
+func SelectUserForModo(notifID string) map[string]string {
+
+	ans := make(map[string]string)
+
+	var userName, userImage, date string
+
+	rows, err := Db.Query("SELECT name,avatar,date FROM notif_admin WHERE notifid = ?", notifID)
+	if err != nil {
+		fmt.Println("Error SELECT in SelectUserForModo")
+		log.Fatal(err)
+	}
+
+	for rows.Next() {
+
+		err := rows.Scan(&userName, &userImage, &date)
+		if err != nil {
+			fmt.Println("Error in the rows.Scan in the SelectUserForModo function")
+			log.Fatal(err)
+		}
+	}
+
+	ans["name"] = userName
+	ans["avatar"] = userImage
+	ans["notifID"] = notifID
+	ans["date"] = date
+
+	return ans
+
+}
+
+func AddingUser2Modo(userName string) {
+
+	_, err := Db.Exec("UPDATE users SET moderateur = ? WHERE name = ?", 1, userName)
+	if err != nil {
+		fmt.Println("Error function AddingCountLike Insert countLikes Posts to the dataBase:")
 		fmt.Printf("err: %v\n", err)
 	}
 

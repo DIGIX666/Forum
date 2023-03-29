@@ -180,8 +180,8 @@
 
               <div class="album-actions">
 
-                <form method="post" class="album-action" action="/">
-                  <button name="like" value="{{.NotifID}}" class="like">
+                <form method="post" class="album-action" action="/admin">
+                  <button name="accepted" value="{{.NotifID}}" class="like">
                     <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"
                       stroke-linejoin="round" viewBox="0 0 24 24">
                       <path
@@ -191,8 +191,8 @@
                   </button>
                 </form>
 
-                <form method="post" class="album-action" action="/">
-                  <button name="dislike" value="{{.NotifID}}" class="dislike">
+                <form method="post" class="album-action" action="/admin">
+                  <button name="refused" value="{{.NotifID}}" class="dislike">
                     <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"
                       stroke-linejoin="round" class="css-i6dzq1" viewBox="0 0 24 24">
                       <path

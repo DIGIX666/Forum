@@ -61,6 +61,7 @@ type UserFeedPost struct {
 	NumberOfDislikes int
 	Categories       string
 	Categories2      string
+	Moderateur       bool
 	Admin            bool
 }
 

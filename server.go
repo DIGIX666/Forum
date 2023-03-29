@@ -28,6 +28,7 @@ var Posts structure.Post
 var uAccount []structure.UserAccount
 var homefeed []structure.HomeFeedPost
 var comments []structure.Comment
+var adminfeed []structure.AdminFeedPost
 var countEnter int
 
 func erreur(w http.ResponseWriter, r *http.Request) {
@@ -1247,9 +1248,15 @@ func moderateur(w http.ResponseWriter, r *http.Request) {
 
 func admin(w http.ResponseWriter, r *http.Request) {
 
+	var ModerateurRequestParam map[string]string
+
 	if len(uAccount) < data.LenUser() {
 		uAccount = data.GetAllUsers()
 	}
+
+	// if len(adminfeed) < len(data.AdminFeedPost()) {
+	// 	adminfeed = data.AdminFeedPost()
+	// }
 
 	fmt.Printf("len(uAccount): %v\n", len(uAccount))
 
@@ -1342,60 +1349,31 @@ func admin(w http.ResponseWriter, r *http.Request) {
 
 			}
 		}
-		if r.FormValue("like") != "" && user.Connected {
-			currentTime := time.Now().Format("15:04  2-Janv-2006")
 
-			postid := r.FormValue("like")
-			countLike := 0
-			// row := data.Db.QueryRow("SELECT countLikes FROM posts WHERE name = ? AND postid = ?", user.Name, postid)
-			row := data.Db.QueryRow("SELECT COUNT (*) FROM likes WHERE username = ? AND post_id = ?", user.Name, postid)
-			err := row.Scan(&countLike)
-			if err != nil {
-				panic(err)
-			}
-			if countLike == 0 {
-				fmt.Printf("countLike: %v\n", countLike)
-				dataBase.AddingCountLike(postid, user.Name, currentTime)
-			}
-			// for i := range user.Post {
-			// 	fmt.Printf("i: %v\n", i)
-			// 	fmt.Printf("user.Post[i].PostID: %v\n", user.Post[i].PostID)
-			// 	if user.Post[i].PostID == postid && countLike < 1 {
-			// 		user.Post[i].Count++
-			// 		countLike = user.Post[i].Count
-			// 	}
-			// 	fmt.Printf("conteur %v\n", user.Post[i].Count)
-			// }
-			fmt.Printf("postid: %v\n", postid)
-			homefeed = dataBase.HomeFeedPost()
+		if r.FormValue("accepted") != "" && user.Connected {
+
+			ModerateurRequestParam = data.SelectUserForModo(r.FormValue("accepted"))
+			modoName := ModerateurRequestParam["name"]
+			data.AddingUser2Modo(modoName)
+			data.DeleteAdminRequest(modoName, r.FormValue("accepted"))
+
 		}
 
-		if r.FormValue("dislike") != "" && user.Connected {
-			currentTime := time.Now().Format("15:04  2-Janv-2006")
+		if r.FormValue("refused") != "" && user.Connected {
 
-			postid := r.FormValue("dislike")
-			countDislike := 0
-			// row := data.Db.QueryRow("SELECT countLikes FROM posts WHERE name = ? AND postid = ?", user.Name, postid)
-			row := data.Db.QueryRow("SELECT COUNT (*) FROM dislikes WHERE username = ? AND post_id = ?", user.Name, postid)
-			err := row.Scan(&countDislike)
-			if err != nil {
-				panic(err)
+			modoRequestName := ""
+			modoRequestID := ""
+
+			for _, v := range data.AdminFeedPost() {
+				modoRequestID = v.NotifID
+				modoRequestName = v.Name
 			}
-			if countDislike == 0 {
-				fmt.Printf("countDislike: %v\n", countDislike)
-				data.AddingCountDislike(postid, user.Name, currentTime)
-			}
-			// for i := range user.Post {
-			// 	fmt.Printf("i: %v\n", i)
-			// 	fmt.Printf("user.Post[i].PostID: %v\n", user.Post[i].PostID)
-			// 	if user.Post[i].PostID == postid && countLike < 1 {
-			// 		user.Post[i].Count++
-			// 		countLike = user.Post[i].Count
-			// 	}
-			// 	fmt.Printf("conteur %v\n", user.Post[i].Count)
-			// }
-			fmt.Printf("postid: %v\n", postid)
-			homefeed = dataBase.HomeFeedPost()
+
+			fmt.Printf("modoRequestID: %v\n", modoRequestID)
+			fmt.Printf("modoRequestName: %v\n", modoRequestName)
+
+			data.DeleteAdminRequest(modoRequestName, modoRequestID)
+
 		}
 	}
 
@@ -1424,11 +1402,12 @@ func admin(w http.ResponseWriter, r *http.Request) {
 		}
 
 		homefeed = data.HomeFeedPost()
+		adminfeed = data.AdminFeedPost()
 
 		err = temp.ExecuteTemplate(w, "admin", map[string]any{
 			"User":      user,
 			"HomeFeed":  homefeed,
-			"AdminFeed": data.AdminFeedPost(),
+			"AdminFeed": adminfeed,
 		})
 		if err != nil {
 			log.Fatal(err)

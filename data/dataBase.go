@@ -6,6 +6,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"strconv"
 
 	"github.com/gofrs/uuid"
 	_ "github.com/mattn/go-sqlite3"
@@ -1146,4 +1147,61 @@ func AddingUser2Modo(userName string) {
 		fmt.Printf("err: %v\n", err)
 	}
 
+}
+
+func LenUserModerateur() int {
+
+	var NumberModerateur int
+	err := Db.QueryRow("SELECT COUNT (*) FROM users WHERE moderateur = ?", 1).Scan(&NumberModerateur)
+	if err != nil {
+		fmt.Println("Error SELECT From LenUserPost dataBase:")
+		log.Fatal(err)
+	}
+
+	return NumberModerateur
+}
+
+func GetAllModerateur() map[string]string {
+
+	res := make(map[string]string)
+
+	rows, err := Db.Query("SELECT name FROM users WHERE moderateur = ?", 1)
+	if err != nil {
+		fmt.Println("Error SELECT From LenUserPost dataBase:")
+		log.Fatal(err)
+	}
+
+	var name string
+	i := 0
+
+	for rows.Next() {
+		err := rows.Scan(&name)
+		if err != nil {
+			fmt.Println("Error rows.Scan() function GetAllModerateur")
+			log.Fatal(err)
+		}
+
+		i++
+
+		res["moderateur"+strconv.Itoa(i)] = name
+	}
+
+	return res
+
+}
+
+func DeleteModerateur(name string) {
+
+	_, err := Db.Exec("DELETE FROM users WHERE name = ?", name)
+	if err != nil {
+		fmt.Println("Erreur lors de la suppression de la session dans la base de données, func DeleteSession:")
+		log.Fatal(err)
+	}
+
+	_, err = Db.Exec("UPDATE users SET moderateur = ? WHERE name = ?", 0, name)
+	if err != nil {
+		fmt.Println("Error function DeleteModerateur Update moderateur:")
+		fmt.Printf("err: %v\n", err)
+
+	}
 }

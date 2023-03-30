@@ -65,7 +65,7 @@
       <div class="side-wrapper">
         <div class="side-title">MODERATEUR</div>
         <div class="side-menu">
-          <a href="/categorie1">Nom Prodil 1 </a>
+          <a href="/categorie1">{{.Moderateur1}}</a>
           <form method="post" class="album-action" action="#">
             <button name="delete" value="{{.PostID}}" class="delete-profil">
               <svg class="delete_svg" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"
@@ -76,7 +76,7 @@
               </svg>
             </button>
           </form>
-          <a href="/categorie2">Nom Prodil 2 </a>
+          <a href="/categorie2">{{.Moderateur2}}</a>
           <form method="post" class="album-action" action="#">
             <button name="delete" value="{{.PostID}}" class="delete-profil">
               <svg class="delete_svg" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"
@@ -87,7 +87,7 @@
               </svg>
             </button>
           </form>
-          <a href="/categorie3">Nom Prodil 3 </a>
+          <a href="/categorie3">{{.Moderateur3}} </a>
           <form method="post" class="album-action" action="#">
             <button name="delete" value="{{.PostID}}" class="delete-profil">
               <svg class="delete_svg" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"

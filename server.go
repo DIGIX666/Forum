@@ -1346,7 +1346,6 @@ func admin(w http.ResponseWriter, r *http.Request) {
 					file.Close()
 
 				}
-
 			}
 		}
 
@@ -1405,9 +1404,12 @@ func admin(w http.ResponseWriter, r *http.Request) {
 		adminfeed = data.AdminFeedPost()
 
 		err = temp.ExecuteTemplate(w, "admin", map[string]any{
-			"User":      user,
-			"HomeFeed":  homefeed,
-			"AdminFeed": adminfeed,
+			"User":        user,
+			"HomeFeed":    homefeed,
+			"AdminFeed":   adminfeed,
+			"Moderateur1": data.GetAllModerateur()["moderateur1"],
+			"Moderateur2": data.GetAllModerateur()["moderateur2"],
+			"Moderateur3": data.GetAllModerateur()["moderateur3"],
 		})
 		if err != nil {
 			log.Fatal(err)

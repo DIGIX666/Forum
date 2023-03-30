@@ -1374,6 +1374,10 @@ func admin(w http.ResponseWriter, r *http.Request) {
 			data.DeleteAdminRequest(modoRequestName, modoRequestID)
 
 		}
+
+		if r.FormValue("delete") != "" && user.Connected {
+			data.DeleteModerateur(r.FormValue("delete"))
+		}
 	}
 
 	temp, err := template.ParseFiles("./assets/Admin/admin.html")

@@ -1134,7 +1134,7 @@ func AddingUser2Modo(userName string) {
 
 	_, err := Db.Exec("UPDATE users SET moderateur = ? WHERE name = ?", 1, userName)
 	if err != nil {
-		fmt.Println("Error function AddingCountLike Insert countLikes Posts to the dataBase:")
+		fmt.Println("Error function AddingUser2Modo Insert modo USERS to the dataBase:")
 		fmt.Printf("err: %v\n", err)
 	}
 

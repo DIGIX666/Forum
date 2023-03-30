@@ -468,19 +468,39 @@ func GetUserProfil() map[string]string {
 		fmt.Println(err)
 	}
 
-	var userImage, userEmail, admin string
+	var userImage, userEmail string
 
-	err = Db.QueryRow("SELECT image,email,admin  FROM users WHERE name = ?", name).Scan(&userImage, &userEmail, &admin)
+	var admin, moderateur bool
+
+	fmt.Printf("NAME USER: %v\n", name)
+
+	err = Db.QueryRow("SELECT image,email,moderateur,admin  FROM users WHERE name = ?", name).Scan(&userImage, &userEmail, &moderateur, &admin)
 	if err != nil {
 		fmt.Println("Erreur SELECT #2 fonction GetUserProfil dataBase:")
 		fmt.Println(err)
 	}
 
+	fmt.Printf("MODERATEUR: %v\n", moderateur)
+	fmt.Printf("ADMIN: %v\n", admin)
+
 	ans["name"] = name
 	ans["email"] = userEmail
 	ans["userImage"] = userImage
 	ans["uuid"] = uuid
-	ans["admin"] = admin
+
+	// boolAdmin, _ := strconv.Atoi(admin)
+	// boolModo, _ := strconv.Atoi(moderateur)
+
+	if admin {
+		ans["admin"] = "true"
+	} else {
+		ans["admin"] = "false"
+	}
+	if moderateur {
+		ans["moderateur"] = "true"
+	} else {
+		ans["moderateur"] = "false"
+	}
 
 	return ans
 }
@@ -572,7 +592,6 @@ func HomeFeedPost() []structure.HomeFeedPost {
 			NumberOfDislikes: NumberOfDislikes,
 			Categories:       categories,
 			Categories2:      categories2,
-			Moderateur:       moderateur,
 			Admin:            admin,
 		})
 	}

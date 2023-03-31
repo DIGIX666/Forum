@@ -787,6 +787,18 @@ func LenUserPost(nameUser string) int {
 	return NumberPost
 }
 
+func LenLikeUserPost(nameUser string) int {
+
+	var NumberPost int
+	err := Db.QueryRow("SELECT COUNT (*) FROM likes WHERE username = ?", nameUser).Scan(&NumberPost)
+	if err != nil {
+		fmt.Println("Error SELECT From LenUserPost dataBase:")
+		log.Fatal(err)
+	}
+	fmt.Printf("NumberPost12: %v\n", NumberPost)
+	return NumberPost
+}
+
 func LenCategories1UserPost() int {
 
 	var NumberPost int
@@ -809,6 +821,54 @@ func LenUser() int {
 	}
 
 	return NumberUser
+}
+
+/*************************** PROFIL LIKE FEED **********************************/
+func ProfilLikeFeed(userName string) []structure.HomeFeedPost {
+	var postid string
+	err := Db.QueryRow("SELECT post_id FROM likes WHERE username = ?", userName).Scan(&postid)
+	if err != nil {
+		panic(err)
+	}
+
+	rows2, err := Db.Query("SELECT * FROM posts WHERE postid = ?", postid)
+	if err != nil {
+		fmt.Println("Error in ProfilLikeFeed Function Query didn't work in dataBase:")
+		log.Fatal(err)
+	}
+
+	var Posts []structure.HomeFeedPost
+
+	for rows2.Next() {
+		var id int
+		var postID, name, message, image, picture, dateTime, categories, categories2 string
+		var NumberOfComment, NumberOfLikes, NumberOfDislikes int
+
+		err := rows2.Scan(&id, &postID, &image, &name, &message, &dateTime, &picture, &NumberOfComment, &NumberOfLikes, &NumberOfDislikes, &categories, &categories2)
+		if err != nil {
+			fmt.Println("Error ProfilLikeFeed Function in rows2.Scan:")
+			log.Fatal(err)
+		}
+
+		fmt.Printf("NumberOfComment: %v\n", NumberOfComment)
+
+		Posts = prependHomeFeedPost(Posts, structure.HomeFeedPost{
+			PostID:           postID,
+			Name:             name,
+			UserImage:        image,
+			Message:          message,
+			DateTime:         dateTime,
+			Picture:          picture,
+			NumberOfComment:  LenUserComment(postID),
+			NumberOfLikes:    NumberOfLikes,
+			NumberOfDislikes: NumberOfDislikes,
+			Categories:       categories,
+			Categories2:      categories2,
+		})
+
+	}
+
+	return Posts
 }
 
 /*************************** ADDING COUNT POST **********************************/

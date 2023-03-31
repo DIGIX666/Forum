@@ -583,6 +583,7 @@ func profil(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var userHomeFeed []structure.UserFeedPost
+	var userLikeFeed []structure.HomeFeedPost
 
 	if err := r.ParseForm(); err != nil {
 		fmt.Fprintf(w, "ParseForm() err: %v", err)
@@ -632,6 +633,13 @@ func profil(w http.ResponseWriter, r *http.Request) {
 	if len(userHomeFeed) < data.LenUserPost(user.Name) {
 		userHomeFeed = data.ProfilFeed(user.Name)
 	}
+
+	if len(userLikeFeed) < data.LenLikeUserPost(user.Name) {
+		userLikeFeed = data.ProfilLikeFeed(user.Name)
+	}
+
+	fmt.Printf("len(userLikeFeed)20: %v\n", len(userLikeFeed))
+
 	notif := r.FormValue("notif")
 	if notif == "notif_moderateur" {
 
@@ -642,6 +650,7 @@ func profil(w http.ResponseWriter, r *http.Request) {
 	if err = temp.ExecuteTemplate(w, "profil", map[string]any{
 		"user":     user,
 		"UserPost": userHomeFeed,
+		"UserLike": userLikeFeed,
 	}); err != nil {
 		log.Println("Error executing template:", err)
 		return

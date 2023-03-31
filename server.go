@@ -378,7 +378,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 		uAccount = data.GetAllUsers()
 	}
 
-	fmt.Printf("len(uAccount): %v\n", len(uAccount))
+	// fmt.Printf("len(uAccount): %v\n", len(uAccount))
 
 	if len(uAccount) > 0 && user.Connected {
 
@@ -472,7 +472,6 @@ func home(w http.ResponseWriter, r *http.Request) {
 					file.Close()
 
 				}
-
 			}
 		}
 		if r.FormValue("like") != "" && user.Connected {

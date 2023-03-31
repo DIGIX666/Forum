@@ -53,7 +53,7 @@
         </div>
       </div>
       
-    {{if .User.Connected}}
+    
       <form method="post" action="/profil">
         <button value="notif_moderateur" name="notif" class="selectnone"
           onclick="setTimeout(function() { alert('Votre demande a été envoyé')}, 2500);">
@@ -64,7 +64,7 @@
           </svg>
         </button>
       </form>
-      {{end}}
+      
       <div class="side-wrapper">
         <div class="side-title">SUBJECTS</div>
         <div class="side-menu">

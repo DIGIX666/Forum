@@ -97,10 +97,7 @@ func CreateDataBase() {
 		countLikes INTEGER DEFAULT 0,
 		countDislikes INTEGER DEFAULT 0,
 		categories TEXT NOT NULL,
-		categories2 TEXT NOT NULL,
-		moderateur BOOLEAN DEFAULT FALSE,
-		admin BOOLEAN DEFAULT FALSE
-
+		categories2 TEXT NOT NULL
     )`)
 
 	if err != nil {
@@ -371,14 +368,14 @@ func CheckUserLogin(email string, password string, uuid string) bool {
 }
 
 /************************* USER POST **********************************/
-func UserPost(userName string, message string, postID string, image string, dateTime string, pictureURL string, countComment int, countLikes int, countDislikes int, categories string, categories2 string, admin bool) (bool, []structure.Post) {
+func UserPost(userName string, message string, postID string, image string, dateTime string, pictureURL string, countComment int, countLikes int, countDislikes int, categories string, categories2 string) (bool, []structure.Post) {
 
 	// NumberOfComment := 0
 
 	fmt.Printf("image: %v", pictureURL)
 	fmt.Println("")
 
-	_, err := Db.Exec("INSERT INTO posts (name, message, postid,image, datetime,picture,countComment, countLikes, countDislikes, categories, categories2, admin) VALUES (?, ?, ?,?,?,?,?,?,?,?,?, ?)", userName, message, postID, image, dateTime, pictureURL, countComment, countLikes, countDislikes, categories, categories2, admin)
+	_, err := Db.Exec("INSERT INTO posts (name, message, postid,image, datetime,picture,countComment, countLikes, countDislikes, categories, categories2) VALUES (?, ?, ?,?,?,?,?,?,?,?,?)", userName, message, postID, image, dateTime, pictureURL, countComment, countLikes, countDislikes, categories, categories2)
 	if err != nil {
 		fmt.Println("Error Insert user Post to the dataBase:")
 		log.Fatal(err)
@@ -397,7 +394,7 @@ func UserPost(userName string, message string, postID string, image string, date
 			CountDis:    countDislikes,
 			Categories:  categories,
 			Categories2: categories2,
-			Admin:       admin,
+			// Admin:       admin,
 		})
 
 		return true, user.Post
@@ -568,13 +565,12 @@ func HomeFeedPost() []structure.HomeFeedPost {
 		log.Fatal(err)
 	}
 	var Posts []structure.HomeFeedPost
-	var admin, moderateur bool
 	var id, NumberOfComment, NumberOfLikes, NumberOfDislikes int
 	var postID, userName, message, image, dateTime, picture, categories, categories2 string
 
 	for rows.Next() {
 
-		err := rows.Scan(&id, &postID, &image, &userName, &message, &dateTime, &picture, &NumberOfComment, &NumberOfLikes, &NumberOfDislikes, &categories, &categories2, &moderateur, &admin)
+		err := rows.Scan(&id, &postID, &image, &userName, &message, &dateTime, &picture, &NumberOfComment, &NumberOfLikes, &NumberOfDislikes, &categories, &categories2)
 		if err != nil {
 			fmt.Println("Error HomeFeedPost Function in rows.Scan:")
 			log.Fatal(err)
@@ -592,7 +588,6 @@ func HomeFeedPost() []structure.HomeFeedPost {
 			NumberOfDislikes: NumberOfDislikes,
 			Categories:       categories,
 			Categories2:      categories2,
-			Admin:            admin,
 		})
 	}
 
@@ -740,11 +735,10 @@ func ProfilFeed(userName string) []structure.UserFeedPost {
 	for rows.Next() {
 
 		var id int
-		var admin, moderateur bool
 		var postID, name, message, dateTime, image, picture, categories, categories2 string
 		var NumberOfComment, NumberOfLikes, NumberOfDislikes int
 
-		err := rows.Scan(&id, &postID, &image, &name, &message, &dateTime, &picture, &NumberOfComment, &NumberOfLikes, &NumberOfDislikes, &categories, &categories2, &moderateur, &admin)
+		err := rows.Scan(&id, &postID, &image, &name, &message, &dateTime, &picture, &NumberOfComment, &NumberOfLikes, &NumberOfDislikes, &categories, &categories2)
 		if err != nil {
 			fmt.Println("Error ProfilFeed Function in rows.Scan:")
 			log.Fatal(err)
@@ -764,8 +758,6 @@ func ProfilFeed(userName string) []structure.UserFeedPost {
 			NumberOfDislikes: NumberOfDislikes,
 			Categories:       categories,
 			Categories2:      categories2,
-			Moderateur:       moderateur,
-			Admin:            admin,
 		})
 
 	}
@@ -1162,7 +1154,7 @@ func AddingUser2Modo(userName string) {
 
 	_, err := Db.Exec("UPDATE users SET moderateur = ? WHERE name = ?", 1, userName)
 	if err != nil {
-		fmt.Println("Error function AddingCountLike Insert countLikes Posts to the dataBase:")
+		fmt.Println("Error function AddingUser2Modo Insert modo USERS to the dataBase:")
 		fmt.Printf("err: %v\n", err)
 	}
 
@@ -1222,5 +1214,14 @@ func DeleteModerateur(name string) {
 		fmt.Println("Error function DeleteModerateur Update moderateur:")
 		fmt.Printf("err: %v\n", err)
 
+	}
+}
+
+func DeletePost(postID string) {
+
+	_, err := Db.Exec("DELETE FROM posts WHERE postid = ?", postID)
+	if err != nil {
+		fmt.Println("Erreur lors de la suppression de la session dans la base de données, func DeleteSession:")
+		log.Fatal(err)
 	}
 }

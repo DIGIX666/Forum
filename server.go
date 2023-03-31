@@ -434,7 +434,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 					return
 				}
 				//Put the message in the dataBase
-				dataBase.UserPost(user.Name, message, postid, user.Image, currentTime, imageName, Posts.Count, Posts.CountDis, Posts.CountCom, Posts.Categories, Posts.Categories2, user.Admin)
+				dataBase.UserPost(user.Name, message, postid, user.Image, currentTime, imageName, Posts.Count, Posts.CountDis, Posts.CountCom, Posts.Categories, Posts.Categories2)
 				homefeed = dataBase.HomeFeedPost()
 
 			} else {
@@ -467,7 +467,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 				if fileStat.Size() > int64(maxImageSize) {
 					os.Remove(imageSRC)
 				} else {
-					_, user.Post = dataBase.UserPost(user.Name, message, postid, user.Image, currentTime, imageSRC, Posts.Count, Posts.CountDis, Posts.CountCom, Posts.Categories, Posts.Categories2, user.Admin)
+					_, user.Post = dataBase.UserPost(user.Name, message, postid, user.Image, currentTime, imageSRC, Posts.Count, Posts.CountDis, Posts.CountCom, Posts.Categories, Posts.Categories2)
 					homefeed = dataBase.HomeFeedPost()
 					file.Close()
 
@@ -574,7 +574,7 @@ func profil(w http.ResponseWriter, r *http.Request) {
 	if profil["admin"] == "true" {
 		user.Admin = true
 	} else {
-		user.Admin = false
+		user.Admin = true
 	}
 
 	var userHomeFeed []structure.UserFeedPost
@@ -1085,7 +1085,7 @@ func moderateur(w http.ResponseWriter, r *http.Request) {
 					return
 				}
 				//Put the message in the dataBase
-				dataBase.UserPost(user.Name, message, postid, user.Image, currentTime, imageName, Posts.Count, Posts.CountDis, Posts.CountCom, Posts.Categories, Posts.Categories2, user.Admin)
+				dataBase.UserPost(user.Name, message, postid, user.Image, currentTime, imageName, Posts.Count, Posts.CountDis, Posts.CountCom, Posts.Categories, Posts.Categories2)
 				homefeed = dataBase.HomeFeedPost()
 
 			} else {
@@ -1118,7 +1118,7 @@ func moderateur(w http.ResponseWriter, r *http.Request) {
 				if fileStat.Size() > int64(maxImageSize) {
 					os.Remove(imageSRC)
 				} else {
-					_, user.Post = dataBase.UserPost(user.Name, message, postid, user.Image, currentTime, imageSRC, Posts.Count, Posts.CountDis, Posts.CountCom, Posts.Categories, Posts.Categories2, user.Admin)
+					_, user.Post = dataBase.UserPost(user.Name, message, postid, user.Image, currentTime, imageSRC, Posts.Count, Posts.CountDis, Posts.CountCom, Posts.Categories, Posts.Categories2)
 					homefeed = dataBase.HomeFeedPost()
 					file.Close()
 
@@ -1181,6 +1181,9 @@ func moderateur(w http.ResponseWriter, r *http.Request) {
 			fmt.Printf("postid: %v\n", postid)
 			homefeed = dataBase.HomeFeedPost()
 		}
+	}
+	if r.FormValue("delete") != "" && user.Connected {
+		data.DeletePost(r.FormValue("delete"))
 	}
 
 	temp, err := template.ParseFiles("./assets/Moderateur/moderateur.html")
@@ -1295,7 +1298,7 @@ func admin(w http.ResponseWriter, r *http.Request) {
 					return
 				}
 				//Put the message in the dataBase
-				dataBase.UserPost(user.Name, message, postid, user.Image, currentTime, imageName, Posts.Count, Posts.CountDis, Posts.CountCom, Posts.Categories, Posts.Categories2, user.Admin)
+				dataBase.UserPost(user.Name, message, postid, user.Image, currentTime, imageName, Posts.Count, Posts.CountDis, Posts.CountCom, Posts.Categories, Posts.Categories2)
 				homefeed = dataBase.HomeFeedPost()
 
 			} else {
@@ -1328,7 +1331,7 @@ func admin(w http.ResponseWriter, r *http.Request) {
 				if fileStat.Size() > int64(maxImageSize) {
 					os.Remove(imageSRC)
 				} else {
-					_, user.Post = dataBase.UserPost(user.Name, message, postid, user.Image, currentTime, imageSRC, Posts.Count, Posts.CountDis, Posts.CountCom, Posts.Categories, Posts.Categories2, user.Admin)
+					_, user.Post = dataBase.UserPost(user.Name, message, postid, user.Image, currentTime, imageSRC, Posts.Count, Posts.CountDis, Posts.CountCom, Posts.Categories, Posts.Categories2)
 					homefeed = dataBase.HomeFeedPost()
 					file.Close()
 
@@ -1361,10 +1364,12 @@ func admin(w http.ResponseWriter, r *http.Request) {
 			data.DeleteAdminRequest(modoRequestName, modoRequestID)
 
 		}
-
 		if r.FormValue("delete") != "" && user.Connected {
 			data.DeleteModerateur(r.FormValue("delete"))
 		}
+	}
+	if r.FormValue("delete") != "" && user.Connected {
+		data.DeletePost(r.FormValue("delete"))
 	}
 
 	temp, err := template.ParseFiles("./assets/Admin/admin.html")

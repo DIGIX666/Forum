@@ -577,6 +577,11 @@ func profil(w http.ResponseWriter, r *http.Request) {
 	} else {
 		user.Admin = false
 	}
+	if profil["moderateur"] == "true" {
+		user.Moderateur = true
+	} else {
+		user.Moderateur = false
+	}
 
 	var userHomeFeed []structure.UserFeedPost
 

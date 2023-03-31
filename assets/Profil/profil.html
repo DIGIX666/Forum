@@ -52,6 +52,8 @@
           </a>
         </div>
       </div>
+      {{if not .user.Admin}}
+      {{if not .user.Moderateur}}
       <form method="post" action="/profil">
         <button value="notif_moderateur" name="notif" class="selectnone"
           onclick="setTimeout(function() { alert('Votre demande a été envoyé')}, 2500);">
@@ -62,6 +64,8 @@
           </svg>
         </button>
       </form>
+      {{end}}
+      {{end}}
 
       <div class="side-wrapper">
         <div class="side-title">SUBJECTS</div>

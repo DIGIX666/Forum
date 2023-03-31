@@ -52,8 +52,13 @@
           </a>
         </div>
       </div>
+<<<<<<< HEAD
       
     
+=======
+      {{if not .user.Admin}}
+      {{if not .user.Moderateur}}
+>>>>>>> fixModoBtn
       <form method="post" action="/profil">
         <button value="notif_moderateur" name="notif" class="selectnone"
           onclick="setTimeout(function() { alert('Votre demande a été envoyé')}, 2500);">
@@ -64,7 +69,13 @@
           </svg>
         </button>
       </form>
+<<<<<<< HEAD
       
+=======
+      {{end}}
+      {{end}}
+
+>>>>>>> fixModoBtn
       <div class="side-wrapper">
         <div class="side-title">SUBJECTS</div>
         <div class="side-menu">

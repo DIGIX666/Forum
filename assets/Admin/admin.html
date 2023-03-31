@@ -157,50 +157,71 @@
 
             <!-- <hr class="hr"> -->
 
-
             <!--------------.Armature Post.----------->
 
-            {{range .AdminFeed}}
+            {{range .HomeFeed}}
             <div class="album box">
               <div class="status-main">
                 <img src="{{.UserImage}}" class="status-img">
                 <div class="album-detail">
-                  <div class="album-title"><strong>{{.Name}}</strong> <span>Demande Moderateur</span>
-                  </div>
-                  <div class="album-date">{{.Date}}</div>
-                  <div class="postid" style="display: none">{{.NotifID}}</div>
+                  <div class="album-title"><strong>{{.Name}}</strong> create new <span>post</span>{{.Categories}} {{.Categories2}}</div>
+                  <div class="album-date">{{.DateTime}}</div>
+                  <div class="postid" style="display: none">{{.PostID}}</div>
                 </div>
+                <form method="post" class="album-action" action="#">
+                  <button name="delete" value="{{.PostID}}" class="delete">
+                    <svg class="delete_svg" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"
+                      stroke-linejoin="round" class="css-i6dzq1" viewBox="0 0 24 24">
+                      <path d="M17.114,3.923h-4.589V2.427c0-0.252-0.207-0.459-0.46-0.459H7.935c-0.252,0-0.459,0.207-0.459,0.459v1.496h-4.59c-0.252,0-0.459,0.205-0.459,0.459c0,0.252,0.207,0.459,0.459,0.459h1.51v12.732c0,0.252,0.207,0.459,0.459,0.459h10.29c0.254,0,0.459-0.207,0.459-0.459V4.841h1.511c0.252,0,0.459-0.207,0.459-0.459C17.573,4.127,17.366,3.923,17.114,3.923M8.394,2.886h3.214v0.918H8.394V2.886z M14.686,17.114H5.314V4.841h9.372V17.114z M12.525,7.306v7.344c0,0.252-0.207,0.459-0.46,0.459s-0.458-0.207-0.458-0.459V7.306c0-0.254,0.205-0.459,0.458-0.459S12.525,7.051,12.525,7.306M8.394,7.306v7.344c0,0.252-0.207,0.459-0.459,0.459s-0.459-0.207-0.459-0.459V7.306c0-0.254,0.207-0.459,0.459-0.459S8.394,7.051,8.394,7.306"></path>
+						        </svg>
+                  </button>
+                </form>
+                <form method="post" class="album-action" action="#">
+                  <button name="signal" value="{{.PostID}}" class="signal">
+                    <svg class="delete_svg" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"
+                      stroke-linejoin="round" class="css-i6dzq1" viewBox="0 0 24 24">
+                      <path d="M18.344,16.174l-7.98-12.856c-0.172-0.288-0.586-0.288-0.758,0L1.627,16.217c0.339-0.543-0.603,0.668,0.384,0.682h15.991C18.893,16.891,18.167,15.961,18.344,16.174 M2.789,16.008l7.196-11.6l7.224,11.6H2.789z M10.455,7.552v3.561c0,0.244-0.199,0.445-0.443,0.445s-0.443-0.201-0.443-0.445V7.552c0-0.245,0.199-0.445,0.443-0.445S10.455,7.307,10.455,7.552M10.012,12.439c-0.733,0-1.33,0.6-1.33,1.336s0.597,1.336,1.33,1.336c0.734,0,1.33-0.6,1.33-1.336S10.746,12.439,10.012,12.439M10.012,14.221c-0.244,0-0.443-0.199-0.443-0.445c0-0.244,0.199-0.445,0.443-0.445s0.443,0.201,0.443,0.445C10.455,14.021,10.256,14.221,10.012,14.221"></path>
+						        </svg>
+                  </button>
+                </form>
               </div>
 
-
-              <div class="album-content">Je souhaite devenir modérateur</div>
+              <div class="album-content">{{.Message}}</div>
               <div class="parentImageUpload">
-                <div class="uploadImage"> <img src="{{.UserImage}}" class="upload-image"></div>
+                <div class="uploadImage"> <img src="{{.Picture}}" class="upload-image"></div>
               </div>
 
               <div class="album-actions">
 
-                <form method="post" class="album-action" action="/admin">
-                  <button name="accepted" value="{{.NotifID}}" class="like">
+                <form method="post" class="album-action" action="#">
+                  <button name="like" value="{{.PostID}}" class="like">
                     <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"
                       stroke-linejoin="round" viewBox="0 0 24 24">
                       <path
-                        d="M10.219,1.688c-4.471,0-8.094,3.623-8.094,8.094s3.623,8.094,8.094,8.094s8.094-3.623,8.094-8.094S14.689,1.688,10.219,1.688 M10.219,17.022c-3.994,0-7.242-3.247-7.242-7.241c0-3.994,3.248-7.242,7.242-7.242c3.994,0,7.241,3.248,7.241,7.242C17.46,13.775,14.213,17.022,10.219,17.022 M15.099,7.03c-0.167-0.167-0.438-0.167-0.604,0.002L9.062,12.48l-2.269-2.277c-0.166-0.167-0.437-0.167-0.603,0c-0.166,0.166-0.168,0.437-0.002,0.603l2.573,2.578c0.079,0.08,0.188,0.125,0.3,0.125s0.222-0.045,0.303-0.125l5.736-5.751C15.268,7.466,15.265,7.196,15.099,7.03">
-                      </path>
+                        d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
                     </svg>
                   </button>
+                  <div id="like-count">{{.NumberOfLikes}}</div>
                 </form>
 
-                <form method="post" class="album-action" action="/admin">
-                  <button name="refused" value="{{.NotifID}}" class="dislike">
+                <form method="post" class="album-action" action="#">
+                  <button name="dislike" value="{{.PostID}}" class="dislike">
                     <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"
                       stroke-linejoin="round" class="css-i6dzq1" viewBox="0 0 24 24">
-                      <path
-                        d="M10.185,1.417c-4.741,0-8.583,3.842-8.583,8.583c0,4.74,3.842,8.582,8.583,8.582S18.768,14.74,18.768,10C18.768,5.259,14.926,1.417,10.185,1.417 M10.185,17.68c-4.235,0-7.679-3.445-7.679-7.68c0-4.235,3.444-7.679,7.679-7.679S17.864,5.765,17.864,10C17.864,14.234,14.42,17.68,10.185,17.68 M10.824,10l2.842-2.844c0.178-0.176,0.178-0.46,0-0.637c-0.177-0.178-0.461-0.178-0.637,0l-2.844,2.841L7.341,6.52c-0.176-0.178-0.46-0.178-0.637,0c-0.178,0.176-0.178,0.461,0,0.637L9.546,10l-2.841,2.844c-0.178,0.176-0.178,0.461,0,0.637c0.178,0.178,0.459,0.178,0.637,0l2.844-2.841l2.844,2.841c0.178,0.178,0.459,0.178,0.637,0c0.178-0.176,0.178-0.461,0-0.637L10.824,10z">
-                      </path>
+                      <path d="M18 6L6 18M6 6l12 12" />
                     </svg>
                   </button>
+                  <div id="dislike-count">{{.NumberOfDislikes}}</div>
                 </form>
+
+                
+                  <a href="/comment?postid={{.PostID}}" name="comment" class="album-action">
+                    <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"
+                      stroke-linejoin="round" class="css-i6dzq1" viewBox="0 0 24 24">
+                      <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
+                    </svg>
+                    <div id="compteur-comment">{{.NumberOfComment}}</div>
+                  </a>
               </div>
             </div>
 
@@ -251,6 +272,54 @@
         {{if not .User.Connected }}<a href="/login"><button type="submit" class="status-share">Login
             in</button></a>{{end}}
       </div>
+
+       <!--------------.Armature Post.----------->
+
+       {{range .AdminFeed}}
+       <div class="album box">
+         <div class="status-main">
+           <img src="{{.UserImage}}" class="status-img">
+           <div class="album-detail">
+             <div class="album-title"><strong>{{.Name}}</strong> <span>Demande Moderateur</span>
+             </div>
+             <div class="album-date">{{.Date}}</div>
+             <div class="postid" style="display: none">{{.NotifID}}</div>
+           </div>
+         </div>
+
+
+         <div class="album-content">Je souhaite devenir modérateur</div>
+         <div class="parentImageUpload">
+           <div class="uploadImage"> <img src="{{.UserImage}}" class="upload-image"></div>
+         </div>
+
+         <div class="album-actions">
+
+           <form method="post" class="album-action" action="/admin">
+             <button name="accepted" value="{{.NotifID}}" class="like">
+               <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"
+                 stroke-linejoin="round" viewBox="0 0 24 24">
+                 <path
+                   d="M10.219,1.688c-4.471,0-8.094,3.623-8.094,8.094s3.623,8.094,8.094,8.094s8.094-3.623,8.094-8.094S14.689,1.688,10.219,1.688 M10.219,17.022c-3.994,0-7.242-3.247-7.242-7.241c0-3.994,3.248-7.242,7.242-7.242c3.994,0,7.241,3.248,7.241,7.242C17.46,13.775,14.213,17.022,10.219,17.022 M15.099,7.03c-0.167-0.167-0.438-0.167-0.604,0.002L9.062,12.48l-2.269-2.277c-0.166-0.167-0.437-0.167-0.603,0c-0.166,0.166-0.168,0.437-0.002,0.603l2.573,2.578c0.079,0.08,0.188,0.125,0.3,0.125s0.222-0.045,0.303-0.125l5.736-5.751C15.268,7.466,15.265,7.196,15.099,7.03">
+                 </path>
+               </svg>
+             </button>
+           </form>
+
+           <form method="post" class="album-action" action="/admin">
+             <button name="refused" value="{{.NotifID}}" class="dislike">
+               <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"
+                 stroke-linejoin="round" class="css-i6dzq1" viewBox="0 0 24 24">
+                 <path
+                   d="M10.185,1.417c-4.741,0-8.583,3.842-8.583,8.583c0,4.74,3.842,8.582,8.583,8.582S18.768,14.74,18.768,10C18.768,5.259,14.926,1.417,10.185,1.417 M10.185,17.68c-4.235,0-7.679-3.445-7.679-7.68c0-4.235,3.444-7.679,7.679-7.679S17.864,5.765,17.864,10C17.864,14.234,14.42,17.68,10.185,17.68 M10.824,10l2.842-2.844c0.178-0.176,0.178-0.46,0-0.637c-0.177-0.178-0.461-0.178-0.637,0l-2.844,2.841L7.341,6.52c-0.176-0.178-0.46-0.178-0.637,0c-0.178,0.176-0.178,0.461,0,0.637L9.546,10l-2.841,2.844c-0.178,0.176-0.178,0.461,0,0.637c0.178,0.178,0.459,0.178,0.637,0l2.844-2.841l2.844,2.841c0.178,0.178,0.459,0.178,0.637,0c0.178-0.176,0.178-0.461,0-0.637L10.824,10z">
+                 </path>
+               </svg>
+             </button>
+           </form>
+         </div>
+       </div>
+       {{end}}
+       <!--------------. FIN Armature Post.----------->
     </div>
 
 

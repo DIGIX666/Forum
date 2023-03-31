@@ -465,19 +465,39 @@ func GetUserProfil() map[string]string {
 		fmt.Println(err)
 	}
 
-	var userImage, userEmail, admin string
+	var userImage, userEmail string
 
-	err = Db.QueryRow("SELECT image,email,admin  FROM users WHERE name = ?", name).Scan(&userImage, &userEmail, &admin)
+	var admin, moderateur bool
+
+	fmt.Printf("NAME USER: %v\n", name)
+
+	err = Db.QueryRow("SELECT image,email,moderateur,admin  FROM users WHERE name = ?", name).Scan(&userImage, &userEmail, &moderateur, &admin)
 	if err != nil {
 		fmt.Println("Erreur SELECT #2 fonction GetUserProfil dataBase:")
 		fmt.Println(err)
 	}
 
+	fmt.Printf("MODERATEUR: %v\n", moderateur)
+	fmt.Printf("ADMIN: %v\n", admin)
+
 	ans["name"] = name
 	ans["email"] = userEmail
 	ans["userImage"] = userImage
 	ans["uuid"] = uuid
-	ans["admin"] = admin
+
+	// boolAdmin, _ := strconv.Atoi(admin)
+	// boolModo, _ := strconv.Atoi(moderateur)
+
+	if admin {
+		ans["admin"] = "true"
+	} else {
+		ans["admin"] = "false"
+	}
+	if moderateur {
+		ans["moderateur"] = "true"
+	} else {
+		ans["moderateur"] = "false"
+	}
 
 	return ans
 }
@@ -1194,5 +1214,14 @@ func DeleteModerateur(name string) {
 		fmt.Println("Error function DeleteModerateur Update moderateur:")
 		fmt.Printf("err: %v\n", err)
 
+	}
+}
+
+func DeletePost(postID string) {
+
+	_, err := Db.Exec("DELETE FROM posts WHERE postid = ?", postID)
+	if err != nil {
+		fmt.Println("Erreur lors de la suppression de la session dans la base de données, func DeleteSession:")
+		log.Fatal(err)
 	}
 }

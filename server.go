@@ -381,6 +381,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("len(uAccount): %v\n", len(uAccount))
 
 	if len(uAccount) > 0 && user.Connected {
+
 		profil := data.GetUserProfil()
 		user.Name = profil["name"]
 		user.Email = profil["email"]
@@ -388,8 +389,13 @@ func home(w http.ResponseWriter, r *http.Request) {
 		user.UUID = profil["uuid"]
 		if profil["admin"] == "true" {
 			user.Admin = true
-		} else {
+		} else if profil["admin"] == "false" {
 			user.Admin = false
+		}
+		if profil["moderateur"] == "true" {
+			user.Moderateur = true
+		} else if profil["moderateur"] == "false" {
+			user.Moderateur = false
 		}
 	}
 	var imageSRC string
@@ -399,7 +405,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 		Posts.Categories = r.FormValue("categories")
 		Posts.Categories2 = r.FormValue("categories2")
 		// notif = r.FormValue("selectnone")
-		user.Admin = r.FormValue("admin") == "true"
+		// user.Admin = r.FormValue("admin") == "true"
 
 		fmt.Printf("Posts.Categories: %v\n", Posts.Categories)
 		if message != "" && user.Connected {
@@ -474,7 +480,6 @@ func home(w http.ResponseWriter, r *http.Request) {
 
 			postid := r.FormValue("like")
 			countLike := 0
-			// row := data.Db.QueryRow("SELECT countLikes FROM posts WHERE name = ? AND postid = ?", user.Name, postid)
 			row := data.Db.QueryRow("SELECT COUNT (*) FROM likes WHERE username = ? AND post_id = ?", user.Name, postid)
 			err := row.Scan(&countLike)
 			if err != nil {
@@ -484,15 +489,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 				fmt.Printf("countLike: %v\n", countLike)
 				dataBase.AddingCountLike(postid, user.Name, currentTime)
 			}
-			// for i := range user.Post {
-			// 	fmt.Printf("i: %v\n", i)
-			// 	fmt.Printf("user.Post[i].PostID: %v\n", user.Post[i].PostID)
-			// 	if user.Post[i].PostID == postid && countLike < 1 {
-			// 		user.Post[i].Count++
-			// 		countLike = user.Post[i].Count
-			// 	}
-			// 	fmt.Printf("conteur %v\n", user.Post[i].Count)
-			// }
+
 			fmt.Printf("postid: %v\n", postid)
 			homefeed = dataBase.HomeFeedPost()
 		}
@@ -502,7 +499,6 @@ func home(w http.ResponseWriter, r *http.Request) {
 
 			postid := r.FormValue("dislike")
 			countDislike := 0
-			// row := data.Db.QueryRow("SELECT countLikes FROM posts WHERE name = ? AND postid = ?", user.Name, postid)
 			row := data.Db.QueryRow("SELECT COUNT (*) FROM dislikes WHERE username = ? AND post_id = ?", user.Name, postid)
 			err := row.Scan(&countDislike)
 			if err != nil {
@@ -512,15 +508,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 				fmt.Printf("countDislike: %v\n", countDislike)
 				data.AddingCountDislike(postid, user.Name, currentTime)
 			}
-			// for i := range user.Post {
-			// 	fmt.Printf("i: %v\n", i)
-			// 	fmt.Printf("user.Post[i].PostID: %v\n", user.Post[i].PostID)
-			// 	if user.Post[i].PostID == postid && countLike < 1 {
-			// 		user.Post[i].Count++
-			// 		countLike = user.Post[i].Count
-			// 	}
-			// 	fmt.Printf("conteur %v\n", user.Post[i].Count)
-			// }
+
 			fmt.Printf("postid: %v\n", postid)
 			homefeed = dataBase.HomeFeedPost()
 		}
@@ -1195,6 +1183,9 @@ func moderateur(w http.ResponseWriter, r *http.Request) {
 			homefeed = dataBase.HomeFeedPost()
 		}
 	}
+	if r.FormValue("delete") != "" && user.Connected {
+		data.DeletePost(r.FormValue("delete"))
+	}
 
 	temp, err := template.ParseFiles("./assets/Moderateur/moderateur.html")
 	if err != nil {
@@ -1377,6 +1368,9 @@ func admin(w http.ResponseWriter, r *http.Request) {
 		if r.FormValue("delete") != "" && user.Connected {
 			data.DeleteModerateur(r.FormValue("delete"))
 		}
+	}
+	if r.FormValue("delete") != "" && user.Connected {
+		data.DeletePost(r.FormValue("delete"))
 	}
 
 	temp, err := template.ParseFiles("./assets/Admin/admin.html")

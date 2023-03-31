@@ -272,66 +272,56 @@
       </div>
       <div class="side-wrapper contacts">
         <div class="side-title">ACIVITÉS</div>
-        <div class="user">
-          <!-- <img src="https://randomuser.me/api/portraits/men/1.jpg" class="user-img"> -->
-          <div class="username">Test #
-            <div class="user-status"></div>
-          </div>
-        </div>
-        <div class="user">
-          <!-- <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=200&fit=max&s=046c29138c1335ef8edee7daf521ba50" class="user-img"> -->
-          <div class="username">Test #
-            <div class="user-status offline"></div>
-          </div>
-        </div>
-        <div class="user">
-          <!-- <img src="https://images.unsplash.com/photo-1575084713138-342cae5f8d00?ixlib=rb-1.2.1&auto=format&fit=crop&w=958&q=80" class="user-img"> -->
-          <div class="username">Test #
-            <div class="user-status offline"></div>
-          </div>
-        </div>
-        <div class="user">
-          <!-- <img src="https://images.pexels.com/photos/598745/pexels-photo-598745.jpeg?h=350&auto=compress&cs=tinysrgb" class="user-img"> -->
-          <div class="username">Test #
-            <div class="user-status"></div>
-          </div>
-        </div>
-        <div class="user">
-          <!-- <img src="https://pbs.twimg.com/profile_images/2452384114/noplz47r59v1uxvyg8ku.png" class="user-img"> -->
-          <div class="username">Test #
-            <div class="user-status"></div>
-          </div>
-        </div>
-        <div class="user">
-          <!-- <img src="https://randomuser.me/api/portraits/women/63.jpg" class="user-img"> -->
-          <div class="username">Test #
-            <div class="user-status"></div>
-          </div>
-        </div>
-        <div class="user">
-          <!-- <img src="https://images.unsplash.com/photo-1476493279419-b785d41e38d8?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=200&fit=max&s=61eaea85f1aa3d065400179c78163f15" class="user-img"> -->
-          <div class="username">Test #
-            <div class="user-status"></div>
-          </div>
-        </div>
-        <div class="user">
-          <!-- <img src="https://m.media-amazon.com/images/M/MV5BMjI4NDcyNjQxNl5BMl5BanBnXkFtZTgwMzI4OTM3NjM@._V1_UY256_CR13,0,172,256_AL_.jpg" class="user-img"> -->
-          <div class="username">Test #
-            <div class="user-status idle"></div>
-          </div>
-        </div>
-        <div class="user">
-          <!-- <img src="https://images.unsplash.com/photo-1509380836717-c4320ccf1a6f?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=200&fit=max&s=e01c8c45a063daaf6d6e571a32bd6c90" class="user-img"> -->
-          <div class="username">Test #
-            <div class="user-status"></div>
-          </div>
-        </div>
-        <div class="user">
-          <!-- <img src="https://pbs.twimg.com/profile_images/737221709267374081/sdwta9Oh.jpg" alt="" class="user-img"> -->
-          <div class="username">Test #
-            <div class="user-status idle"></div>
-          </div>
-        </div>
+
+         <!--------------.Like Post.----------->
+         {{range .UserLike}}
+         <div class="album box">
+           <div class="status-main">
+             <img src="{{.UserImage}}" class="status-img">
+             <div class="album-detail">
+               <div class="album-title"><strong>{{.Name}}</strong>create
+                 new<span>post</span>{{.Categories}}{{.Categories2}}</div>
+               <div class="album-date">{{.DateTime}}</div>
+             </div>
+           </div>
+           <div class="album-content">{{.Message}}</div>
+           <div class="parentImageUpload">
+             <div class="uploadImage"> <img src="{{.Picture}}" class="upload-image"></div>
+           </div>
+
+           <div class="album-actions">
+
+             <a href="" class="album-action">
+               <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+                 viewBox="0 0 24 24">
+                 <path
+                   d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
+               </svg>
+               <div id="like-count">{{.NumberOfLikes}}</div>
+             </a>
+
+
+             <a href="" class="album-action">
+               <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+                 class="css-i6dzq1" viewBox="0 0 24 24">
+                 <path d="M18 6L6 18M6 6l12 12" />
+               </svg>
+               <div id="dislike-count">{{.NumberOfDislikes}}</div>
+             </a>
+
+
+             <a href="/comment?postid={{.PostID}}" class="album-action">
+               <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+                 class="css-i6dzq1" viewBox="0 0 24 24">
+                 <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
+               </svg>
+               <div id="compteur-comment">{{.NumberOfComment}}</div>
+             </a>
+           </div>
+         </div>
+         {{end}}
+         <!--------------. FIN Like Post.----------->
+
       </div>
     </div>
 </body>

@@ -574,7 +574,7 @@ func profil(w http.ResponseWriter, r *http.Request) {
 	if profil["admin"] == "true" {
 		user.Admin = true
 	} else {
-		user.Admin = true
+		user.Admin = false
 	}
 	if profil["moderateur"] == "true" {
 		user.Moderateur = true

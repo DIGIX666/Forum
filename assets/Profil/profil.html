@@ -11,7 +11,6 @@
   <link rel="website icon" type="png" href="/assets/icon.png">
 </head>
 
-
 <body>
 
   <!-----------------------------.BLOCK DE GAUCHE.------------------------>
@@ -52,8 +51,9 @@
           </a>
         </div>
       </div>
-      {{if not .user.Admin}}
+  
       {{if not .user.Moderateur}}
+      {{if not .user.Admin}}
       <form method="post" action="/profil">
         <button value="notif_moderateur" name="notif" class="selectnone"
           onclick="setTimeout(function() { alert('Votre demande a été envoyé')}, 2500);">

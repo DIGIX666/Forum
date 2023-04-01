@@ -441,16 +441,6 @@ func SetGitHubUUID(userName string) string {
 
 }
 
-// /*************************** ADD LIKES **********************************/
-// func AddLikes(userName string, postID string, dateTime string) {
-
-// 	_, err := Db.Exec("INSERT INTO likes (username,datetime,post_id) VALUES (?,?,?)", userName, postID, dateTime)
-// 	if err != nil {
-// 		fmt.Println("Error function AddLikes dataBase:")
-// 		fmt.Printf("err: %v\n", err)
-// 	}
-// }
-
 /*************************** GET USER PROFIL **********************************/
 func GetUserProfil() map[string]string {
 

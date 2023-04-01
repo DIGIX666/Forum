@@ -638,7 +638,7 @@ func profil(w http.ResponseWriter, r *http.Request) {
 		userLikeFeed = data.ProfilLikeFeed(user.Name)
 	}
 
-	fmt.Printf("len(userLikeFeed)20: %v\n", len(userLikeFeed))
+	fmt.Printf("data.LenLikeUserPost(user.Name) 20: %v\n", data.LenLikeUserPost(user.Name))
 
 	notif := r.FormValue("notif")
 	if notif == "notif_moderateur" {

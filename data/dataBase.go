@@ -204,7 +204,7 @@ func DataBaseRegister(email string, password string) bool {
 		checkExisting = true
 
 	} else {
-		_, err = Db.Exec("INSERT INTO users (name, image, email, uuid, password, admin) VALUES (?, ?, ?,?,?,?)", "none", "../assets/images/beehive-37436.svg", email, uuid, password, false)
+		_, err = Db.Exec("INSERT INTO users (name, image, email, uuid, password, admin) VALUES (?, ?, ?,?,?,?)", email, "../assets/images/beehive-37436.svg", email, uuid, password, false)
 		if err != nil {
 			log.Fatal(err)
 		}

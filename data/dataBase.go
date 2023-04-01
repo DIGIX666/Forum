@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 	"strconv"
+	"time"
 
 	"github.com/gofrs/uuid"
 	_ "github.com/mattn/go-sqlite3"
@@ -16,6 +17,8 @@ var uAccount []structure.UserAccount
 var user structure.UserAccount
 var posts []structure.Post
 var users []structure.UserAccount
+var Notif structure.Notification
+var Notifs []structure.Notification
 
 func preappendPost(c structure.Post) []structure.Post {
 	posts = append(posts, structure.Post{})
@@ -29,6 +32,13 @@ func preappendUser(c structure.UserAccount) []structure.UserAccount {
 	copy(users[1:], users)
 	users[0] = c
 	return users
+}
+
+func preappendNotif(c structure.Notification) []structure.Notification {
+	Notifs = append(Notifs, structure.Notification{})
+	copy(Notifs[1:], Notifs)
+	Notifs[0] = c
+	return Notifs
 }
 
 var Db *sql.DB
@@ -143,6 +153,22 @@ func CreateDataBase() {
     )`)
 	if err != nil {
 		log.Println("erreur creation de table dislikes")
+		log.Fatal(err)
+	}
+
+	_, err = Db.Exec(`CREATE TABLE IF NOT EXISTS notification (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		username TEXT NOT NULL,
+		datetime TEXT NOT NULL,
+		post_id INTEGER,
+		comment_id INTEGER,
+		like_post BOOLEAN DEFAULT FALSE,
+		dislike_post BOOLEAN DEFAULT FALSE,
+		like_comment BOOLEAN DEFAULT FALSE,
+		dislike_comment BOOLEAN DEFAULT FALSE,
+		added_comment BOOLEAN DEFAULT FALSE
+	)`)
+	if err != nil {
 		log.Fatal(err)
 	}
 }
@@ -1314,8 +1340,28 @@ func NotifComment(postID string) {
 
 		}
 	}
-	fmt.Printf("comment done by: %v\n", name)
+	rows3, err := Db.Query("SELECT picture FROM users WHERE name=?", name)
+	if err != nil {
+		panic(err)
+	}
 
+	var picture string
+
+	for rows3.Next() {
+		err := rows3.Scan(&picture)
+		if err != nil {
+			panic(err)
+		}
+	}
+	dateTime := time.Now().Format("2006-01-02")
+	Notifs = preappendNotif(structure.Notification{
+		UserName:     name,
+		UserAvatar:   picture,
+		CommentID:    commentID,
+		PostID:       postID,
+		AddedComment: true,
+		Date:         dateTime,
+	})
 }
 
 func NotifLike(postID string) {
@@ -1333,8 +1379,27 @@ func NotifLike(postID string) {
 		}
 
 	}
-	fmt.Printf("Post Liked by: %v\n", name)
+	rows2, err := Db.Query("SELECT picture FROM users WHERE name=?", name)
+	if err != nil {
+		panic(err)
+	}
 
+	var picture string
+
+	for rows2.Next() {
+		err := rows2.Scan(&picture)
+		if err != nil {
+			panic(err)
+		}
+	}
+	dateTime := time.Now().Format("2006-01-02")
+	Notifs = preappendNotif(structure.Notification{
+		UserName:   name,
+		UserAvatar: picture,
+		PostID:     postID,
+		LikePost:   true,
+		Date:       dateTime,
+	})
 }
 func NotifLikeComment(commentID string) {
 
@@ -1351,11 +1416,30 @@ func NotifLikeComment(commentID string) {
 		}
 
 	}
-	fmt.Printf("Post Liked by: %v\n", name)
+	rows2, err := Db.Query("SELECT picture FROM users WHERE name=?", name)
+	if err != nil {
+		panic(err)
+	}
 
+	var picture string
+
+	for rows2.Next() {
+		err := rows2.Scan(&picture)
+		if err != nil {
+			panic(err)
+		}
+	}
+	dateTime := time.Now().Format("2006-01-02")
+	Notifs = preappendNotif(structure.Notification{
+		UserName:    name,
+		UserAvatar:  picture,
+		CommentID:   commentID,
+		LikeComment: true,
+		Date:        dateTime,
+	})
 }
 func NotifDisLike(postID string) {
-
+	dateTime := time.Now().Format("2006-01-02")
 	rows, err := Db.Query("SELECT username FROM dislikes WHERE post_id=?", postID)
 	if err != nil {
 		panic(err)
@@ -1369,10 +1453,33 @@ func NotifDisLike(postID string) {
 		}
 
 	}
-	fmt.Printf("Post Disliked by: %v\n", name)
+
+	rows2, err := Db.Query("SELECT picture FROM users WHERE name=?", name)
+	if err != nil {
+		panic(err)
+	}
+
+	var picture string
+
+	for rows2.Next() {
+		err := rows2.Scan(&picture)
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	Notifs = preappendNotif(structure.Notification{
+		UserName:    name,
+		UserAvatar:  picture,
+		PostID:      postID,
+		DislikePost: true,
+		Date:        dateTime,
+	})
 
 }
 func NotifDisLikeComment(commentID string) {
+
+	dateTime := time.Now().Format("2006-01-02")
 
 	rows, err := Db.Query("SELECT username FROM dislikes WHERE comment_id=?", commentID)
 	if err != nil {
@@ -1385,8 +1492,32 @@ func NotifDisLikeComment(commentID string) {
 		if err != nil {
 			panic(err)
 		}
-
 	}
-	fmt.Printf("Post Disliked by: %v\n", name)
+
+	rows2, err := Db.Query("SELECT picture FROM users WHERE name=?", name)
+	if err != nil {
+		panic(err)
+	}
+
+	var picture string
+
+	for rows2.Next() {
+		err := rows2.Scan(&picture)
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	Notifs = preappendNotif(structure.Notification{
+		UserName:       name,
+		UserAvatar:     picture,
+		CommentID:      commentID,
+		DislikeComment: true,
+		Date:           dateTime,
+	})
+
+}
+
+func AddNotification() {
 
 }

@@ -487,7 +487,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 			if countLike == 0 {
 				fmt.Printf("countLike: %v\n", countLike)
 				dataBase.AddingCountLike(postid, user.Name, currentTime)
-				dataBase.NotifLike(postid)
+
 			}
 
 			fmt.Printf("postid: %v\n", postid)
@@ -507,7 +507,6 @@ func home(w http.ResponseWriter, r *http.Request) {
 			if countDislike == 0 {
 				fmt.Printf("countDislike: %v\n", countDislike)
 				data.AddingCountDislike(postid, user.Name, currentTime)
-				data.NotifDisLike(postid)
 			}
 
 			fmt.Printf("postid: %v\n", postid)
@@ -640,8 +639,6 @@ func profil(w http.ResponseWriter, r *http.Request) {
 		userLikeFeed = data.ProfilLikeFeed(user.Name)
 	}
 
-	fmt.Printf("len(userLikeFeed)20: %v\n", len(userLikeFeed))
-
 	notif := r.FormValue("notif")
 	if notif == "notif_moderateur" {
 
@@ -650,9 +647,10 @@ func profil(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err = temp.ExecuteTemplate(w, "profil", map[string]any{
-		"user":     user,
-		"UserPost": userHomeFeed,
-		"UserLike": userLikeFeed,
+		"user":          user,
+		"UserPost":      userHomeFeed,
+		"UserLike":      userLikeFeed,
+		"Notifications": data.Notifs,
 	}); err != nil {
 		log.Println("Error executing template:", err)
 		return
@@ -953,7 +951,6 @@ func comment(w http.ResponseWriter, r *http.Request) {
 			fmt.Printf("countLike: %v\n", countLike)
 			if countLike == 0 {
 				data.AddingCommentLike(commentid, countLike, user.Name, currentTime)
-				data.NotifDisLikeComment(commentid)
 
 			}
 
@@ -975,7 +972,7 @@ func comment(w http.ResponseWriter, r *http.Request) {
 
 			if countLike == 0 {
 				data.AddingCommentDisLike(commentid, countLike, user.Name, currentTime)
-				data.NotifDisLikeComment(commentid)
+
 			}
 
 			homefeed = dataBase.HomeFeedPost()

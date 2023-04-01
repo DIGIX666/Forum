@@ -247,30 +247,15 @@
       </div>
       <div class="side-wrapper stories">
         <div class="side-title">NOTIFICATIONS</div>
+        {{.Notifications}}
         <div class="user">
-          <!-- <img src="https://pbs.twimg.com/profile_images/1102351320567164931/ZCkJgJIH.png" alt="" class="user-img"> -->
-          <div class="username">Test #
-            <div class="album-date">12 hours ago</div>
+          <img src="{{.UserAvatar}}" alt="" class="user-img">
+          <div class="username">{{.UserName}}</div>
+            <div class="album-date">{{.Date}}</div>
           </div>
         </div>
-        <div class="user">
-          <!-- <img src="https://pbs.twimg.com/profile_images/1153966095444992000/1lpIyHaQ.jpg" alt="" class="user-img"> -->
-          <div class="username">Test #
-            <div class="album-date">29 minutes ago</div>
-          </div>
-        </div>
-        <div class="user">
-          <!-- <img src="https://images.unsplash.com/photo-1565464027194-7957a2295fb7?ixlib=rb-1.2.1&auto=format&fit=crop&w=3500&q=80" alt="" class="user-img"> -->
-          <div class="username">Test #
-            <div class="album-date">3 hours ago</div>
-          </div>
-        </div>
-        <div class="user">
-          <!-- <img src="https://images.unsplash.com/photo-1527980965255-d3b416303d12?ixlib=rb-1.2.1&auto=format&fit=crop&w=1400&q=80" alt="" class="user-img"> -->
-          <div class="username">Test #
-            <div class="album-date">18 hours ago</div>
-          </div>
-        </div>
+        {{end}}
+        
       </div>
       <div class="side-wrapper contacts">
         <div class="side-title">ACIVITÉS</div>

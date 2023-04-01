@@ -565,6 +565,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 
 /*************************** FUNCTION PROFIL **********************************/
 func profil(w http.ResponseWriter, r *http.Request) {
+	var userLikeFeed []structure.UserFeedPost
 
 	profil := data.GetUserProfil()
 	user.Name = profil["name"]
@@ -583,7 +584,6 @@ func profil(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var userHomeFeed []structure.UserFeedPost
-	var userLikeFeed []structure.HomeFeedPost
 
 	if err := r.ParseForm(); err != nil {
 		fmt.Fprintf(w, "ParseForm() err: %v", err)
@@ -637,6 +637,7 @@ func profil(w http.ResponseWriter, r *http.Request) {
 	if len(userLikeFeed) < data.LenLikeUserPost(user.Name) {
 		userLikeFeed = data.ProfilLikeFeed(user.Name)
 	}
+	fmt.Printf("userLikeFeed 2: %v\n", userLikeFeed)
 
 	fmt.Printf("data.LenLikeUserPost(user.Name) 20: %v\n", data.LenLikeUserPost(user.Name))
 

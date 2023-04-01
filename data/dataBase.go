@@ -814,51 +814,57 @@ func LenUser() int {
 }
 
 /*************************** PROFIL LIKE FEED **********************************/
-func ProfilLikeFeed(userName string) []structure.HomeFeedPost {
+func ProfilLikeFeed(userName string) []structure.UserFeedPost {
+	var tabpostid []string
+	var likeFeed []structure.UserFeedPost
 	var postid string
-	err := Db.QueryRow("SELECT post_id FROM likes WHERE username = ?", userName).Scan(&postid)
-	if err != nil {
-		panic(err)
-	}
-
-	rows2, err := Db.Query("SELECT * FROM posts WHERE postid = ?", postid)
+	rows, err := Db.Query("SELECT post_id FROM likes WHERE username = ?", userName)
 	if err != nil {
 		fmt.Println("Error in ProfilLikeFeed Function Query didn't work in dataBase:")
 		log.Fatal(err)
 	}
-
-	var Posts []structure.HomeFeedPost
-
-	for rows2.Next() {
-		var id int
-		var postID, name, message, image, picture, dateTime, categories, categories2 string
-		var NumberOfComment, NumberOfLikes, NumberOfDislikes int
-
-		err := rows2.Scan(&id, &postID, &image, &name, &message, &dateTime, &picture, &NumberOfComment, &NumberOfLikes, &NumberOfDislikes, &categories, &categories2)
-		if err != nil {
-			fmt.Println("Error ProfilLikeFeed Function in rows2.Scan:")
-			log.Fatal(err)
-		}
-
-		fmt.Printf("NumberOfComment: %v\n", NumberOfComment)
-
-		Posts = prependHomeFeedPost(Posts, structure.HomeFeedPost{
-			PostID:           postID,
-			Name:             name,
-			UserImage:        image,
-			Message:          message,
-			DateTime:         dateTime,
-			Picture:          picture,
-			NumberOfComment:  LenUserComment(postID),
-			NumberOfLikes:    NumberOfLikes,
-			NumberOfDislikes: NumberOfDislikes,
-			Categories:       categories,
-			Categories2:      categories2,
-		})
-
+	for rows.Next() {
+		rows.Scan(&postid)
+		tabpostid = append(tabpostid, postid)
 	}
 
-	return Posts
+	for _, ps := range tabpostid {
+		rows2, err := Db.Query("SELECT * FROM posts WHERE postid = ?", ps)
+		if err != nil {
+			fmt.Println("Error in ProfilLikeFeed Function Query didn't work in dataBase:")
+			log.Fatal(err)
+		}
+		for rows2.Next() {
+			var id int
+			var postID, name, message, image, picture, dateTime, categories, categories2 string
+			var NumberOfComment, NumberOfLikes, NumberOfDislikes int
+
+			err := rows2.Scan(&id, &postID, &image, &name, &message, &dateTime, &picture, &NumberOfComment, &NumberOfLikes, &NumberOfDislikes, &categories, &categories2)
+			if err != nil {
+				fmt.Println("Error ProfilLikeFeed Function in rows2.Scan:")
+				log.Fatal(err)
+			}
+
+			fmt.Printf("NumberOfComment: %v\n", NumberOfComment)
+
+			likeFeed = preappendUserFeed(likeFeed, structure.UserFeedPost{
+				PostID:           postID,
+				Name:             name,
+				UserImage:        image,
+				Message:          message,
+				DateTime:         dateTime,
+				Picture:          picture,
+				NumberOfComment:  LenUserComment(postID),
+				NumberOfLikes:    NumberOfLikes,
+				NumberOfDislikes: NumberOfDislikes,
+				Categories:       categories,
+				Categories2:      categories2,
+			})
+
+		}
+	}
+
+	return likeFeed
 }
 
 /*************************** ADDING COUNT POST **********************************/

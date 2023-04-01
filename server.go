@@ -21,7 +21,6 @@ import (
 	"github.com/gofrs/uuid"
 )
 
-/****************************** FUNCTION ERREUR *******************************/
 var user structure.UserAccount
 var userComment structure.Comment
 var Posts structure.Post
@@ -30,6 +29,8 @@ var homefeed []structure.HomeFeedPost
 var comments []structure.Comment
 var adminfeed []structure.AdminFeedPost
 var countEnter int
+
+/****************************** FUNCTION ERREUR *******************************/
 
 func erreur(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" && r.URL.Path != "/register" && r.URL.Path != "/home" && r.URL.Path != "/error" && r.URL.Path != "/userAccount" {
@@ -197,7 +198,6 @@ func login(w http.ResponseWriter, r *http.Request) {
 						log.Println("Erreur dans la QueryRow dans la fonction login pour userSession")
 						log.Fatal(err)
 					}
-
 				}
 
 				cookie := http.Cookie{
@@ -243,7 +243,6 @@ func login(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		return
-
 	}
 }
 
@@ -474,6 +473,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 		}
+
 		if r.FormValue("like") != "" && user.Connected {
 			currentTime := time.Now().Format("15:04  2-Janv-2006")
 
@@ -487,6 +487,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 			if countLike == 0 {
 				fmt.Printf("countLike: %v\n", countLike)
 				dataBase.AddingCountLike(postid, user.Name, currentTime)
+				dataBase.NotifLike(postid)
 			}
 
 			fmt.Printf("postid: %v\n", postid)
@@ -506,6 +507,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 			if countDislike == 0 {
 				fmt.Printf("countDislike: %v\n", countDislike)
 				data.AddingCountDislike(postid, user.Name, currentTime)
+				data.NotifDisLike(postid)
 			}
 
 			fmt.Printf("postid: %v\n", postid)
@@ -951,6 +953,7 @@ func comment(w http.ResponseWriter, r *http.Request) {
 			fmt.Printf("countLike: %v\n", countLike)
 			if countLike == 0 {
 				data.AddingCommentLike(commentid, countLike, user.Name, currentTime)
+				data.NotifDisLikeComment(commentid)
 
 			}
 
@@ -970,16 +973,13 @@ func comment(w http.ResponseWriter, r *http.Request) {
 				panic(err)
 			}
 
-			fmt.Printf("countLike: %v\n", countLike)
 			if countLike == 0 {
 				data.AddingCommentDisLike(commentid, countLike, user.Name, currentTime)
-
+				data.NotifDisLikeComment(commentid)
 			}
 
 			homefeed = dataBase.HomeFeedPost()
 			comments = data.GetComment(postID)
-
-			// fmt.Printf("postid: %v\n", postID)
 
 		}
 
@@ -1019,6 +1019,7 @@ func comment(w http.ResponseWriter, r *http.Request) {
 			if countComment >= 0 {
 				fmt.Printf("countComment: %v\n", countComment)
 				dataBase.AddingCountComment(postid, user.Name)
+				data.NotifComment(postid)
 			}
 			fmt.Printf("postid: %v\n", postid)
 		}
@@ -1074,9 +1075,6 @@ func moderateur(w http.ResponseWriter, r *http.Request) {
 		if message != "" && user.Connected {
 			postid := script.GeneratePostID()
 			currentTime := time.Now().Format("15:04  2-Janv-2006")
-
-			// user.Name = profil["name"]
-			// user.Image = profil["image"]
 
 			user.Post = preappendPost(structure.Post{
 				PostID:      postid,

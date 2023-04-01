@@ -136,7 +136,7 @@ func CreateDataBase() {
 		username NOT NULL,
         datetime NOT NULL,
 		post_id INTEGER,
-		comment_id,
+		comment_id INTEGER,
 		FOREIGN KEY (post_id) REFERENCES posts(postid),
 		FOREIGN KEY (comment_id) REFERENCES comments(commentid)
 
@@ -1284,4 +1284,109 @@ func DeletePost(postID string) {
 		fmt.Println("Erreur lors de la suppression de la session dans la base de données, func DeleteSession:")
 		log.Fatal(err)
 	}
+}
+
+func NotifComment(postID string) {
+
+	rows, err := Db.Query("SELECT commentid FROM comments WHERE post_id=?", postID)
+	if err != nil {
+		panic(err)
+	}
+	var commentID string
+	for rows.Next() {
+
+		err := rows.Scan(&commentID)
+		if err != nil {
+			panic(err)
+		}
+
+	}
+	rows2, err := Db.Query("SELECT name FROM comments WHERE commentid = ?", commentID)
+	if err != nil {
+		panic(err)
+
+	}
+	var name string
+	for rows2.Next() {
+		err := rows2.Scan(&name)
+		if err != nil {
+			panic(err)
+
+		}
+	}
+	fmt.Printf("comment done by: %v\n", name)
+
+}
+
+func NotifLike(postID string) {
+
+	rows, err := Db.Query("SELECT username FROM likes WHERE post_id=?", postID)
+	if err != nil {
+		panic(err)
+	}
+	var name string
+	for rows.Next() {
+
+		err := rows.Scan(&name)
+		if err != nil {
+			panic(err)
+		}
+
+	}
+	fmt.Printf("Post Liked by: %v\n", name)
+
+}
+func NotifLikeComment(commentID string) {
+
+	rows, err := Db.Query("SELECT username FROM likes WHERE comment_id=?", commentID)
+	if err != nil {
+		panic(err)
+	}
+	var name string
+	for rows.Next() {
+
+		err := rows.Scan(&name)
+		if err != nil {
+			panic(err)
+		}
+
+	}
+	fmt.Printf("Post Liked by: %v\n", name)
+
+}
+func NotifDisLike(postID string) {
+
+	rows, err := Db.Query("SELECT username FROM dislikes WHERE post_id=?", postID)
+	if err != nil {
+		panic(err)
+	}
+	var name string
+	for rows.Next() {
+
+		err := rows.Scan(&name)
+		if err != nil {
+			panic(err)
+		}
+
+	}
+	fmt.Printf("Post Disliked by: %v\n", name)
+
+}
+func NotifDisLikeComment(commentID string) {
+
+	rows, err := Db.Query("SELECT username FROM dislikes WHERE comment_id=?", commentID)
+	if err != nil {
+		panic(err)
+	}
+	var name string
+	for rows.Next() {
+
+		err := rows.Scan(&name)
+		if err != nil {
+			panic(err)
+		}
+
+	}
+	fmt.Printf("Post Disliked by: %v\n", name)
+
 }

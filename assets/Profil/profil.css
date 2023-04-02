@@ -738,6 +738,9 @@ body {
 
 .stories {
   border-bottom: 1px solid #272a3a;
+  display: flex;
+  flex-direction: column;  
+  overflow: auto;
 }
 
 .stories .user-img {

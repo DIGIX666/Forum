@@ -563,6 +563,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 /*************************** FUNCTION PROFIL **********************************/
 func profil(w http.ResponseWriter, r *http.Request) {
 	var userLikeFeed []structure.UserFeedPost
+	var notification []structure.Notification
 
 	profil := data.GetUserProfil()
 	user.Name = profil["name"]
@@ -634,34 +635,27 @@ func profil(w http.ResponseWriter, r *http.Request) {
 	if len(userLikeFeed) < data.LenLikeUserPost(user.Name) {
 		userLikeFeed = data.ProfilLikeFeed(user.Name)
 	}
-	fmt.Printf("userLikeFeed 2: %v\n", userLikeFeed)
 
-<<<<<<< HEAD
-=======
-	fmt.Printf("data.LenLikeUserPost(user.Name) 20: %v\n", data.LenLikeUserPost(user.Name))
-
->>>>>>> master
 	notif := r.FormValue("notif")
 	if notif == "notif_moderateur" {
 
 		data.AddingModoRequest(user.Name, user.Image, script.GeneratePostID(), time.Now().Format("15:04  2-Janv-2006"))
 
 	}
-	fmt.Printf("data.GetUserNotif(): %v\n", data.GetUserNotif())
 
-	if len(data.Notifs) < len(data.GetUserNotif()) {
+	notification = data.GetUserNotif()
 
-		data.Notifs = data.GetUserNotif()
-	}
+	fmt.Printf("notifications: %v\n", notification)
 
 	if err = temp.ExecuteTemplate(w, "profil", map[string]any{
 		"user":          user,
 		"UserPost":      userHomeFeed,
 		"UserLike":      userLikeFeed,
-		"Notifications": data.GetUserNotif(),
+		"Notifications": notification,
 	}); err != nil {
 		log.Println("Error executing template:", err)
 		return
+
 	}
 }
 

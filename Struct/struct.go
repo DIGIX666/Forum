@@ -149,6 +149,7 @@ type Notification struct {
 	LikeComment    bool
 	DislikeComment bool
 	AddedComment   bool
+	Action         string
 }
 
 type AuthGoogle struct {

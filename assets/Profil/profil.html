@@ -51,7 +51,7 @@
           </a>
         </div>
       </div>
-  
+
       {{if not .user.Moderateur}}
       {{if not .user.Admin}}
       <form method="post" action="/profil">
@@ -247,52 +247,55 @@
       </div>
       <div class="side-wrapper stories">
         <div class="side-title">NOTIFICATIONS</div>
-        
-        <div class="user">
-          {{range .Notifications}}
-          <img src="{{.UserAvatar}}" alt="user-image" class="user-img">
-          <div class="username">{{.UserName}}</div>
+        {{range .Notifications}}
+        <div class="album box">
+          <div class="user">
+            <div class="status-main"></div>
+            <img src="{{.UserAvatar}}" alt="avatar" class="user-img">
+            <div class="username">{{.UserName}}</div>
+            <p>{{.Action}}</p>
             <div class="album-date">{{.Date}}</div>
           </div>
-          {{end}}
         </div>
-        
+        {{end}}
       </div>
+
+
       <div class="side-wrapper contacts">
 
         <div class="side-title">POSTS LIKED</div>
-         <!--------------.Like Post.----------->
-         {{range .UserLike}}
-         <div class="album box">
-           <div class="status-main">
-             <img src="{{.UserImage}}" class="status-img">
-             <div class="album-detail">
-               <div class="album-title"><strong>{{.Name}}</strong>create
-                 new<span>post</span>{{.Categories}}{{.Categories2}}</div>
-               <div class="album-date">{{.DateTime}}</div>
-             </div>
-           </div>
-           <div class="album-content">{{.Message}}</div>
-           <div class="parentImageUpload">
-             <div class="uploadImage"> <img src="{{.Picture}}" class="upload-image"></div>
-           </div>
+        <!--------------.Like Post.----------->
+        {{range .UserLike}}
+        <div class="album box">
+          <div class="status-main">
+            <img src="{{.UserImage}}" class="status-img">
+            <div class="album-detail">
+              <div class="album-title"><strong>{{.Name}}</strong>
+                <span>post</span>{{.Categories}}{{.Categories2}}</div>
+              <div class="album-date">{{.DateTime}}</div>
+            </div>
+          </div>
+          <div class="album-content">{{.Message}}</div>
+          <div class="parentImageUpload">
+            <div class="uploadImage"> <img src="{{.Picture}}" class="upload-image"></div>
+          </div>
 
-           <div class="album-actions">
-
-             <a href="" class="album-action">
-               <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
-                 viewBox="0 0 24 24">
-                 <path
-                   d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
-               </svg>
-               <div id="like-count">{{.NumberOfLikes}}</div>
-             </a>
-           </div>
-         </div>
-         {{end}}
-         <!--------------. FIN Like Post.----------->
+          <div class="album-actions">
+            <a href="" class="album-action">
+              <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+                viewBox="0 0 24 24">
+                <path
+                  d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
+              </svg>
+              <div id="like-count">{{.NumberOfLikes}}</div>
+            </a>
+          </div>
+        </div>
+        {{end}}
+        <!--------------. FIN Like Post.----------->
       </div>
     </div>
+  </div>
 </body>
 <!-----------------------------------.FIN BODY.--------------------------------->
 

@@ -72,54 +72,6 @@
       <div class="main-container">
         <div class="timeline">
           <div class="timeline-right">
-            <!--------------.Écriture Post.----------->
-            {{if .User.Connected}}
-            <form method="POST" enctype="multipart/form-data">
-              <div class="status box">
-                <div class="status-menu"></div>
-                <div class="status-main">
-                  <img src="{{.User.Image}}" class="status-img">
-                  <textarea class="status-textarea" name="message" placeholder="Write something ..."></textarea>
-                </div>
-                <div class="status-actions">
-                  <a href="/" class="status-action">
-                    <svg viewBox="-42 0 512 512" xmlns="http://www.w3.org/2000/svg">
-                      <path
-                        d="M427.2 424c0 26.7-8.5 48.3-25.3 64.3-16.5 15.7-38.4 23.7-65 23.7H90.2c-26.6 0-48.5-8-65-23.7C8.5 472.3 0 450.7 0 423.9c0-10.2.3-20.4 1-30.2a302.7 302.7 0 0112.1-64.9c3.3-10.3 7.8-20.5 13.4-30.3 5.8-10.2 12.5-19 20.1-26.3a89 89 0 0129-18.2c11.2-4.4 23.7-6.7 37-6.7 5.2 0 10.3 2.2 20 8.5l21 13.5c6.6 4.3 15.7 8.3 27 11.9a107.7 107.7 0 0033 5.3c11 0 22-1.8 33-5.3 11.2-3.6 20.3-7.6 27-12l21-13.4c9.7-6.3 14.7-8.5 20-8.5 13.3 0 25.7 2.3 37 6.7a89 89 0 0128.9 18.2c7.6 7.3 14.4 16.1 20.2 26.3 5.5 9.8 10 20 13.3 30.3a305.5 305.5 0 0112.1 64.9c.7 9.8 1 20 1 30.2zm0 0"
-                        fill="#6aa9ff" />
-                      <path
-                        d="M427.2 424c0 26.7-8.5 48.3-25.3 64.3-16.5 15.7-38.4 23.7-65 23.7H210.2V286.5h3.3c11 0 22-1.8 33-5.3 11.2-3.6 20.3-7.6 27-12l21-13.4c9.7-6.3 14.7-8.5 20-8.5 13.3 0 25.7 2.3 37 6.7a89 89 0 0128.9 18.2c7.6 7.3 14.4 16.1 20.2 26.3 5.5 9.8 10 20 13.3 30.3a305.5 305.5 0 0112.1 64.9c.7 9.8 1 20 1 30.2zm0 0"
-                        fill="#2682ff" />
-                    </svg>
-                  </a>
-                  <input type="file" name="myFile">
-                  <p class="descript_img">max size 20Mo</p>
-                  <button type="submit" class="status-share">Send</button>
-                </div>
-              </div>
-              
-              <label for="cat-select">Choose a categories:</label>
-              
-              <select name="categories" id="cat-select">
-                <option ></option>
-                <option value="cat1">Cat 1</option>
-                <option value="cat2">Cat 2</option>
-                <option value="cat3">Cat 3</option>
-              </select>
-              <select name="categories2" id="cat-select">
-                <option ></option>
-                <option value="cat1">Cat 1</option>
-                <option value="cat2">Cat 2</option>
-                <option value="cat3">Cat 3</option>
-              </select>
-            </form>
-            {{end}}
-
-            <!--------------.FIN Écriture Post.----------->
-
-            <hr class="hr">
-
-
             <!--------------.Armature Post.----------->
 
             {{range .HomeFeed}}

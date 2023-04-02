@@ -28,7 +28,6 @@ var uAccount []structure.UserAccount
 var homefeed []structure.HomeFeedPost
 var comments []structure.Comment
 var adminfeed []structure.AdminFeedPost
-var countEnter int
 
 /****************************** FUNCTION ERREUR *******************************/
 
@@ -485,12 +484,10 @@ func home(w http.ResponseWriter, r *http.Request) {
 				panic(err)
 			}
 			if countLike == 0 {
-				fmt.Printf("countLike: %v\n", countLike)
 				dataBase.AddingCountLike(postid, user.Name, currentTime)
-
 			}
 
-			fmt.Printf("postid: %v\n", postid)
+			data.NotifLike(postid)
 			homefeed = dataBase.HomeFeedPost()
 		}
 
@@ -505,11 +502,10 @@ func home(w http.ResponseWriter, r *http.Request) {
 				panic(err)
 			}
 			if countDislike == 0 {
-				fmt.Printf("countDislike: %v\n", countDislike)
 				data.AddingCountDislike(postid, user.Name, currentTime)
 			}
 
-			fmt.Printf("postid: %v\n", postid)
+			data.NotifDisLike(postid)
 			homefeed = dataBase.HomeFeedPost()
 		}
 	}
@@ -645,12 +641,18 @@ func profil(w http.ResponseWriter, r *http.Request) {
 		data.AddingModoRequest(user.Name, user.Image, script.GeneratePostID(), time.Now().Format("15:04  2-Janv-2006"))
 
 	}
+	fmt.Printf("data.GetUserNotif(): %v\n", data.GetUserNotif())
+
+	if len(data.Notifs) < len(data.GetUserNotif()) {
+
+		data.Notifs = data.GetUserNotif()
+	}
 
 	if err = temp.ExecuteTemplate(w, "profil", map[string]any{
 		"user":          user,
 		"UserPost":      userHomeFeed,
 		"UserLike":      userLikeFeed,
-		"Notifications": data.Notifs,
+		"Notifications": data.GetUserNotif(),
 	}); err != nil {
 		log.Println("Error executing template:", err)
 		return
@@ -916,6 +918,7 @@ func comment(w http.ResponseWriter, r *http.Request) {
 
 		if message != "" && user.Connected {
 			dataBase.UserComment(user.Name, message, script.GenerateCommentID(), currentTime, postID)
+			data.NotifComment(postID)
 			homefeed = data.HomeFeedPost()
 		}
 		var commentid, pressed string
@@ -951,6 +954,7 @@ func comment(w http.ResponseWriter, r *http.Request) {
 			fmt.Printf("countLike: %v\n", countLike)
 			if countLike == 0 {
 				data.AddingCommentLike(commentid, countLike, user.Name, currentTime)
+				data.NotifLikeComment(commentid)
 
 			}
 
@@ -972,6 +976,7 @@ func comment(w http.ResponseWriter, r *http.Request) {
 
 			if countLike == 0 {
 				data.AddingCommentDisLike(commentid, countLike, user.Name, currentTime)
+				data.NotifDisLikeComment(commentid)
 
 			}
 
@@ -1014,9 +1019,8 @@ func comment(w http.ResponseWriter, r *http.Request) {
 				panic(err)
 			}
 			if countComment >= 0 {
-				fmt.Printf("countComment: %v\n", countComment)
+
 				dataBase.AddingCountComment(postid, user.Name)
-				data.NotifComment(postid)
 			}
 			fmt.Printf("postid: %v\n", postid)
 		}
@@ -1026,6 +1030,7 @@ func comment(w http.ResponseWriter, r *http.Request) {
 			return
 
 		}
+
 		homefeed = data.HomeFeedPost()
 		if err := temp.ExecuteTemplate(w, "comment", map[string]any{
 			"PostID":    postid,
@@ -1150,15 +1155,7 @@ func moderateur(w http.ResponseWriter, r *http.Request) {
 				fmt.Printf("countLike: %v\n", countLike)
 				dataBase.AddingCountLike(postid, user.Name, currentTime)
 			}
-			// for i := range user.Post {
-			// 	fmt.Printf("i: %v\n", i)
-			// 	fmt.Printf("user.Post[i].PostID: %v\n", user.Post[i].PostID)
-			// 	if user.Post[i].PostID == postid && countLike < 1 {
-			// 		user.Post[i].Count++
-			// 		countLike = user.Post[i].Count
-			// 	}
-			// 	fmt.Printf("conteur %v\n", user.Post[i].Count)
-			// }
+
 			fmt.Printf("postid: %v\n", postid)
 			homefeed = dataBase.HomeFeedPost()
 		}
@@ -1178,15 +1175,7 @@ func moderateur(w http.ResponseWriter, r *http.Request) {
 				fmt.Printf("countDislike: %v\n", countDislike)
 				data.AddingCountDislike(postid, user.Name, currentTime)
 			}
-			// for i := range user.Post {
-			// 	fmt.Printf("i: %v\n", i)
-			// 	fmt.Printf("user.Post[i].PostID: %v\n", user.Post[i].PostID)
-			// 	if user.Post[i].PostID == postid && countLike < 1 {
-			// 		user.Post[i].Count++
-			// 		countLike = user.Post[i].Count
-			// 	}
-			// 	fmt.Printf("conteur %v\n", user.Post[i].Count)
-			// }
+
 			fmt.Printf("postid: %v\n", postid)
 			homefeed = dataBase.HomeFeedPost()
 		}

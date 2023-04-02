@@ -247,14 +247,15 @@
       </div>
       <div class="side-wrapper stories">
         <div class="side-title">NOTIFICATIONS</div>
-        {{.Notifications}}
+        
         <div class="user">
-          <img src="{{.UserAvatar}}" alt="" class="user-img">
+          {{range .Notifications}}
+          <img src="{{.UserAvatar}}" alt="user-image" class="user-img">
           <div class="username">{{.UserName}}</div>
             <div class="album-date">{{.Date}}</div>
           </div>
+          {{end}}
         </div>
-        {{end}}
         
       </div>
       <div class="side-wrapper contacts">

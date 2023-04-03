@@ -25,6 +25,18 @@ body {
   margin: 0 auto;
 }
 
+.delete-profil {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #a2a4b4;
+}
+
+/* .delete-profil {
+  margin-left: 90px;
+  margin-top: -51px;
+} */
+
 .left-side {
   width: 260px;
   border-right: 1px solid #272a3a;

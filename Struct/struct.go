@@ -139,6 +139,7 @@ type Dislikes struct {
 }
 
 type Notification struct {
+	NotifID        string
 	UserName       string // the user who done the action
 	UserAvatar     string
 	Date           string

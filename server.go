@@ -642,6 +642,10 @@ func profil(w http.ResponseWriter, r *http.Request) {
 		data.AddingModoRequest(user.Name, user.Image, script.GeneratePostID(), time.Now().Format("15:04  2-Janv-2006"))
 
 	}
+	if r.FormValue("delete-notif") != "" {
+		data.DeleteNotif(r.FormValue("delete-notif"))
+
+	}
 
 	notification = data.GetUserNotif()
 

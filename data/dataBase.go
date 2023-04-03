@@ -166,6 +166,7 @@ func CreateDataBase() {
 	//table notification
 	_, err = Db.Exec(`CREATE TABLE IF NOT EXISTS notification (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		notifid TEXT DEFAULT '',
 		username TEXT DEFAULT '',	
 		avatar TEXT DEFAULT '',
 		datetime TEXT DEFAULT '',
@@ -1371,7 +1372,7 @@ func NotifComment(postID string) {
 	fmt.Printf("Name of the post : %v\n", namePost)
 
 	dateTime := time.Now().Format("1-Janv-2006 15:04")
-	_, err = Db.Exec("INSERT INTO notification (username, avatar, datetime, post_id, comment_id, added_comment) VALUES (?,?,?,?,?,?)", namePost, picture, dateTime, postID, commentID, true)
+	_, err = Db.Exec("INSERT INTO notification (notifid,username, avatar, datetime, post_id, comment_id, added_comment) VALUES (?,?,?,?,?,?,?)", script.GenerateRandomString(), namePost, picture, dateTime, postID, commentID, true)
 	if err != nil {
 		fmt.Println("Error function NotifComment dataBase:")
 		fmt.Printf("err: %v\n", err)
@@ -1424,7 +1425,7 @@ func NotifLike(postID string) {
 	fmt.Printf("Name of the post : %v\n", namePost)
 
 	dateTime := time.Now().Format("1-Janv-2006 15:04")
-	_, err = Db.Exec("INSERT INTO notification (username, avatar, datetime, post_id, like_post) VALUES (?,?,?,?,?)", namePost, picture, dateTime, postID, true)
+	_, err = Db.Exec("INSERT INTO notification (notifid,username, avatar, datetime, post_id, like_post) VALUES (?,?,?,?,?,?)", script.GenerateRandomString(), namePost, picture, dateTime, postID, true)
 	if err != nil {
 		fmt.Println("Error function NotifLike dataBase:")
 		fmt.Printf("err: %v\n", err)
@@ -1477,7 +1478,7 @@ func NotifLikeComment(commentID string) {
 	fmt.Printf("Name of the post : %v\n", namePost)
 
 	dateTime := time.Now().Format("1-Janv-2006 15:04")
-	_, err = Db.Exec("INSERT INTO notification (username, avatar, datetime, comment_id,like_comment) VALUES (?,?,?,?,?)", namePost, picture, dateTime, commentID, true)
+	_, err = Db.Exec("INSERT INTO notification (notifid,username, avatar, datetime, comment_id,like_comment) VALUES (?,?,?,?,?,?)", script.GenerateRandomString(), namePost, picture, dateTime, commentID, true)
 	if err != nil {
 		fmt.Println("Error function NotifLikeCommment dataBase:")
 		fmt.Printf("err: %v\n", err)
@@ -1527,7 +1528,7 @@ func NotifDisLike(postID string) {
 	fmt.Printf("Name of the post : %v\n", namePost)
 
 	dateTime := time.Now().Format("1-Janv-2023 15:04")
-	_, err = Db.Exec("INSERT INTO notification (username, avatar, datetime, post_id, dislike_post) VALUES (?,?,?,?,?)", namePost, picture, dateTime, postID, true)
+	_, err = Db.Exec("INSERT INTO notification (notifid,username, avatar, datetime, post_id, dislike_post) VALUES (?,?,?,?,?,?)", script.GenerateRandomString(), namePost, picture, dateTime, postID, true)
 	if err != nil {
 		fmt.Println("Error function NotifDislike dataBase:")
 		fmt.Printf("err: %v\n", err)
@@ -1577,7 +1578,7 @@ func NotifDisLikeComment(commentID string) {
 		}
 	}
 
-	_, err = Db.Exec("INSERT INTO notification (username,avatar, datetime,comment_id,dislike_comment) VALUES (?,?,?,?,?)", nameNotif, picture, dateTime, commentID, dislikeComment)
+	_, err = Db.Exec("INSERT INTO notification (notifid,username,avatar, datetime,comment_id,dislike_comment) VALUES (?,?,?,?,?,?)", script.GenerateRandomString(), nameNotif, picture, dateTime, commentID, dislikeComment)
 	if err != nil {
 		fmt.Println("Error function NotifDislikeComment dataBase:")
 		fmt.Printf("err: %v\n", err)
@@ -1620,19 +1621,19 @@ func GetUserNotif() []structure.Notification {
 	}
 	var Notifs []structure.Notification
 
-	var name, picture, date, postID, commentID, action string
+	var notifID, name, picture, date, postID, commentID, action string
 	var likePost, dislikePost, likeComment, dislikeComment, addedComment bool
 
 	for rows.Next() {
 
 		var id int
-		err := rows.Scan(&id, &name, &picture, &date, &postID, &commentID, &likePost, &dislikePost, &likeComment, &dislikeComment, &addedComment, &action)
+		err := rows.Scan(&id, &notifID, &name, &picture, &date, &postID, &commentID, &likePost, &dislikePost, &likeComment, &dislikeComment, &addedComment, &action)
 		if err != nil {
 			panic(err)
 		}
 
 		Notifs = reverseApppend(Notifs, structure.Notification{
-
+			NotifID:        notifID,
 			UserName:       name,
 			UserAvatar:     picture,
 			Date:           date,
@@ -1663,4 +1664,12 @@ func LenUserNotif(username string) int {
 		panic(err)
 	}
 	return count
+}
+
+func DeleteNotif(notifID string) {
+	_, err := Db.Exec("DELETE FROM notification WHERE notifid=?", notifID)
+	if err != nil {
+		fmt.Println("Error function DeleteNotif dataBase:")
+		fmt.Printf("err: %v\n", err)
+	}
 }

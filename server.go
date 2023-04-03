@@ -645,8 +645,6 @@ func profil(w http.ResponseWriter, r *http.Request) {
 
 	notification = data.GetUserNotif()
 
-	fmt.Printf("notifications: %v\n", notification)
-
 	if err = temp.ExecuteTemplate(w, "profil", map[string]any{
 		"user":          user,
 		"UserPost":      userHomeFeed,

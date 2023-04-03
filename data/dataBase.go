@@ -1313,28 +1313,6 @@ func DeletePost(postID string) {
 	}
 }
 
-// create a function that calculate the time since the post was created
-func timeSince(t time.Time) string {
-	switch int(time.Since(t).Seconds()) {
-	case t.Second():
-		return "a few seconds ago"
-	case t.Minute():
-		return "a minute ago"
-	case t.Hour():
-		return "an hour ago"
-	case t.Day():
-		return "a day ago"
-	case t.Day() / 7:
-		return "a week ago"
-	case t.Day() / 30:
-		return "a month ago"
-	case t.Year():
-		return "a year ago"
-	default:
-		return t.String()
-	}
-}
-
 func NotifComment(postID string) {
 
 	rows, err := Db.Query("SELECT commentid FROM comments WHERE post_id=?", postID)
@@ -1368,6 +1346,8 @@ func NotifComment(postID string) {
 		panic(err)
 	}
 
+	fmt.Printf("Name of the user who commented : %v\n", name)
+
 	var picture string
 
 	for rows3.Next() {
@@ -1377,8 +1357,21 @@ func NotifComment(postID string) {
 		}
 	}
 
-	dateTime := timeSince(time.Now())
-	_, err = Db.Exec("INSERT INTO notification (username, avatar, datetime, post_id, comment_id, added_comment) VALUES (?,?,?,?,?,?)", name, picture, dateTime, postID, commentID, true)
+	r, err := Db.Query("SELECT name FROM posts WHERE postid=?", postID)
+	if err != nil {
+		panic(err)
+	}
+	var namePost string
+	for r.Next() {
+		err := r.Scan(&namePost)
+		if err != nil {
+			panic(err)
+		}
+	}
+	fmt.Printf("Name of the post : %v\n", namePost)
+
+	dateTime := time.Now().Format("1-Janv-2006 15:04")
+	_, err = Db.Exec("INSERT INTO notification (username, avatar, datetime, post_id, comment_id, added_comment) VALUES (?,?,?,?,?,?)", namePost, picture, dateTime, postID, commentID, true)
 	if err != nil {
 		fmt.Println("Error function NotifComment dataBase:")
 		fmt.Printf("err: %v\n", err)
@@ -1405,6 +1398,8 @@ func NotifLike(postID string) {
 		panic(err)
 	}
 
+	fmt.Printf("Name user who liked the post: %v\n", name)
+
 	var picture string
 
 	for rows2.Next() {
@@ -1413,8 +1408,23 @@ func NotifLike(postID string) {
 			panic(err)
 		}
 	}
-	dateTime := timeSince(time.Now())
-	_, err = Db.Exec("INSERT INTO notification (username, avatar, datetime, post_id, like_post) VALUES (?,?,?,?,?)", name, picture, dateTime, postID, true)
+
+	r, err := Db.Query("SELECT name FROM posts WHERE postid=?", postID)
+	if err != nil {
+
+		panic(err)
+	}
+	var namePost string
+	for r.Next() {
+		err := r.Scan(&namePost)
+		if err != nil {
+			panic(err)
+		}
+	}
+	fmt.Printf("Name of the post : %v\n", namePost)
+
+	dateTime := time.Now().Format("1-Janv-2006 15:04")
+	_, err = Db.Exec("INSERT INTO notification (username, avatar, datetime, post_id, like_post) VALUES (?,?,?,?,?)", namePost, picture, dateTime, postID, true)
 	if err != nil {
 		fmt.Println("Error function NotifLike dataBase:")
 		fmt.Printf("err: %v\n", err)
@@ -1442,6 +1452,8 @@ func NotifLikeComment(commentID string) {
 		panic(err)
 	}
 
+	fmt.Printf("Name of the user who liked the comment: %v\n", name)
+
 	var picture string
 
 	for rows2.Next() {
@@ -1450,8 +1462,22 @@ func NotifLikeComment(commentID string) {
 			panic(err)
 		}
 	}
-	dateTime := timeSince(time.Now())
-	_, err = Db.Exec("INSERT INTO notification (username, avatar, datetime, comment_id,like_comment) VALUES (?,?,?,?,?)", name, picture, dateTime, commentID, true)
+
+	r, err := Db.Query("SELECT name FROM comments WHERE commentid=?", commentID)
+	if err != nil {
+		panic(err)
+	}
+	var namePost string
+	for r.Next() {
+		err := r.Scan(&namePost)
+		if err != nil {
+			panic(err)
+		}
+	}
+	fmt.Printf("Name of the post : %v\n", namePost)
+
+	dateTime := time.Now().Format("1-Janv-2006 15:04")
+	_, err = Db.Exec("INSERT INTO notification (username, avatar, datetime, comment_id,like_comment) VALUES (?,?,?,?,?)", namePost, picture, dateTime, commentID, true)
 	if err != nil {
 		fmt.Println("Error function NotifLikeCommment dataBase:")
 		fmt.Printf("err: %v\n", err)
@@ -1471,7 +1497,6 @@ func NotifDisLike(postID string) {
 		if err != nil {
 			panic(err)
 		}
-
 	}
 
 	rows2, err := Db.Query("SELECT image FROM users WHERE name=?", name)
@@ -1487,8 +1512,22 @@ func NotifDisLike(postID string) {
 			panic(err)
 		}
 	}
-	dateTime := timeSince(time.Now())
-	_, err = Db.Exec("INSERT INTO notification (username, avatar, datetime, post_id, dislike_post) VALUES (?,?,?,?,?)", name, picture, dateTime, postID, true)
+
+	r, err := Db.Query("SELECT name FROM posts WHERE postid=?", postID)
+	if err != nil {
+		panic(err)
+	}
+	var namePost string
+	for r.Next() {
+		err := r.Scan(&namePost)
+		if err != nil {
+			panic(err)
+		}
+	}
+	fmt.Printf("Name of the post : %v\n", namePost)
+
+	dateTime := time.Now().Format("1-Janv-2023 15:04")
+	_, err = Db.Exec("INSERT INTO notification (username, avatar, datetime, post_id, dislike_post) VALUES (?,?,?,?,?)", namePost, picture, dateTime, postID, true)
 	if err != nil {
 		fmt.Println("Error function NotifDislike dataBase:")
 		fmt.Printf("err: %v\n", err)
@@ -1523,16 +1562,26 @@ func NotifDisLikeComment(commentID string) {
 			panic(err)
 		}
 	}
-	dateTime := timeSince(time.Now())
+	dateTime := time.Now().Format("1-Janv-2023 15:04")
 	var dislikeComment bool = true
 
-	_, err = Db.Exec("INSERT INTO notification (username,avatar, datetime,comment_id,dislike_comment) VALUES (?,?,?,?,?)", name, picture, dateTime, commentID, dislikeComment)
+	r, err := Db.Query("SELECT username FROM notification WHERE comment_id=?", commentID)
+	if err != nil {
+		panic(err)
+	}
+	var nameNotif string
+	for r.Next() {
+		err := r.Scan(&nameNotif)
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	_, err = Db.Exec("INSERT INTO notification (username,avatar, datetime,comment_id,dislike_comment) VALUES (?,?,?,?,?)", nameNotif, picture, dateTime, commentID, dislikeComment)
 	if err != nil {
 		fmt.Println("Error function NotifDislikeComment dataBase:")
 		fmt.Printf("err: %v\n", err)
-
 	}
-
 }
 
 func reverseApppend(s []structure.Notification, e structure.Notification) []structure.Notification {
@@ -1565,7 +1614,7 @@ func GetTypeNotif(notif structure.Notification) string {
 }
 
 func GetUserNotif() []structure.Notification {
-	rows, err := Db.Query("SELECT * FROM notification")
+	rows, err := Db.Query("SELECT * FROM notification WHERE username=? ORDER BY datetime DESC", GetUserProfil()["name"])
 	if err != nil {
 		panic(err)
 	}
@@ -1575,7 +1624,6 @@ func GetUserNotif() []structure.Notification {
 	var likePost, dislikePost, likeComment, dislikeComment, addedComment bool
 
 	for rows.Next() {
-		// var notif structure.Notification
 
 		var id int
 		err := rows.Scan(&id, &name, &picture, &date, &postID, &commentID, &likePost, &dislikePost, &likeComment, &dislikeComment, &addedComment, &action)

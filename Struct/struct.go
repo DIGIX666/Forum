@@ -138,6 +138,20 @@ type Dislikes struct {
 	Connected        bool
 }
 
+type Notification struct {
+	UserName       string // the user who done the action
+	UserAvatar     string
+	Date           string
+	PostID         string
+	CommentID      string
+	LikePost       bool
+	DislikePost    bool
+	LikeComment    bool
+	DislikeComment bool
+	AddedComment   bool
+	Action         string
+}
+
 type AuthGoogle struct {
 	Access_Token  string `json:"access_token"`
 	Expires_In    int    `json:"expires_in"`

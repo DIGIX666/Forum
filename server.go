@@ -376,7 +376,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 		uAccount = data.GetAllUsers()
 	}
 
-	// fmt.Printf("len(uAccount): %v\n", len(uAccount))
+	var notification []structure.Notification
 
 	if len(uAccount) > 0 && user.Connected {
 
@@ -534,13 +534,18 @@ func home(w http.ResponseWriter, r *http.Request) {
 			v.Connected = true
 		}
 
-		fmt.Printf("user.Admin: %v\n", user.Admin)
+		if r.FormValue("delete-notif") != "" {
+			data.DeleteNotif(r.FormValue("delete-notif"))
+
+		}
+		notification = data.GetUserNotif()
 
 		homefeed = data.HomeFeedPost()
 
 		err = temp.ExecuteTemplate(w, "home", map[string]any{
-			"User":     user,
-			"HomeFeed": homefeed,
+			"User":          user,
+			"HomeFeed":      homefeed,
+			"Notifications": notification,
 		})
 		if err != nil {
 			log.Fatal(err)

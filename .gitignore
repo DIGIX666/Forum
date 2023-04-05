@@ -1,0 +1,11 @@
+# Dossiers à ignorer
+/upload-image/*
+
+# Fichiers à ignorer
+*.DS_Store
+*.dll
+*.exe
+*.war
+*.jar
+*.db
+*.gif

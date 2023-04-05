@@ -1,0 +1,248 @@
+{{define "categorie1"}}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/assets/Categories/Cat-1/cat1.css">
+  <title>{{.user.Name}}</title>
+  <link rel="website icon" type="png" href="/assets/icon.png">
+</head>
+
+
+<body>
+
+  <!-----------------------------.BLOCK DE GAUCHE.------------------------>
+
+  <div class="container" x-data="{ rightSide: false, leftSide: false }">
+    <div class="left-side" :class="{'active' : leftSide}">
+      <div class="left-side-button" @click="leftSide = !leftSide">
+        <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"
+          stroke-linejoin="round">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+        <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+          viewBox="0 0 24 24">
+          <path d="M19 12H5M12 19l-7-7 7-7" />
+        </svg>
+      </div>
+      <div class="logo">MDO</div>
+      <div class="side-wrapper">
+        <div class="side-title">MENU</div>
+        <div class="side-menu">
+          <a href="/">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+              <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+              <path d="M9 22V12h6v10" />
+            </svg>
+            Home
+          </a>
+          <a href="/profil">
+            <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+              viewBox="0 0 24 24">
+              <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+              <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+            </svg>
+            Me
+          </a>
+        </div>
+      </div>
+
+      <div class="side-wrapper">
+        <div class="side-title">SUBJECTS</div>
+        <div class="side-menu">
+          <a href="#"># Cat 1 </a>
+          <a href="/categorie2"># Cat 2 </a>
+          <a href="/categorie3"># Cat 3 </a>
+        </div>
+      </div>
+    </div>
+    <!------------------------------------------------------------------------>
+
+
+    <!-----------------------------.BLOCK CENTRAL.---------------------------->
+    <div class="main">
+      <div class="search-bar"></div>
+      <div class="main-container">
+        <div class="timeline">
+          <div class="timeline-right">
+
+            <!--------------.Armature Post.----------->
+
+            {{range .categories}}
+            <div class="album box">
+              <div class="status-main">
+                 <img src="{{.UserImage}}" class="status-img"> 
+                <div class="album-detail">
+                  <div class="album-title"><strong>{{.Name}}</strong>create new<span>post</span>{{.Categories}}{{.Categories2}}</div>
+                  <div class="album-date">{{.DateTime}}</div>
+                </div>
+              </div>
+              <div class="album-content">{{.Message}}</div>
+              <div class="parentImageUpload">
+                <div class="uploadImage"> <img src="{{.Picture}}" class="upload-image"></div>
+              </div>
+
+              <div class="album-actions">
+                
+                <a href="" class="album-action">
+                  <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                    <path
+                      d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
+                  </svg>
+                  <div id="like-count">{{.NumberOfLikes}}</div>
+                </a>
+                
+                
+                <a href="" class="album-action">
+                  <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+                  class="css-i6dzq1" viewBox="0 0 24 24">
+                  <path d="M18 6L6 18M6 6l12 12" />
+                </svg>
+                <div id="dislike-count">{{.NumberOfDislikes}}</div>
+                </a>
+               
+                
+                <a href="/comment?postid={{.PostID}}" class="album-action">
+                  <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+                    class="css-i6dzq1" viewBox="0 0 24 24">
+                    <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
+                  </svg>
+                  <div id="compteur-comment">{{.NumberOfComment}}</div>
+                </a>
+              </div>
+            </div>
+            {{end}}
+            <!--------------. FIN Armature Post.----------->
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <!-----------------------------.FIN BLOCK CENTRAL.---------------------------->
+
+
+    <!-----------------------------.BLOCK DE DROITE.---------------------------->
+    <div class="right-side" :class="{ 'active': rightSide }">
+      <div class="account">
+        <button class="account-button">
+          <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+            class="css-i6dzq1" viewBox="0 0 24 24">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+            <path d="M22 6l-10 7L2 6" />
+          </svg>
+        </button>
+
+        <form action="/profil" method="POST">
+          <button type="submit" value="logout" name="logout" class="account-user">Logout</button>
+        </form>
+
+        <span class="account-user">{{.user.Name}}
+           <img src="{{.user.Image}}" class="account-profile">
+        </span>
+
+      </div>
+      <div class="side-wrapper stories">
+        <div class="side-title">NOTIFICATIONS</div>
+        <div class="user">
+          <!-- <img src="https://pbs.twimg.com/profile_images/1102351320567164931/ZCkJgJIH.png" alt="" class="user-img"> -->
+          <div class="username">Test #
+            <div class="album-date">12 hours ago</div>
+          </div>
+        </div>
+        <div class="user">
+          <!-- <img src="https://pbs.twimg.com/profile_images/1153966095444992000/1lpIyHaQ.jpg" alt="" class="user-img"> -->
+          <div class="username">Test #
+            <div class="album-date">29 minutes ago</div>
+          </div>
+        </div>
+        <div class="user">
+          <!-- <img src="https://images.unsplash.com/photo-1565464027194-7957a2295fb7?ixlib=rb-1.2.1&auto=format&fit=crop&w=3500&q=80" alt="" class="user-img"> -->
+          <div class="username">Test #
+            <div class="album-date">3 hours ago</div>
+          </div>
+        </div>
+        <div class="user">
+          <!-- <img src="https://images.unsplash.com/photo-1527980965255-d3b416303d12?ixlib=rb-1.2.1&auto=format&fit=crop&w=1400&q=80" alt="" class="user-img"> -->
+          <div class="username">Test #
+            <div class="album-date">18 hours ago</div>
+          </div>
+        </div>
+      </div>
+      <div class="side-wrapper contacts">
+        <div class="side-title">ACIVITÉS</div>
+        <div class="user">
+          <!-- <img src="https://randomuser.me/api/portraits/men/1.jpg" class="user-img"> -->
+          <div class="username">Test #
+            <div class="user-status"></div>
+          </div>
+        </div>
+        <div class="user">
+          <!-- <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=200&fit=max&s=046c29138c1335ef8edee7daf521ba50" class="user-img"> -->
+          <div class="username">Test #
+            <div class="user-status offline"></div>
+          </div>
+        </div>
+        <div class="user">
+          <!-- <img src="https://images.unsplash.com/photo-1575084713138-342cae5f8d00?ixlib=rb-1.2.1&auto=format&fit=crop&w=958&q=80" class="user-img"> -->
+          <div class="username">Test #
+            <div class="user-status offline"></div>
+          </div>
+        </div>
+        <div class="user">
+          <!-- <img src="https://images.pexels.com/photos/598745/pexels-photo-598745.jpeg?h=350&auto=compress&cs=tinysrgb" class="user-img"> -->
+          <div class="username">Test #
+            <div class="user-status"></div>
+          </div>
+        </div>
+        <div class="user">
+          <!-- <img src="https://pbs.twimg.com/profile_images/2452384114/noplz47r59v1uxvyg8ku.png" class="user-img"> -->
+          <div class="username">Test #
+            <div class="user-status"></div>
+          </div>
+        </div>
+        <div class="user">
+          <!-- <img src="https://randomuser.me/api/portraits/women/63.jpg" class="user-img"> -->
+          <div class="username">Test #
+            <div class="user-status"></div>
+          </div>
+        </div>
+        <div class="user">
+          <!-- <img src="https://images.unsplash.com/photo-1476493279419-b785d41e38d8?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=200&fit=max&s=61eaea85f1aa3d065400179c78163f15" class="user-img"> -->
+          <div class="username">Test #
+            <div class="user-status"></div>
+          </div>
+        </div>
+        <div class="user">
+          <!-- <img src="https://m.media-amazon.com/images/M/MV5BMjI4NDcyNjQxNl5BMl5BanBnXkFtZTgwMzI4OTM3NjM@._V1_UY256_CR13,0,172,256_AL_.jpg" class="user-img"> -->
+          <div class="username">Test #
+            <div class="user-status idle"></div>
+          </div>
+        </div>
+        <div class="user">
+          <!-- <img src="https://images.unsplash.com/photo-1509380836717-c4320ccf1a6f?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=200&fit=max&s=e01c8c45a063daaf6d6e571a32bd6c90" class="user-img"> -->
+          <div class="username">Test #
+            <div class="user-status"></div>
+          </div>
+        </div>
+        <div class="user">
+          <!-- <img src="https://pbs.twimg.com/profile_images/737221709267374081/sdwta9Oh.jpg" alt="" class="user-img"> -->
+          <div class="username">Test #
+            <div class="user-status idle"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+</body>
+<!-----------------------------------.FIN BODY.--------------------------------->
+
+<!-----------------------------------.SCRIPT.----------------------------------->
+<!------------------------------------------------------------------------------>
+
+</html>
+{{end}}

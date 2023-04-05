@@ -1,0 +1,104 @@
+{{define "login"}}
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>Connexion au forum</title>
+	<link rel="stylesheet" type="text/css" href="/assets/login.css">
+	<link rel="website icon" type="png" href="/assets/icon.png">
+	<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+</head>
+
+<body>
+	<div>
+		<div class="caixa__login">
+			<form action="/login" method="post">
+				<button class="button__login" type="submit" name="login" value="login"><h2>HOME In Guest Mode</h2></button>
+			</form>
+			
+			<div class="user-photo">
+				<!-- Emplacement de la photo de l'utilisateur -->
+				<img src="/assets/images/beehive-37436.svg" alt="Photo de l'utilisateur">
+			</div>
+
+			<div>
+				<form id="form" method="post">
+					<div class="caixa__login-input">
+						<label for="email">Email</label><br>
+						<input type="text" id="email" name="email"><br>
+					</div>
+					<div class="caixa__login-input">
+						<label for="password">Mot de passe</label><br>
+						<input type="password" id="password" name="password">
+						<button class="button-password" type="button" onclick="revealPassword()"></button><br><br>
+					</div>
+					<a class="button_a">
+						<span></span>
+						<span></span>
+						<span></span>
+						<span></span>
+						<input type="submit" value="Se connecter">
+					</a>
+				</form>
+
+				<div class="authentifaction">
+					<form method="POST">
+						<a name="google_code" class='bx bxl-google' href='https://accounts.google.com/o/oauth2/v2/auth?scope=https://www.googleapis.com/auth/userinfo.profile+https://www.googleapis.com/auth/userinfo.email&access_type=offline&include_granted_scopes=false&response_type=code&state=state_parameter_passthrough_value&redirect_uri=https%3A//localhost:8080/login&client_id=760601264616-u9vo4s8hdistvmn6ia2goko3m6qhmff8.apps.googleusercontent.com'></a>
+					
+						<a name="github_code" class='bx bxl-github' href='https://github.com/login/oauth/authorize?client_id=44fd70920b2db737a3ba&scope=user'></a>
+					</form>
+				</div>
+			</div>
+			<div class="register">
+				<label for="register">You don't have an account ? <a href="/register">Register</a></label>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+		function revealPassword() {
+			let passwordInput = document.getElementById("password");
+
+			if (passwordInput.type === "password") {
+				passwordInput.type = "text";
+
+			} else {
+				passwordInput.type = "password";
+
+			}
+
+		}
+		function displayBadMatching() {
+			const emailInput = document.getElementById("email")
+
+			const passwordInput = document.getElementById("password")
+
+			let btn = document.getElementById("submit")
+
+			emailInput.addEventListener("input", displayBadMatching)
+
+			passwordInput.addEventListener("input", displayBadMatching)
+
+
+
+			const passwordBytes = new TextEncoder().encode(password);
+
+
+			if (emailInput.value != "" && passwordInput.value != "" && passwordBytes.length < 72) {
+
+				btn.disabled = false
+				btn.style.backgroundColor = "#3498db"
+
+			} else {
+				btn.disabled = true
+				btn.style.backgroundColor = "grey"
+
+			}
+		}
+
+		displayBadMatching()
+
+	</script>
+</body>
+
+</html>
+{{end}}

@@ -13,6 +13,4 @@ go run .
 ```
 
 
-### Contributors
 
-@Yirmiyah

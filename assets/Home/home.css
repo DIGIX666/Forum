@@ -468,16 +468,8 @@ body {
 
 .user {
   display: flex;
-  flex-direction: column;
   align-items: center;
   cursor: pointer;
-}
-
-.delete-profil {
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  color: #a2a4b4;
 }
 
 .user + .user {
@@ -607,12 +599,12 @@ body {
   text-decoration: none;
 }
 
-.like, .dislike {
+.like, .dislike, .delete-profil {
   background: transparent;
   border: none;
   color: #a2a4b4;
 }
-.like:hover, .dislike:hover {
+.like:hover, .dislike:hover, .delete-profil:hover {
   color: #fff;
 }
 
@@ -770,9 +762,6 @@ body {
 
 .stories {
   border-bottom: 1px solid #272a3a;
-  display: flex;
-  flex-direction: column;  
-  overflow: auto;
 }
 
 .stories .user-img {
@@ -1011,4 +1000,10 @@ body {
   color: #333;
   background-color: #f5f5f5;
   font-weight: normal;
+}
+
+.delete-profil {
+  margin-left: 50px;
+  margin-top: 5px;
+  cursor: pointer;
 }/*# sourceMappingURL=home.css.map */

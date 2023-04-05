@@ -250,7 +250,7 @@
         {{range .Notifications}}
         <div class="album box">
           <div class="user">
-            <div class="status-main"></div>
+            <div class="status-main">
             <img src="{{.UserAvatar}}" alt="avatar" class="user-img">
             <div class="username">{{.UserName}}</div>
             <p>{{.Action}}</p>
@@ -265,6 +265,7 @@
                 </svg>
               </button>
             </form>
+          </div>
           </div>
         </div>
         {{end}}

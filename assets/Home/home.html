@@ -332,13 +332,14 @@
         </a>
         {{end}}
       </div>
+
       <div class="side-wrapper stories">
         <div class="side-title">NOTIFICATIONS</div>
         {{if .User.Connected}}
         {{range .Notifications}}
         <div class="album box">
           <div class="user">
-            <div class="status-main"></div>
+            <div class="status-main">
             <img src="{{.UserAvatar}}" alt="avatar" class="user-img">
             <div class="username">{{.UserName}}</div>
             <p>{{.Action}}</p>
@@ -354,6 +355,7 @@
               </button>
             </form>
           </div>
+          </div>
         </div>
         {{end}}
         {{end}}
@@ -365,9 +367,9 @@
       {{end}}
 
       <div class="side-wrapper contacts">
-        <div class="side-title">POSTS LIKED</div>
+        <!-- <div class="side-title">POSTS LIKED</div> -->
 
-        {{if .User.Connected}}
+        <!-- {{if .User.Connected}}
         {{range .UserLike}}
         <div class="album box">
           <div class="status-main">
@@ -396,7 +398,7 @@
           </div>
         </div>
         {{end}}
-        {{end}}
+        {{end}} -->
 
         {{if not .User.Connected}}
         <a href="/login"><button type="submit" class="status-share">Login

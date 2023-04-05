@@ -25,18 +25,6 @@ body {
   margin: 0 auto;
 }
 
-.delete-profil {
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  color: #a2a4b4;
-}
-
-/* .delete-profil {
-  margin-left: 90px;
-  margin-top: -51px;
-} */
-
 .left-side {
   width: 260px;
   border-right: 1px solid #272a3a;
@@ -134,7 +122,6 @@ body {
 
 .side-wrapper {
   padding: 30px;
-  overflow-wrap: break-word;
 }
 
 .side-menu {
@@ -480,7 +467,6 @@ body {
 
 .user {
   display: flex;
-  flex-direction: column;
   align-items: center;
   cursor: pointer;
 }
@@ -750,9 +736,6 @@ body {
 
 .stories {
   border-bottom: 1px solid #272a3a;
-  display: flex;
-  flex-direction: column;  
-  overflow: auto;
 }
 
 .stories .user-img {
@@ -1038,4 +1021,16 @@ body {
   width: 100%; /* assurez-vous que l'image occupe toute la largeur disponible de la div */
   height: auto; /* permet à la hauteur de l'image de s'ajuster en fonction de sa largeur pour éviter toute distorsion */
   display: block; /* assurez-vous que l'image est affichée comme un bloc pour qu'elle occupe toute la largeur disponible de la div */
+}
+
+.delete-profil {
+  background: transparent;
+  border: none;
+  margin-left: 50px;
+  margin-top: 5px;
+  cursor: pointer;
+  color: #a2a4b4;
+}
+.delete-profil:hover {
+  color: #fff;
 }/*# sourceMappingURL=profil.css.map */

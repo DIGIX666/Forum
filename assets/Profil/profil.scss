@@ -1029,3 +1029,15 @@ body {
   height: auto; /* permet à la hauteur de l'image de s'ajuster en fonction de sa largeur pour éviter toute distorsion */
   display: block; /* assurez-vous que l'image est affichée comme un bloc pour qu'elle occupe toute la largeur disponible de la div */
 }
+
+.delete-profil {
+  background: transparent;
+  border: none;
+  margin-left: 50px;
+  margin-top: 5px;
+  cursor: pointer;
+  color: #a2a4b4;
+  &:hover{
+    color: #fff;
+  }
+}

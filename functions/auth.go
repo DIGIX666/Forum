@@ -10,11 +10,10 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"os"
 	"strings"
 )
 
-const DISCORD_CLIENT_ID = "1086324794837962795"
-const DISCORD_CLIENT_SECRET = "EA-iR4RV_VfD5peX0r3DVSZr5XMXSTFe"
 const DISCORD_OAUTH2_TOKEN = "https://discord.com/api/oauth2/token"
 const REDIRECT_URI = "https://localhost:8080/register"
 
@@ -25,8 +24,8 @@ func DiscordAuthRegister(code string, hashPassword string) {
 	fmt.Printf("code: %v\n", code)
 
 	data := url.Values{}
-	data.Set("client_id", DISCORD_CLIENT_ID)
-	data.Set("client_secret", DISCORD_CLIENT_SECRET)
+	data.Set("client_id", os.Getenv("CLIENT_ID_GITHUB"))
+	data.Set("client_secret", os.Getenv("CLIENT_KEY_SECRET_GITHUB"))
 	data.Set("code", code)
 	data.Set("redirect_uri", REDIRECT_URI)
 	data.Set("grant_type", "authorization_code")
@@ -101,8 +100,8 @@ func DiscordAuthRegister(code string, hashPassword string) {
 func GoogleAuthLog(code string) (bool, string, string, string) {
 
 	data := url.Values{}
-	data.Set("client_id", "760601264616-u9vo4s8hdistvmn6ia2goko3m6qhmff8.apps.googleusercontent.com")
-	data.Set("client_secret", "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")
+	data.Set("client_id", os.Getenv("CLIENT_ID_GOOGLE"))
+	data.Set("client_secret", os.Getenv("CLIENT_KEY_SECRET_GOOGLE"))
 	data.Set("code", code)
 	data.Set("redirect_uri", "https://localhost:8080/login")
 	data.Set("grant_type", "authorization_code")
@@ -169,8 +168,9 @@ func GoogleAuthLog(code string) (bool, string, string, string) {
 func GoogleAuthRegister(code string, hashPassword string) (bool, string, string) {
 
 	data := url.Values{}
-	data.Set("client_id", "760601264616-u9vo4s8hdistvmn6ia2goko3m6qhmff8.apps.googleusercontent.com")
-	data.Set("client_secret", "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")
+	data.Set("client_id", os.Getenv("CLIENT_ID_GOOGLE"))
+
+	data.Set("client_secret", os.Getenv("CLIENT_KEY_SECRET_GOOGLE"))
 	data.Set("code", code)
 	data.Set("redirect_uri", "https://localhost:8080/register")
 	data.Set("grant_type", "authorization_code")
@@ -235,8 +235,8 @@ func GoogleAuthRegister(code string, hashPassword string) (bool, string, string)
 func GitHubRegister(code string) (bool, string, string) {
 
 	data := url.Values{}
-	data.Set("client_id", "44fd70920b2db737a3ba")
-	data.Set("client_secret", "d01537f316e411dbc710369e9f907f5b8a71cc9d")
+	data.Set("client_id", os.Getenv("CLIENT_ID_GITHUB"))
+	data.Set("client_secret", os.Getenv("CLIENT_KEY_SECRET_GITHUB"))
 	data.Set("code", code)
 	data.Set("redirect_uri", "https://localhost:8080/register")
 

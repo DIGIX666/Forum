@@ -9,3 +9,4 @@
 *.jar
 *.db
 *.gif
+.env

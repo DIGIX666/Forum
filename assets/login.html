@@ -45,9 +45,9 @@
 
 				<div class="authentifaction">
 					<form method="POST">
-						<a name="google_code" class='bx bxl-google' href='https://accounts.google.com/o/oauth2/v2/auth?scope=https://www.googleapis.com/auth/userinfo.profile+https://www.googleapis.com/auth/userinfo.email&access_type=offline&include_granted_scopes=false&response_type=code&state=state_parameter_passthrough_value&redirect_uri=https%3A//localhost:8080/login&client_id=760601264616-u9vo4s8hdistvmn6ia2goko3m6qhmff8.apps.googleusercontent.com'></a>
+						<a name="google_code" class='bx bxl-google' href='https://accounts.google.com/o/oauth2/v2/auth?scope=https://www.googleapis.com/auth/userinfo.profile+https://www.googleapis.com/auth/userinfo.email&access_type=offline&include_granted_scopes=false&response_type=code&state=state_parameter_passthrough_value&redirect_uri=https%3A//localhost:8080/login&client_id={{.ClientIDGoogle}}'></a>
 					
-						<a name="github_code" class='bx bxl-github' href='https://github.com/login/oauth/authorize?client_id=44fd70920b2db737a3ba&scope=user'></a>
+						<a name="github_code" class='bx bxl-github' href='https://github.com/login/oauth/authorize?client_id={{.ClientIDGithub}}&scope=user'></a>
 					</form>
 				</div>
 			</div>

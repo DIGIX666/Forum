@@ -1,0 +1,29 @@
+name: Vérification des dépendances Go
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout du code
+      uses: actions/checkout@v4
+
+    - name: Installation de Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: '1.20'
+
+    - name: Vérification du fichier go.mod
+      run: go mod tidy && git diff --exit-code go.mod go.sum
+
+    - name: Build du projet
+      run: go build -v ./...
+
+    - name: Vérification des vulnérabilités
+      run: go install golang.org/x/vuln/cmd/govulncheck@latest && govulncheck ./...

@@ -134,6 +134,7 @@ func main() {
 		Addr:         ":8080",
 		TLSConfig:    config,
 		TLSNextProto: make(map[string]func(*http.Server, *tls.Conn, http.Handler), 0),
+		ReadTimeout:  5 * time.Second,
 	}
 
 	fmt.Println("Starting server at port: 8080")

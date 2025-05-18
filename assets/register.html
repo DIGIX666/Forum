@@ -40,7 +40,11 @@
 				<span></span>
 				<span></span>
 				<span></span>
+				<form method="POST" action="/register">
+				<input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+				<!-- autres champs du formulaire -->
 				<input type="submit" id="submit" value="S'inscrire">
+				</form>
 			</a>
 
 		</form>

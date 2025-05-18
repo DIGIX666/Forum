@@ -6,6 +6,8 @@ import (
 	dataBase "Forum/data"
 	function "Forum/functions"
 	script "Forum/scripts"
+	"crypto/rand"
+	"encoding/base64"
 	"crypto/tls"
 	"fmt"
 	"io/ioutil"
@@ -28,6 +30,31 @@ var uAccount []structure.UserAccount
 var homefeed []structure.HomeFeedPost
 var comments []structure.Comment
 var adminfeed []structure.AdminFeedPost
+
+// Fonction pour générer un token CSRF
+func generateCSRFToken() (string, error) {
+    token := make([]byte, 32)
+    _, err := rand.Read(token)
+    if err != nil {
+        return "", err
+    }
+    return base64.StdEncoding.EncodeToString(token), nil
+}
+
+// Middleware pour vérifier le token CSRF
+func csrfMiddleware(next http.Handler) http.Handler {
+    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        if r.Method == "POST" {
+            sessionToken := r.FormValue("csrf_token")
+            cookie, err := r.Cookie("csrf_token")
+            if err != nil || sessionToken != cookie.Value {
+                http.Error(w, "Invalid CSRF token", http.StatusForbidden)
+                return
+            }
+        }
+        next.ServeHTTP(w, r)
+    })
+}
 
 /****************************** FUNCTION ERREUR *******************************/
 
@@ -76,7 +103,7 @@ func main() {
 	http.Handle("/profil", tollbooth.LimitFuncHandler(lmt, profil))
 	http.Handle("/comment", tollbooth.LimitFuncHandler(lmt, comment))
 	http.Handle("/login", tollbooth.LimitFuncHandler(lmt, login))
-	http.Handle("/register", tollbooth.LimitFuncHandler(lmt, register))
+	http.Handle("/register", csrfMiddleware(tollbooth.LimitFuncHandler(lmt, register)))
 	//http.Handle("/userAccount", tollbooth.LimitFuncHandler(lmt, userAccount))
 
 	http.Handle("/error", tollbooth.LimitFuncHandler(lmt, erreur))
@@ -113,136 +140,84 @@ func main() {
 /***************************** FUNCTION LOGIN *****************************/
 
 func login(w http.ResponseWriter, r *http.Request) {
+    if r.Method == "POST" {
+        if err := r.ParseForm(); err != nil {
+            fmt.Fprintf(w, "ParseForm() err: %v", err)
+            return
+        }
 
-	if r.FormValue("login") != "" {
-		http.Redirect(w, r, "/", http.StatusFound)
-		return
-	}
+        // Vérification du token CSRF
+        sessionToken := r.FormValue("csrf_token")
+        cookie, err := r.Cookie("csrf_token")
+        if err != nil || sessionToken != cookie.Value {
+            http.Error(w, "Invalid CSRF token", http.StatusForbidden)
+            return
+        }
 
-	if r.FormValue("code") != "" {
+        email := r.FormValue("email")
+        password := r.FormValue("password")
+        uuidGenerated, _ := uuid.NewV4()
+        uuidUser := uuidGenerated.String()
 
-		code := r.FormValue("code")
+        if email != "" && password != "" {
+            checkLogin := dataBase.CheckUserLogin(email, password, uuidUser)
+            if checkLogin {
+                uAccount = append(uAccount, structure.UserAccount{
+                    UUID: uuidUser,
+                })
+                var userSession string
+                for range uAccount {
+                    err := data.Db.QueryRow("SELECT uuid FROM users WHERE email = ?", email).Scan(&userSession)
+                    if err != nil {
+                        log.Println("Erreur dans la QueryRow dans la fonction login pour userSession")
+                        log.Fatal(err)
+                    }
+                }
 
-		checkGoogleUserLogged, uName, uEmail, _ := function.GoogleAuthLog(code)
+                cookie := http.Cookie{
+                    Value:  uuidUser,
+                    Name:   "session",
+                    MaxAge: 7200,
+                }
+                http.SetCookie(w, &cookie)
 
-		checkGitHubUserLoogged, GitHub_UserName, _, _ := function.GitHubLog(code)
+                var uName, uEmail, uPassword string
+                var uAdmin bool
+                var uImage string
+                err := data.Db.QueryRow("SELECT name, image, email, password, admin FROM users WHERE email = ?", email).Scan(&uName, &uImage, &uEmail, &uPassword, &uAdmin)
+                if err != nil {
+                    log.Println("Erreur dans la selection des parametres utilisateur dans la fonction login: ")
+                    log.Fatal(err)
+                }
+                user.Connected = true
+                data.AddSession(uName, userSession, cookie.Value)
 
-		if checkGoogleUserLogged {
-			uuidGenerated, _ := uuid.NewV4()
-			uuidUser := uuidGenerated.String()
-			cookie := http.Cookie{
+                Posts.Connected = true
+                userComment.Connected = true
 
-				Value:  uuidUser,
-				Name:   "session",
-				MaxAge: 7200,
-			}
-			http.SetCookie(w, &cookie)
+                http.Redirect(w, r, "/profil", http.StatusFound)
+                return
 
-			dataBase.AddSession(uName, uuidUser, cookie.Value)
-			user.Connected = true
-			Posts.Connected = true
-			userComment.Connected = true
-			data.SetGoogleUserUUID(uEmail)
-			uAccount = data.GetAllUsers()
-			http.Redirect(w, r, "/profil", http.StatusFound)
-			return
-		}
+            } else {
+                http.Redirect(w, r, "/register", http.StatusFound)
+                return
+            }
 
-		if checkGitHubUserLoogged {
-
-			uuidGenerated, _ := uuid.NewV4()
-			uuidGithubUser := uuidGenerated.String()
-			cookie := http.Cookie{
-
-				Value:  uuidGithubUser,
-				Name:   "session",
-				MaxAge: 7200,
-			}
-			dataBase.AddSession(GitHub_UserName, uuidGithubUser, cookie.Value)
-			http.SetCookie(w, &cookie)
-			user.Connected = true
-			Posts.Connected = true
-			userComment.Connected = true
-			uAccount = data.GetAllUsers()
-			http.Redirect(w, r, "/profil", http.StatusFound)
-			return
-		}
-		http.Redirect(w, r, "/register", http.StatusFound)
-		return
-
-	}
-
-	if r.Method == "POST" {
-		if err := r.ParseForm(); err != nil {
-			fmt.Fprintf(w, "ParseForm() err: %v", err)
-			return
-		}
-
-		email := r.FormValue("email")
-		password := r.FormValue("password")
-		uuidGenerated, _ := uuid.NewV4()
-		uuidUser := uuidGenerated.String()
-
-		if email != "" && password != "" {
-			checkLogin := dataBase.CheckUserLogin(email, password, uuidUser)
-			if checkLogin {
-				uAccount = append(uAccount, structure.UserAccount{
-					UUID: uuidUser,
-				})
-				var userSession string
-				for range uAccount {
-
-					err := data.Db.QueryRow("SELECT uuid FROM users WHERE email = ?", email).Scan(&userSession)
-					if err != nil {
-						log.Println("Erreur dans la QueryRow dans la fonction login pour userSession")
-						log.Fatal(err)
-					}
-				}
-
-				cookie := http.Cookie{
-					Value:  uuidUser,
-					Name:   "session",
-					MaxAge: 7200,
-				}
-				http.SetCookie(w, &cookie)
-
-				var uName, uEmail, uPassword string
-				var uAdmin bool
-				var uImage string
-				err := data.Db.QueryRow("SELECT name, image, email, password, admin FROM users WHERE email = ?", email).Scan(&uName, &uImage, &uEmail, &uPassword, &uAdmin)
-				if err != nil {
-					log.Println("Erreur dans la selection des parametres utilisateur dans la fonction login: ")
-					log.Fatal(err)
-				}
-				user.Connected = true
-				data.AddSession(uName, userSession, cookie.Value)
-
-				Posts.Connected = true
-				userComment.Connected = true
-
-				http.Redirect(w, r, "/profil", http.StatusFound)
-				return
-
-			} else {
-				http.Redirect(w, r, "/register", http.StatusFound)
-				return
-			}
-
-		} else {
-			fmt.Println("email empty && password empty!")
-			return
-		}
-	} else if r.Method == "GET" {
-		// uAccount = data.GetAllUsers()
-		t := template.New("login")
-		t = template.Must(t.ParseFiles("./assets/login.html"))
-		err := t.ExecuteTemplate(w, "login", nil)
-		if err != nil {
-			log.Fatal(err)
-			return
-		}
-		return
-	}
+        } else {
+            fmt.Println("email empty && password empty!")
+            return
+        }
+    } else if r.Method == "GET" {
+        // uAccount = data.GetAllUsers()
+        t := template.New("login")
+        t = template.Must(t.ParseFiles("./assets/login.html"))
+        err := t.ExecuteTemplate(w, "login", nil)
+        if err != nil {
+            log.Fatal(err)
+            return
+        }
+        return
+    }
 }
 
 /*************************** FUNCTION REGISTER **********************************/

@@ -23,6 +23,8 @@
 
 			<div>
 				<form id="form" method="post">
+					<!-- Ajout du champ caché pour le token CSRF -->
+					<input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
 					<div class="caixa__login-input">
 						<label for="email">Email</label><br>
 						<input type="text" id="email" name="email"><br>
@@ -78,13 +80,9 @@
 
 			passwordInput.addEventListener("input", displayBadMatching)
 
-
-
 			const passwordBytes = new TextEncoder().encode(password);
 
-
 			if (emailInput.value != "" && passwordInput.value != "" && passwordBytes.length < 72) {
-
 				btn.disabled = false
 				btn.style.backgroundColor = "#3498db"
 

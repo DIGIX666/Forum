@@ -2,7 +2,6 @@ module Forum
 
 go 1.23.0
 
-toolchain go1.24.1
 
 require (
 	github.com/didip/tollbooth v4.0.2+incompatible

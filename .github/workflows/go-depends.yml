@@ -17,7 +17,7 @@ jobs:
     - name: Installation de Go
       uses: actions/setup-go@v5
       with:
-        go-version: '1.20'
+        go-version: '1.23'
 
     - name: Vérification du fichier go.mod
       run: go mod tidy && git diff --exit-code go.mod go.sum

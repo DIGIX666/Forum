@@ -140,9 +140,7 @@ func main() {
 	fmt.Println("Starting server at port: 8080")
 	err = server.ListenAndServeTLS("Key/server.crt", "Key/server.key")
 	if err != nil {
-		if err != nil {
-			log.Fatal(err)
-		}
+		log.Fatal(err)
 	}
 }
 

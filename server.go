@@ -32,8 +32,8 @@ var homefeed []structure.HomeFeedPost
 var comments []structure.Comment
 var adminfeed []structure.AdminFeedPost
 
-// Fonction pour générer un token CSRF
-func generateCSRFToken() (string, error) {
+// Fonction for generated CSRF token
+func GenerateCSRFToken() (string, error) {
 	token := make([]byte, 32)
 	_, err := rand.Read(token)
 	if err != nil {
@@ -42,7 +42,7 @@ func generateCSRFToken() (string, error) {
 	return base64.StdEncoding.EncodeToString(token), nil
 }
 
-// Middleware pour vérifier le token CSRF
+// Middleware for token verification CSRF
 func csrfMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == "POST" {
@@ -217,10 +217,28 @@ func login(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	} else if r.Method == "GET" {
-		// uAccount = data.GetAllUsers()
+		// Generate a new CSRF token
+		csrfToken, err := GenerateCSRFToken()
+		if err != nil {
+			http.Error(w, "Erreur lors de la génération du token CSRF", http.StatusInternalServerError)
+			return
+		}
+		http.SetCookie(w, &http.Cookie{
+			Name:     "csrf_token",
+			Value:    csrfToken,
+			HttpOnly: true,
+			Path:     "/",
+			MaxAge:   3600,
+			Secure:   true,
+			SameSite: http.SameSiteStrictMode,
+		})
+
 		t := template.New("login")
 		t = template.Must(t.ParseFiles("./assets/login.html"))
-		err := t.ExecuteTemplate(w, "login", nil)
+		// Give the CSRF token to the template
+		err = t.ExecuteTemplate(w, "login", map[string]interface{}{
+			"CSRFToken": csrfToken,
+		})
 		if err != nil {
 			log.Fatal(err)
 			return
@@ -295,12 +313,31 @@ func register(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Receive no code !")
 
 		if r.Method == "GET" {
+			csrfToken, err := GenerateCSRFToken()
+			if err != nil {
+				http.Error(w, "Erreur lors de la génération du token CSRF", http.StatusInternalServerError)
+				return
+			}
+			// Stocker le token dans un cookie
+			http.SetCookie(w, &http.Cookie{
+				Name:     "csrf_token",
+				Value:    csrfToken,
+				HttpOnly: true,
+				Path:     "/",
+				MaxAge:   3600,
+				Secure:   true,
+				SameSite: http.SameSiteStrictMode,
+			})
+
 			t := template.New("register")
 			t = template.Must(t.ParseFiles("./assets/register.html"))
-			err := t.ExecuteTemplate(w, "register", nil)
+			err = t.ExecuteTemplate(w, "register", map[string]interface{}{
+				"CSRFToken": csrfToken,
+			})
 			if err != nil {
 				log.Fatal(err)
 			}
+			return
 		}
 
 		var email string

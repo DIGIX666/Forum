@@ -1,11 +1,11 @@
 package main
 
 import (
-	structure "Forum/backend/Struct"
-	"Forum/backend/data"
-	dataBase "Forum/backend/data"
-	function "Forum/backend/functions"
-	script "Forum/backend/scripts"
+	structure "Forum/backend/infrastructures/Struct"
+	"Forum/backend/adapters/data"
+	dataBase "Forum/backend/adapters/data"
+	function "Forum/backend/domains"
+	script "Forum/backend/infrastructures/cryptage"
 	"crypto/rand"
 	"crypto/tls"
 	"encoding/base64"
@@ -138,7 +138,7 @@ func main() {
 	}
 
 	fmt.Println("Starting server at port: 8080")
-	err = server.ListenAndServeTLS("./backend/Key/server.crt", "./backend/Key/server.key")
+	err = server.ListenAndServeTLS("./backend/infrastructures/Key/server.crt", "./backend/infrastructures/Key/server.key")
 	if err != nil {
 		log.Fatal(err)
 	}

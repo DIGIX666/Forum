@@ -1,8 +1,8 @@
 package data
 
 import (
-	structure "Forum/backend/Struct"
-	script "Forum/backend/scripts"
+	structure "Forum/backend/infrastructures/Struct"
+	script "Forum/backend/infrastructures/cryptage"
 	"database/sql"
 	"fmt"
 	"log"

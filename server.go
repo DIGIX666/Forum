@@ -65,7 +65,7 @@ func erreur(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err := template.ParseFiles("./assets/error.html")
+	_, err := template.ParseFiles("./frontend/error.html")
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte("500: Internal Server Error"))
@@ -95,8 +95,8 @@ func main() {
 	uAccount = data.GetAllUsers()
 	defer data.Db.Close()
 
-	fileServer := http.FileServer(http.Dir("./assets"))
-	http.Handle("/assets/", http.StripPrefix("/assets/", fileServer))
+	fileServer := http.FileServer(http.Dir("./frontend"))
+	http.Handle("/frontend/", http.StripPrefix("/frontend/", fileServer))
 
 	// Create a limiter with the maximum rate of 5 requests per minute.
 	lmt := tollbooth.NewLimiter(100, &limiter.ExpirableOptions{DefaultExpirationTTL: time.Minute})
@@ -232,7 +232,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 		})
 
 		t := template.New("login")
-		t = template.Must(t.ParseFiles("./assets/login.html"))
+		t = template.Must(t.ParseFiles("./frontend/login.html"))
 		// Give the CSRF token to the template
 		err = t.ExecuteTemplate(w, "login", map[string]interface{}{
 			"CSRFToken": csrfToken,
@@ -328,7 +328,7 @@ func register(w http.ResponseWriter, r *http.Request) {
 			})
 
 			t := template.New("register")
-			t = template.Must(t.ParseFiles("./assets/register.html"))
+			t = template.Must(t.ParseFiles("./frontend/register.html"))
 			err = t.ExecuteTemplate(w, "register", map[string]interface{}{
 				"CSRFToken": csrfToken,
 			})
@@ -466,7 +466,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 					fmt.Println(err)
 				}
 
-				imageSRC = "./assets/upload-image/" + imageName
+				imageSRC = "./frontend/upload-image/" + imageName
 
 				err = ioutil.WriteFile(imageSRC, fileBytes, 0o666)
 				if err != nil {
@@ -529,7 +529,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	temp, err := template.ParseFiles("./assets/Home/home.html")
+	temp, err := template.ParseFiles("./frontend/Home/home.html")
 	if err != nil {
 		log.Println("Error parsing template:", err)
 		return
@@ -632,7 +632,7 @@ func profil(w http.ResponseWriter, r *http.Request) {
 		v.Connected = true
 	}
 
-	temp, err := template.ParseFiles("./assets/Profil/profil.html")
+	temp, err := template.ParseFiles("./frontend/Profil/profil.html")
 	if err != nil {
 		log.Println("Error parsing template:", err)
 		return
@@ -728,7 +728,7 @@ func categorie1(w http.ResponseWriter, r *http.Request) {
 		v.Connected = true
 	}
 
-	temp, err := template.ParseFiles("./assets/Categories/Cat-1/cat1.html")
+	temp, err := template.ParseFiles("./frontend/Categories/Cat-1/cat1.html")
 	if err != nil {
 		log.Println("Error parsing template:", err)
 		return
@@ -805,7 +805,7 @@ func categorie2(w http.ResponseWriter, r *http.Request) {
 		v.Connected = true
 	}
 
-	temp, err := template.ParseFiles("./assets/Categories/Cat-2/cat2.html")
+	temp, err := template.ParseFiles("./frontend/Categories/Cat-2/cat2.html")
 	if err != nil {
 		log.Println("Error parsing template:", err)
 		return
@@ -881,7 +881,7 @@ func categorie3(w http.ResponseWriter, r *http.Request) {
 		v.Connected = true
 	}
 
-	temp, err := template.ParseFiles("./assets/Categories/Cat-3/cat3.html")
+	temp, err := template.ParseFiles("./frontend/Categories/Cat-3/cat3.html")
 	if err != nil {
 		log.Println("Error parsing template:", err)
 		return
@@ -919,7 +919,7 @@ func categorie3(w http.ResponseWriter, r *http.Request) {
 /*************************** FUNCTION COMMENT **********************************/
 
 func comment(w http.ResponseWriter, r *http.Request) {
-	temp, err := template.ParseFiles("./assets/Commentaire/comment.html")
+	temp, err := template.ParseFiles("./frontend/Commentaire/comment.html")
 	if err != nil {
 		log.Println("Error parsing template:", err)
 		return
@@ -1140,7 +1140,7 @@ func moderateur(w http.ResponseWriter, r *http.Request) {
 					fmt.Println(err)
 				}
 
-				imageSRC = "./assets/upload-image/" + imageName
+				imageSRC = "./frontend/upload-image/" + imageName
 
 				err = ioutil.WriteFile(imageSRC, fileBytes, 0o666)
 				if err != nil {
@@ -1210,7 +1210,7 @@ func moderateur(w http.ResponseWriter, r *http.Request) {
 		data.DeletePost(r.FormValue("delete"))
 	}
 
-	temp, err := template.ParseFiles("./assets/Moderateur/moderateur.html")
+	temp, err := template.ParseFiles("./frontend/Moderateur/moderateur.html")
 	if err != nil {
 		log.Println("Error parsing template:", err)
 		return
@@ -1337,7 +1337,7 @@ func admin(w http.ResponseWriter, r *http.Request) {
 					fmt.Println(err)
 				}
 
-				imageSRC = "./assets/upload-image/" + imageName
+				imageSRC = "./frontend/upload-image/" + imageName
 
 				err = ioutil.WriteFile(imageSRC, fileBytes, 0o666)
 				if err != nil {
@@ -1396,7 +1396,7 @@ func admin(w http.ResponseWriter, r *http.Request) {
 		data.DeletePost(r.FormValue("delete"))
 	}
 
-	temp, err := template.ParseFiles("./assets/Admin/admin.html")
+	temp, err := template.ParseFiles("./frontend/Admin/admin.html")
 	if err != nil {
 		log.Println("Error parsing template:", err)
 		return

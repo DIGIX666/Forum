@@ -241,7 +241,7 @@ func DataBaseRegister(email string, password string) bool {
 		checkExisting = true
 
 	} else {
-		_, err = Db.Exec("INSERT INTO users (name, image, email, uuid, password, admin) VALUES (?, ?, ?,?,?,?)", email, "../assets/images/beehive-37436.svg", email, uuid, password, false)
+		_, err = Db.Exec("INSERT INTO users (name, image, email, uuid, password, admin) VALUES (?, ?, ?,?,?,?)", email, "../frontend/images/beehive-37436.svg", email, uuid, password, false)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -284,7 +284,7 @@ func AddingAdminUser() {
 	}
 
 	if count == 0 {
-		_, err = Db.Exec("INSERT INTO users (name, image, email, uuid, password, admin) VALUES (?, ?, ?,?,?,?)", "admin", "../assets/images/beehive-37436.svg", "admin", "admin", script.GenerateHash("adminadmin"), true)
+		_, err = Db.Exec("INSERT INTO users (name, image, email, uuid, password, admin) VALUES (?, ?, ?,?,?,?)", "admin", "../frontend/images/beehive-37436.svg", "admin", "admin", script.GenerateHash("adminadmin"), true)
 		if err != nil {
 			log.Fatal(err)
 		}

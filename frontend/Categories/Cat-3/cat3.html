@@ -1,4 +1,4 @@
-{{define "categorie1"}}
+{{define "categorie3"}}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -6,9 +6,9 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="/assets/Categories/Cat-1/cat1.css">
+  <link rel="stylesheet" href="/frontend/Categories/Cat-3/cat3.css">
   <title>{{.user.Name}}</title>
-  <link rel="website icon" type="png" href="/assets/icon.png">
+  <link rel="website icon" type="png" href="/frontend/icon.png">
 </head>
 
 
@@ -56,9 +56,9 @@
       <div class="side-wrapper">
         <div class="side-title">SUBJECTS</div>
         <div class="side-menu">
-          <a href="#"># Cat 1 </a>
+          <a href="/categorie1"># Cat 1 </a>
           <a href="/categorie2"># Cat 2 </a>
-          <a href="/categorie3"># Cat 3 </a>
+          <a href="#"># Cat 3 </a>
         </div>
       </div>
     </div>
@@ -69,12 +69,15 @@
     <div class="main">
       <div class="search-bar"></div>
       <div class="main-container">
+
+
+
         <div class="timeline">
           <div class="timeline-right">
+        
+            <!--------------.Armature Post.---------->
 
-            <!--------------.Armature Post.------------>
-
-            {{range .categories}}
+            {{range .categories3}}
             <div class="album box">
               <div class="status-main">
                  <img src="{{.UserImage}}" class="status-img"> 
@@ -118,9 +121,71 @@
               </div>
             </div>
             {{end}}
-            <!-------------------------->
-          </div>
+            <!--------------. FIN Armature Post.---------->
 
+            <!--------------. Armature Post1 Précréer.---------->
+            <div class="album box">
+              <div class="status-main">
+                <img src="{{.user.Image}}"
+                  class="status-img" />
+                <div class="album-detail">
+
+                  <div class="album-title"><strong>{{.user.Name}}
+                    </strong> create new <span>post</span></div>
+
+                  <div class="album-date">11:10 11.janv.2023</div>
+                </div>
+              </div>
+              <div class="album-content">Hello guys
+                <div class="album-photos">
+                  <img
+                    src="https://images.unsplash.com/photo-1508179719682-dbc62681c355?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2378&q=80"
+                    alt="" class="album-photo" />
+                  <div class="album-right">
+                    <img
+                      src="https://images.unsplash.com/photo-1502872364588-894d7d6ddfab?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2250&q=80"
+                      alt="" class="album-photo" />
+                    <img
+                      src="https://images.unsplash.com/photo-1566737236500-c8ac43014a67?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1950&q=80"
+                      alt="" class="album-photo" />
+                  </div>
+                </div>
+              </div>
+
+              <div class="album-actions">
+                
+                <a href="" class="album-action">
+                  <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+                    viewBox="0 0 24 24">
+                    <path
+                      d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
+                  </svg>
+                  9
+                </a>
+               
+                
+                <a href="" class="album-action">
+                  <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+                    class="css-i6dzq1" viewBox="0 0 24 24">
+                    <path d="M18 6L6 18M6 6l12 12" />
+                  </svg>
+                  10
+                </a>
+               
+                
+                <a href="/comment" class="album-action">
+                  <svg stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+                    class="css-i6dzq1" viewBox="0 0 24 24">
+                    <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
+                  </svg>
+                  1
+                </a>
+               
+              </div>
+            </div>
+            <!-----------------.FIN Armature Post1 Précréer.---------->
+          </div>
+          
         </div>
       </div>
     </div>
@@ -242,6 +307,7 @@
 <!-----------------------------------.FIN BODY.--------------------------------->
 
 <!-----------------------------------.SCRIPT.----------------------------------->
+
 <!------------------------------------------------------------------------------>
 
 </html>

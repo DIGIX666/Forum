@@ -1,4 +1,4 @@
-{{define "categorie3"}}
+{{define "categorie2"}}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -6,9 +6,9 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="/assets/Categories/Cat-3/cat3.css">
+  <link rel="stylesheet" href="/frontend/Categories/Cat-2/cat2.css">
   <title>{{.user.Name}}</title>
-  <link rel="website icon" type="png" href="/assets/icon.png">
+  <link rel="website icon" type="png" href="/frontend/icon.png">
 </head>
 
 
@@ -57,8 +57,8 @@
         <div class="side-title">SUBJECTS</div>
         <div class="side-menu">
           <a href="/categorie1"># Cat 1 </a>
-          <a href="/categorie2"># Cat 2 </a>
-          <a href="#"># Cat 3 </a>
+          <a href="#"># Cat 2 </a>
+          <a href="/categorie3"># Cat 3 </a>
         </div>
       </div>
     </div>
@@ -69,15 +69,15 @@
     <div class="main">
       <div class="search-bar"></div>
       <div class="main-container">
-
+  
 
 
         <div class="timeline">
           <div class="timeline-right">
-        
+          
             <!--------------.Armature Post.---------->
 
-            {{range .categories3}}
+            {{range .categories2}}
             <div class="album box">
               <div class="status-main">
                  <img src="{{.UserImage}}" class="status-img"> 
@@ -123,8 +123,8 @@
             {{end}}
             <!--------------. FIN Armature Post.---------->
 
-            <!--------------. Armature Post1 Précréer.---------->
-            <div class="album box">
+            <!-----------.Armature Post1 Précréer.---->
+             <div class="album box">
               <div class="status-main">
                 <img src="{{.user.Image}}"
                   class="status-img" />
@@ -183,9 +183,8 @@
                
               </div>
             </div>
-            <!-----------------.FIN Armature Post1 Précréer.---------->
+            <!-----------------.FIN Armature Post1 Précréer.-------->
           </div>
-          
         </div>
       </div>
     </div>

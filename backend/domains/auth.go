@@ -1,9 +1,9 @@
 package function
 
 import (
-	structure "Forum/Struct"
-	dataBase "Forum/data"
-	script "Forum/scripts"
+	structure "Forum/backend/infrastructures/Struct"
+	dataBase "Forum/backend/adapters/data"
+	script "Forum/backend/infrastructures/cryptage"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"

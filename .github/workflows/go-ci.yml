@@ -12,7 +12,7 @@ jobs:
 
     steps:
     - name: Checkout du code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
 
     - name: Installation de Go
       uses: actions/setup-go@v5
